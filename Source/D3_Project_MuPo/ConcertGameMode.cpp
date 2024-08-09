@@ -202,27 +202,36 @@ void AConcertGameMode::LoadSongData()
         FString CurrentLevelName = GetWorld()->GetMapName();
         CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-        FName LevelName = FName(*CurrentLevelName);
-        UE_LOG(LogTemp, Warning, TEXT("Current Level Name (stripped): %s"), *LevelName.ToString());
-
-        const TArray<FNoteData>& NotesData = GameInstance->GetSongDataForLevel(LevelName);
-        UE_LOG(LogTemp, Warning, TEXT("Notes Data Count: %d for level: %s"), NotesData.Num(), *LevelName.ToString());
-
-        // Reset the Note Spawner's data to ensure no residual data remains
         if (NoteSpawner)
         {
-            NoteSpawner->ClearScheduledNotes(); // Ensure notes are cleared before setting new ones
-            NoteSpawner->SetNotesData(NotesData);
-            UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
+            // Clear previous notes data
+            NoteSpawner->ClearScheduledNotes(); // Ensure old data is cleared
+        }
+
+        const TArray<FNoteData>* NotesData = nullptr;
+
+        if (CurrentLevelName == "ConcertLocation_1")
+        {
+            NotesData = &GameInstance->GetConcertLocation1Data();
+        }
+        else if (CurrentLevelName == "ConcertLocation_2")
+        {
+            NotesData = &GameInstance->GetConcertLocation2Data();
+        }
+
+        if (NotesData && NoteSpawner)
+        {
+            NoteSpawner->SetNotesData(*NotesData);
+            UE_LOG(LogTemp, Warning, TEXT("Loaded %d notes for level: %s"), NotesData->Num(), *CurrentLevelName);
         }
         else
         {
-            UE_LOG(LogTemp, Error, TEXT("NoteSpawner is null. Cannot set notes data."));
+            UE_LOG(LogTemp, Error, TEXT("No notes data found or NoteSpawner is null for level: %s"), *CurrentLevelName);
         }
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance not found"));
+        UE_LOG(LogTemp, Error, TEXT("GameInstance is null."));
     }
 }
 

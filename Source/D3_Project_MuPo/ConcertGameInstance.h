@@ -4,21 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
+#include "NoteData.h" // Make sure this include is correct
 #include "ConcertGameInstance.generated.h"
 
-struct FNoteData;
-/**
- * 
- */
-USTRUCT(BlueprintType)
+USTRUCT()
 struct FLevelSongData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadOnly)
-	FName LevelName;
-
-	UPROPERTY(BlueprintReadOnly)
 	TArray<FNoteData> NotesData;
 };
 
@@ -29,14 +22,20 @@ class D3_PROJECT_MUPO_API UConcertGameInstance : public UGameInstance
 
 public:
 	virtual void Init() override;
-	void SetDefaultSoundMix();
+	void LoadAllSongData();
+	float GetSongDuration(FName LevelName) const;
+	
 
 	UFUNCTION(BlueprintCallable, Category = "Songs")
 	const TArray<FNoteData>& GetSongDataForLevel(FName LevelName) const;
 
-	float GetSongDuration(FName LevelName) const;
+	const TArray<FNoteData>& GetConcertLocation1Data() const;
+	const TArray<FNoteData>& GetConcertLocation2Data() const;
+	const TArray<FNoteData>& GetConcertLocation3Data() const;
+	void LoadSongDataFromCSV(FString CSVFilePath);
 
 private:
-	void LoadAllSongData();
-	TMap<FName, FLevelSongData> AllSongsData;
+	FLevelSongData ConcertLocation1Data;
+	FLevelSongData ConcertLocation2Data;
+	FLevelSongData ConcertLocation3Data;
 };

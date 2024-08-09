@@ -21,74 +21,73 @@ UNoteSpawner::UNoteSpawner()
 void UNoteSpawner::BeginPlay()
 {
     Super::BeginPlay();
-	SetNotesData(CurrentNotesData);
+	SetNotesData(ScheduledNotes);
 }
 
 void UNoteSpawner::InitializeComponent()
 {
 	Super::InitializeComponent();
-	CurrentNotesData.Empty();
+	ScheduledNotes.Empty();
 	ClearScheduledNotes();
 }
 
-void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NotesData)
+void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NewNotesData)
 {
-	CurrentNotesData = NotesData;
-	UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
+	// Clear any existing scheduled notes to avoid overlap
+	ScheduledNotes.Empty();
 
-	// Schedule notes if already begun play
-	if (HasBegunPlay())
-	{
-		ClearScheduledNotes();
-		ScheduleNotes(CurrentNotesData);
-	}
+	// Add the new notes
+	ScheduledNotes = NewNotesData;
+
+	// Optional: Log the data to confirm it is being set correctly
+	UE_LOG(LogTemp, Warning, TEXT("NoteSpawner: Loaded %d notes."), ScheduledNotes.Num());
 }
 
 void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
 {
-   FVector SpawnLocation;
-	FRotator SpawnRotation = GetOwner()->GetActorRotation();
-	FActorSpawnParameters SpawnParameters;
+	FVector SpawnLocation;
+    FRotator SpawnRotation = GetOwner()->GetActorRotation();
+    FActorSpawnParameters SpawnParameters;
 
-	bool isHighNote = Note.NoteNumber >= HighNoteValue && Note.Track == 0;
-	bool isSpawnAction = Note.Action.Equals(TEXT("spawn"), ESearchCase::IgnoreCase);
-	bool isDespawnAction = Note.Action.Equals(TEXT("despawn"), ESearchCase::IgnoreCase);
-	
-	if (isSpawnAction)
-	{
-		if (isHighNote)
-		{
-			SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetHigh);
-			if (BP_DrumNoteHigh)
-			{
-				AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteHigh, SpawnLocation, SpawnRotation, SpawnParameters);
-				//UE_LOG(LogTemp, Warning, TEXT("Spawned High Note: %s"), (SpawnedActor != nullptr) ? TEXT("Yes") : TEXT("No"));
-				if (SpawnedActor)
-				{
-					SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
-					OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
-				}
-			}
-		}
-		else if (Note.NoteNumber <= LowNoteValue && Note.Track == 0)
-		{
-			SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetLow);
-			if (BP_DrumNoteLow)
-			{
-				AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteLow, SpawnLocation, SpawnRotation, SpawnParameters);
-				//UE_LOG(LogTemp, Warning, TEXT("Spawned Low Note: %s"), (SpawnedActor != nullptr) ? TEXT("Yes") : TEXT("No"));
-				if (SpawnedActor)
-				{
-					SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
-					OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
-				}
-			}
-		}
-	}
-	else if (isDespawnAction)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Despawn action detected. Handling despawn logic here."));
-	}
+    bool isHighNote = Note.NoteNumber >= HighNoteValue && Note.Track == 0;
+    bool isSpawnAction = Note.Action.Equals(TEXT("spawn"), ESearchCase::IgnoreCase);
+    bool isDespawnAction = Note.Action.Equals(TEXT("despawn"), ESearchCase::IgnoreCase);
+
+    if (isSpawnAction)
+    {
+        if (isHighNote)
+        {
+            SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetHigh);
+            if (BP_DrumNoteHigh)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Spawning High Note at location: %s"), *SpawnLocation.ToString());
+                AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteHigh, SpawnLocation, SpawnRotation, SpawnParameters);
+                if (SpawnedActor)
+                {
+                    SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
+                    OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
+                }
+            }
+        }
+        else if (Note.NoteNumber <= LowNoteValue && Note.Track == 0)
+        {
+            SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetLow);
+            if (BP_DrumNoteLow)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Spawning Low Note at location: %s"), *SpawnLocation.ToString());
+                AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteLow, SpawnLocation, SpawnRotation, SpawnParameters);
+                if (SpawnedActor)
+                {
+                    SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
+                    OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
+                }
+            }
+        }
+    }
+    else if (isDespawnAction)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Despawn action detected. Handling despawn logic here."));
+    }
 }
 
 void UNoteSpawner::ScheduleNotes(const TArray<FNoteData>& InNotesData)

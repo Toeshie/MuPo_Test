@@ -39,12 +39,28 @@ void AOverworldConcertActor::LoadLevel()
         UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
         if (GameInstance)
         {
-            const TArray<FNoteData>& NotesData = GameInstance->GetSongDataForLevel(LevelToLoad);
-            // You can now use NotesData in your level to set up the song
+            TArray<FNoteData> NotesData; // Declare NotesData variable
 
-            // Proceed to load the level
-            UGameplayStatics::OpenLevel(this, LevelToLoad);
+            FString LevelName = LevelToLoad.ToString(); // Convert LevelToLoad to FString
+
+            if (LevelName == "ConcertLocation_1")
+            {
+                NotesData = GameInstance->GetConcertLocation1Data();
+            }
+            else if (LevelName == "ConcertLocation_2")
+            {
+                NotesData = GameInstance->GetConcertLocation2Data();
+            }
+            /*else if (LevelName == "ConcertLocation_3")
+            {
+                NotesData = GameInstance->GetConcertLocation3Data();
+            }*/
+
+            // Now you can use NotesData for further operations
         }
+
+        // Proceed to load the level
+        UGameplayStatics::OpenLevel(this, LevelToLoad);
     }
 }
 
@@ -96,7 +112,6 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
     {
         if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
         {
-            //UE_LOG(LogTemp, Warning, TEXT("IN"));
             LoadLevel();
         }
     }
@@ -109,9 +124,7 @@ void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedCompone
     {
         if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
         {
-            //UE_LOG(LogTemp, Warning, TEXT("OUT"));
-            //DismissWidget();
+            // Handle overlap end
         }
     }
 }
-
