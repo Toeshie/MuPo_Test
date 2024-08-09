@@ -202,36 +202,21 @@ void AConcertGameMode::LoadSongData()
         FString CurrentLevelName = GetWorld()->GetMapName();
         CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-        if (NoteSpawner)
-        {
-            // Clear previous notes data
-            NoteSpawner->ClearScheduledNotes(); // Ensure old data is cleared
-        }
-
-        const TArray<FNoteData>* NotesData = nullptr;
-
         if (CurrentLevelName == "ConcertLocation_1")
         {
-            NotesData = &GameInstance->GetConcertLocation1Data();
+            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation1Data();
+            NoteSpawner->SetNotesData(NotesData);
         }
         else if (CurrentLevelName == "ConcertLocation_2")
         {
-            NotesData = &GameInstance->GetConcertLocation2Data();
+            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation2Data();
+            NoteSpawner->SetNotesData(NotesData);
         }
-
-        if (NotesData && NoteSpawner)
+        /*else if (CurrentLevelName == "ConcertLocation_3")
         {
-            NoteSpawner->SetNotesData(*NotesData);
-            UE_LOG(LogTemp, Warning, TEXT("Loaded %d notes for level: %s"), NotesData->Num(), *CurrentLevelName);
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("No notes data found or NoteSpawner is null for level: %s"), *CurrentLevelName);
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance is null."));
+            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation3Data();
+            NoteSpawner->SetNotesData(NotesData);
+        }*/
     }
 }
 

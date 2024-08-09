@@ -24,7 +24,6 @@ public:
 	virtual void Init() override;
 	void LoadAllSongData();
 	float GetSongDuration(FName LevelName) const;
-	
 
 	UFUNCTION(BlueprintCallable, Category = "Songs")
 	const TArray<FNoteData>& GetSongDataForLevel(FName LevelName) const;
@@ -32,7 +31,6 @@ public:
 	const TArray<FNoteData>& GetConcertLocation1Data() const;
 	const TArray<FNoteData>& GetConcertLocation2Data() const;
 	const TArray<FNoteData>& GetConcertLocation3Data() const;
-	void LoadSongDataFromCSV(FString CSVFilePath);
 
 private:
 	FLevelSongData ConcertLocation1Data;

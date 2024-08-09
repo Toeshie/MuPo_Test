@@ -52,10 +52,9 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FNoteSpawnedDelegate OnNoteSpawned;
 
-	void SetNotesData(const TArray<FNoteData>& NewNotesData);
+	void SetNotesData(const TArray<FNoteData>& NotesData);
 
 private:
-	
+	TArray<FNoteData> CurrentNotesData;
 	TArray<FTimerHandle> NoteTimerHandles;
-	TArray<FNoteData> ScheduledNotes;
 };

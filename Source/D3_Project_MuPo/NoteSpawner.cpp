@@ -21,26 +21,27 @@ UNoteSpawner::UNoteSpawner()
 void UNoteSpawner::BeginPlay()
 {
     Super::BeginPlay();
-	SetNotesData(ScheduledNotes);
+	SetNotesData(CurrentNotesData);
 }
 
 void UNoteSpawner::InitializeComponent()
 {
 	Super::InitializeComponent();
-	ScheduledNotes.Empty();
+	CurrentNotesData.Empty();
 	ClearScheduledNotes();
 }
 
-void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NewNotesData)
+void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NotesData)
 {
-	// Clear any existing scheduled notes to avoid overlap
-	ScheduledNotes.Empty();
+	CurrentNotesData = NotesData;
+	UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
 
-	// Add the new notes
-	ScheduledNotes = NewNotesData;
-
-	// Optional: Log the data to confirm it is being set correctly
-	UE_LOG(LogTemp, Warning, TEXT("NoteSpawner: Loaded %d notes."), ScheduledNotes.Num());
+	// Schedule notes if already begun play
+	if (HasBegunPlay())
+	{
+		ClearScheduledNotes();
+		ScheduleNotes(CurrentNotesData);
+	}
 }
 
 void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
