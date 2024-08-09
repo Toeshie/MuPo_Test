@@ -18,11 +18,12 @@ void UConcertGameInstance::Init()
 
 void UConcertGameInstance::LoadAllSongData()
 {
+	AllSongsData.Empty(); // Clear previous data
+
 	USongDataParserSubsystem* ParserSubsystem = GetSubsystem<USongDataParserSubsystem>();
 
 	if (ParserSubsystem)
 	{
-		// Ensure these file paths and level names are correct
 		TMap<FString, FName> SongFiles = {
 			{TEXT("D:/UnrealProjects/MuPo/MuPo/D3_Project_MuPo/CSV/Nobody, Not Even the RainCSV.csv"),TEXT("ConcertLocation_1")},
 			{TEXT("D:/UnrealProjects/MuPo/MuPo/D3_Project_MuPo/CSV/ChankuraCSV.csv"), TEXT("ConcertLocation_2")}

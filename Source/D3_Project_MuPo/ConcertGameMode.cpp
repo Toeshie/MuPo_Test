@@ -208,10 +208,10 @@ void AConcertGameMode::LoadSongData()
         const TArray<FNoteData>& NotesData = GameInstance->GetSongDataForLevel(LevelName);
         UE_LOG(LogTemp, Warning, TEXT("Notes Data Count: %d for level: %s"), NotesData.Num(), *LevelName.ToString());
 
-        TotalNotesInSong = NotesData.Num(); // Set the total number of notes in the current song
-
+        // Reset the Note Spawner's data to ensure no residual data remains
         if (NoteSpawner)
         {
+            NoteSpawner->ClearScheduledNotes(); // Ensure notes are cleared before setting new ones
             NoteSpawner->SetNotesData(NotesData);
             UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
         }
