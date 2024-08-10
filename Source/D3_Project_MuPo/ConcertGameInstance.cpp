@@ -13,6 +13,7 @@ void UConcertGameInstance::Init()
     Super::Init();
     UE_LOG(LogTemp, Warning, TEXT("Game Instance Initialized."));
     LoadAllSongData();
+    
 }
 
 void UConcertGameInstance::LoadAllSongData()

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SceneComponent.h"
+#include "NoteData.h" 
 #include "NoteSpawner.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FNoteSpawnedDelegate);
@@ -13,48 +14,47 @@ class D3_PROJECT_MUPO_API UNoteSpawner : public USceneComponent
 {
 	GENERATED_BODY()
 
-protected:
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 LowNoteValue;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 HighNoteValue;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UClass* BP_DrumNoteHigh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UClass* BP_DrumNoteLow;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Settings")
-	FVector LocalOffsetHigh;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Settings")
-	FVector LocalOffsetLow;
-
-	
-
 public:
 	UNoteSpawner();
+
+	void SetNotesData(const TArray<FNoteData>& NotesData);
 	void ClearScheduledNotes();
-
-protected:
-	virtual void BeginPlay() override;
-	virtual void InitializeComponent() override;
-	UFUNCTION()
-	void SpawnNoteBasedOnNoteData(const FNoteData& Note);
-
-	void ScheduleNotes(const TArray<FNoteData>& InNotesData);
-
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FNoteSpawnedDelegate OnNoteSpawned;
 
-	void SetNotesData(const TArray<FNoteData>& NotesData);
+protected:
+	virtual void BeginPlay() override;
+	virtual void InitializeComponent() override;
 
 private:
+	void HandleNoteSpawning();
+	void SpawnNoteBasedOnNoteData(const FNoteData& Note);
+
+	// Timer handle for spawning notes
+	FTimerHandle NoteSpawnTimerHandle;
+
+	// Current list of notes to be spawned
 	TArray<FNoteData> CurrentNotesData;
-	TArray<FTimerHandle> NoteTimerHandles;
+
+	// Index of the next note to be spawned
+	int32 CurrentNoteIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Notes", meta = (AllowPrivateAccess = "true"))
+	int32 LowNoteValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Notes", meta = (AllowPrivateAccess = "true"))
+	int32 HighNoteValue;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Notes", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> BP_DrumNoteHigh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Notes", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<AActor> BP_DrumNoteLow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Settings", meta = (AllowPrivateAccess = "true"))
+	FVector LocalOffsetHigh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Spawn Settings", meta = (AllowPrivateAccess = "true"))
+	FVector LocalOffsetLow;
 };

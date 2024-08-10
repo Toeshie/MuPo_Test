@@ -57,7 +57,7 @@ void AMainConcertCameraActor::BeginPlay()
 	}
 */
 	// Set timer to play music after 4.40 seconds
-	GetWorld()->GetTimerManager().SetTimer(MusicStartTimerHandle, this, &AMainConcertCameraActor::PlayMusic, 5.10f, false);
+	GetWorld()->GetTimerManager().SetTimer(MusicStartTimerHandle, this, &AMainConcertCameraActor::PlayMusic, MusicStartTimer, false);
 }
 
 void AMainConcertCameraActor::PlayMusic()
