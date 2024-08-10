@@ -25,21 +25,27 @@ void UConcertGameInstance::LoadAllSongData()
         // Load data for ConcertLocation_1
         if (ParserSubsystem->ParseSongData(TEXT("D:/MuPo_Test/MuPo_Test/CSV/Nobody, Not Even the RainCSV.csv")))
         {
-            ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData();
+            ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_1, total notes: %d"), ConcertLocation1Data.NotesData.Num());
         }
+
+        // Clear NotesData before parsing the next file
+        ParserSubsystem->NotesData.Empty();
 
         // Load data for ConcertLocation_2
         if (ParserSubsystem->ParseSongData(TEXT("D:/MuPo_Test/MuPo_Test/CSV/ChankuraCSV.csv")))
         {
-            ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData();
+            ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_2, total notes: %d"), ConcertLocation2Data.NotesData.Num());
         }
+
+        // Clear NotesData before parsing the next file (if needed)
+        ParserSubsystem->NotesData.Empty();
 
         // Load data for ConcertLocation_3
         /*if (ParserSubsystem->ParseSongData(TEXT("D:/MuPo_Test/MuPo_Test/CSV/DeadNeverStavDeadCSV.csv")))
         {
-            ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();
+            ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_3, total notes: %d"), ConcertLocation3Data.NotesData.Num());
         }*/
     }
