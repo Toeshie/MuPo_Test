@@ -33,7 +33,7 @@ ANoteBaseClass::ANoteBaseClass()
 	GoodNoteCollider2->SetCollisionProfileName(TEXT("OverlapAllDynamic"));
 	GoodNoteCollider2->ComponentTags.Add("GoodNoteCollider");
 
-	MoveSpeed = 20;
+	MoveSpeed = 10;
 	
 	const FVector Location2(-200, 0, 0);
 	const FVector Location3(-300, 0, 0);

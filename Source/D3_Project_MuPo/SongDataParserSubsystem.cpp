@@ -5,13 +5,15 @@
 
 
 
-bool USongDataParserSubsystem::ParseSongData(const FString& FilePath)
-
+bool USongDataParserSubsystem::ParseSongData(const FString& FileName)
 {
+	// Construct the full path to the file in the Content/SongData directory
+	FString FullPath = FPaths::ProjectContentDir() + TEXT("SongData/") + FileName;
+
 	TArray<FString> Lines;
-	if (FFileHelper::LoadFileToStringArray(Lines, *FilePath))
+	if (FFileHelper::LoadFileToStringArray(Lines, *FullPath))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("File read successfully from: %s"), *FilePath);
+		UE_LOG(LogTemp, Warning, TEXT("File read successfully from: %s"), *FullPath);
 		for (int32 i = 1; i < Lines.Num(); ++i) // Start at 1 to skip header
 		{
 			TArray<FString> Columns;
@@ -43,10 +45,10 @@ bool USongDataParserSubsystem::ParseSongData(const FString& FilePath)
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No valid note data found in file: %s"), *FilePath);
+			UE_LOG(LogTemp, Warning, TEXT("No valid note data found in file: %s"), *FullPath);
 			return false; // No valid data found
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Failed to read file: %s"), *FilePath);
+	UE_LOG(LogTemp, Warning, TEXT("Failed to read file: %s"), *FullPath);
 	return false; // File could not be loaded or parsed
 }
