@@ -46,6 +46,16 @@ class AD3_Project_MuPoCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
+	
+	// Cheat code sequence
+	FString CheatCode = TEXT("heavy");
+	FString CurrentInput;
+
+	void OnKeyInput(FKey PressedKey); // Function to handle key inputs
+	// Function to check the cheat code
+	void SpawnNewConcertLocation();
+
+	bool bHasSpawnedSecretConcertLocation = false;
 
 public:
 	AD3_Project_MuPoCharacter();
