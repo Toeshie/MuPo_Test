@@ -57,6 +57,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UListView* EntriesListView;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UUserWidget> ListEntryWidgetBPClass;
+
 private:
 	TArray<FCSVEntry> CSVEntries;
 

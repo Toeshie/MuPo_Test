@@ -1,10 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "SongCreatorWidget.h"
+
+#include "ListEntryWidget.h"
 #include "Components/EditableTextBox.h"
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/ListView.h"
+#include "Components/TextBlock.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
@@ -67,7 +70,23 @@ void UCSVWidget::UpdateDropdown()
 
 void UCSVWidget::UpdateVisualization()
 {
-    // Implementation to update the list view with the new data
+    if (!EntriesListView) return;
+
+    EntriesListView->ClearListItems();
+
+    for (const FCSVEntry& Entry : CSVEntries)
+    {
+        UListEntryWidget* EntryWidget = CreateWidget<UListEntryWidget>(this, ListEntryWidgetBPClass);
+        if (EntryWidget)
+        {
+            EntryWidget->TimeMsText->SetText(FText::FromString(FString::FromInt(Entry.TimeMs)));
+            EntryWidget->NoteNumberText->SetText(FText::FromString(FString::FromInt(Entry.NoteNumber)));
+            EntryWidget->TrackText->SetText(FText::FromString(FString::FromInt(Entry.Track)));
+            EntryWidget->ActionText->SetText(FText::FromString(Entry.Action));
+
+            EntriesListView->AddItem(EntryWidget);
+        }
+    }
 }
 
 void UCSVWidget::ClearFields()
