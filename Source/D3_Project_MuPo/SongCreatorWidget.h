@@ -60,6 +60,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UListView* EntriesListView;
 
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* FileNameTextBox;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
 	TSubclassOf<UUserWidget> ListEntryWidgetBPClass;
 

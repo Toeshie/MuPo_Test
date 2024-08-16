@@ -20,7 +20,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
 	UStaticMeshComponent* ConcertLocationMesh;
 
-	UPROPERTY(BlueprintReadWrite, Category = "Collider")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Collider")
 	UBoxComponent* ConcertCollider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Root")
@@ -30,16 +30,15 @@ protected:
 	FName LevelToLoad;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UUserWidget> WidgetClass;
+	TSubclassOf<class UConcertSelectionWidget> WidgetClass;
 
 	UPROPERTY()
-	UUserWidget* WidgetInstance;
+	UConcertSelectionWidget* WidgetInstance;
+	
 
 	virtual void BeginPlay() override;
 
 	void ShowWidget();
-	void DismissWidget();
-	void Tick(float DeltaTime);
 
 	UFUNCTION()
 	void LoadLevel();

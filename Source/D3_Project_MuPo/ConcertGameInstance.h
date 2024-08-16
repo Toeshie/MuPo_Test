@@ -32,8 +32,15 @@ public:
 	const TArray<FNoteData>& GetConcertLocation2Data() const;
 	const TArray<FNoteData>& GetConcertLocation3Data() const;
 
+	UFUNCTION(BlueprintCallable, Category = "Songs")
+	FString GetSongNameForLevel(FName LevelName) const;
+
+	void SetSelectedCharacter(const FString& CharacterName);
+	FString GetSelectedCharacter() const;
+
 private:
 	FLevelSongData ConcertLocation1Data;
 	FLevelSongData ConcertLocation2Data;
 	FLevelSongData ConcertLocation3Data;
+	FString SelectedCharacter;
 };

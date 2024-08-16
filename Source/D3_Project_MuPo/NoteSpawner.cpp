@@ -21,7 +21,6 @@ void UNoteSpawner::BeginPlay()
 
     if (CurrentNotesData.Num() > 0)
     {
-        // Start a single timer to handle all note spawns
         GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.005f, true);
     }
 }

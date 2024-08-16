@@ -1,10 +1,10 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OverworldConcertActor.h"
+#include "ConcertSelectionWidget.h"
 #include "D3_Project_MuPoCharacter.h"
-#include "Blueprint/UserWidget.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/PlayerController.h"
 #include "ConcertGameInstance.h"
 
 // Sets default values
@@ -12,67 +12,42 @@ AOverworldConcertActor::AOverworldConcertActor()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    RootRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-    RootComponent = RootRoot;
+    // Initialize the root component
+    RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
 
-    ConcertLocationMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Concert Mesh"));
-    ConcertLocationMesh->SetupAttachment(RootRoot);
-
+    // Initialize the collider
     ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Concert Collider"));
     ConcertCollider->SetupAttachment(RootComponent);
-    ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));
-    
+
+    // Set default values for the collider, such as its extent
+    ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));  // Example size
+    ConcertCollider->SetCollisionProfileName(TEXT("Trigger"));  // Set the collision profile to Trigger (adjust as needed)
+
+    // Attach overlap events (if necessary)
     ConcertCollider->OnComponentBeginOverlap.AddDynamic(this, &AOverworldConcertActor::OnBeginOverlap);
     ConcertCollider->OnComponentEndOverlap.AddDynamic(this, &AOverworldConcertActor::OnEndOverlap);
 }
 
-// Called when the game starts or when spawned
 void AOverworldConcertActor::BeginPlay()
 {
     Super::BeginPlay();
-}
-
-void AOverworldConcertActor::LoadLevel()
-{
-    if (LevelToLoad != NAME_None)
-    {
-        UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-        if (GameInstance)
-        {
-            TArray<FNoteData> NotesData; // Declare NotesData variable
-
-            FString LevelName = LevelToLoad.ToString(); // Convert LevelToLoad to FString
-
-            if (LevelName == "ConcertLocation_1")
-            {
-                NotesData = GameInstance->GetConcertLocation1Data();
-            }
-            else if (LevelName == "ConcertLocation_2")
-            {
-                NotesData = GameInstance->GetConcertLocation2Data();
-            }
-            /*else if (LevelName == "ConcertLocation_3")
-            {
-                NotesData = GameInstance->GetConcertLocation3Data();
-            }*/
-
-            // Now you can use NotesData for further operations
-        }
-
-        // Proceed to load the level
-        UGameplayStatics::OpenLevel(this, LevelToLoad);
-    }
 }
 
 void AOverworldConcertActor::ShowWidget()
 {
     if (WidgetClass && !WidgetInstance)
     {
-        WidgetInstance = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
+        WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
         if (WidgetInstance)
         {
+            UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+            FString SongName = GameInstance ? GameInstance->GetSongNameForLevel(LevelToLoad) : TEXT("Unknown Song");
+
+            WidgetInstance->InitializeWidget(SongName, TArray<FString>({TEXT("Concert Character")}));
+            WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
+
             WidgetInstance->AddToViewport();
-            
+
             if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
             {
                 PlayerController->bShowMouseCursor = true;
@@ -83,26 +58,27 @@ void AOverworldConcertActor::ShowWidget()
     }
 }
 
-void AOverworldConcertActor::DismissWidget()
+void AOverworldConcertActor::LoadLevel()
 {
     if (WidgetInstance)
     {
+        FString SelectedCharacter = WidgetInstance->GetSelectedCharacter();
+        UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+        if (GameInstance)
+        {
+            GameInstance->SetSelectedCharacter(SelectedCharacter);
+        }
+
+        // Remove the widget
         WidgetInstance->RemoveFromParent();
         WidgetInstance = nullptr;
-        
-        if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+
+        // Load the level
+        if (LevelToLoad != NAME_None)
         {
-            PlayerController->bShowMouseCursor = false;
-            PlayerController->bEnableClickEvents = false;
-            PlayerController->bEnableMouseOverEvents = false;
+            UGameplayStatics::OpenLevel(this, LevelToLoad);
         }
     }
-}
-
-// Called every frame
-void AOverworldConcertActor::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
 }
 
 void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -112,7 +88,7 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
     {
         if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
         {
-            LoadLevel();
+            ShowWidget();
         }
     }
 }
@@ -124,7 +100,19 @@ void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedCompone
     {
         if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
         {
-            // Handle overlap end
+            if (WidgetInstance)
+            {
+                WidgetInstance->RemoveFromParent();
+                WidgetInstance = nullptr;
+
+                APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+                if (PlayerController)
+                {
+                    PlayerController->bShowMouseCursor = false;
+                    PlayerController->bEnableClickEvents = false;
+                    PlayerController->bEnableMouseOverEvents = false;
+                }
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ void UConcertGameInstance::LoadAllSongData()
     if (ParserSubsystem)
     {
         // Load data for ConcertLocation_1
-        if (ParserSubsystem->ParseSongData(TEXT("LaDisputeCSV.csv")))
+        if (ParserSubsystem->ParseSongData(TEXT("LagosCSV.csv")))
         {
             ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_1, total notes: %d"), ConcertLocation1Data.NotesData.Num());
@@ -112,6 +112,34 @@ const TArray<::FNoteData>& UConcertGameInstance::GetConcertLocation2Data() const
 const TArray<::FNoteData>& UConcertGameInstance::GetConcertLocation3Data() const
 {
     return ConcertLocation3Data.NotesData;
+}
+
+FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
+{
+    if (LevelName == "ConcertLocation_1")
+    {
+        return TEXT("Lagos");
+    }
+    else if (LevelName == "ConcertLocation_2")
+    {
+        return TEXT("Chankura");
+    }
+    else if (LevelName == "ConcertLocation_3")
+    {
+        return TEXT("Song for Concert Location 3");
+    }
+    
+    return TEXT("Unknown Song");
+}
+
+void UConcertGameInstance::SetSelectedCharacter(const FString& CharacterName)
+{
+    SelectedCharacter = CharacterName;
+}
+
+FString UConcertGameInstance::GetSelectedCharacter() const
+{
+    return SelectedCharacter;
 }
 
 

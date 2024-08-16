@@ -6,7 +6,6 @@
 #include "Components/Button.h"
 #include "Components/ComboBoxString.h"
 #include "Components/ListView.h"
-#include "Components/TextBlock.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 #include "SongDataEntry.h"
@@ -15,8 +14,6 @@ void UCSVWidget::NativeConstruct()
 {
     Super::NativeConstruct();
     
-
-    // Usual button bindings
     if (AddUpdateButton)
     {
         AddUpdateButton->OnClicked.AddDynamic(this, &UCSVWidget::OnAddUpdateEntry);
@@ -26,8 +23,7 @@ void UCSVWidget::NativeConstruct()
     {
         ExportButton->OnClicked.AddDynamic(this, &UCSVWidget::OnExportCSV);
     }
-
-    // Initialize the action combo box with options
+    
     if (ActionComboBox)
     {
         ActionComboBox->AddOption(TEXT("spawn"));
@@ -100,36 +96,55 @@ void UCSVWidget::OnAddUpdateEntry()
         // Add to ListView
         EntriesListView->AddItem(DataEntry);
     }
-
-    // Clear the input fields after updating or adding
+    
     ClearFields();
-
-    // Reset the selected index
     SelectedIndex = -1;
 }
 
 void UCSVWidget::OnExportCSV()
 {
-    FString FilePath = FPaths::ProjectDir() + "/ExportedCSV.csv";
+    
+    FString FileName = FileNameTextBox ? FileNameTextBox->GetText().ToString() : TEXT("DefaultSongName");
+    
+   
+    if (!FileName.EndsWith(TEXT(".csv")))
+    {
+        FileName += TEXT(".csv");
+    }
+    
+    FString FolderPath = FPaths::ProjectContentDir() + "Custom Songs/";
+    
+    IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+    if (!PlatformFile.DirectoryExists(*FolderPath))
+    {
+        PlatformFile.CreateDirectory(*FolderPath);
+    }
 
+    FString FilePath = FolderPath + FileName;
+    
     FString FileContent = "Time_ms,Note_Number,Track,Action\n";
     for (const FCSVEntry& Entry : CSVEntries)
     {
         FileContent += FString::Printf(TEXT("%d,%d,%d,%s\n"),
             Entry.TimeMs, Entry.NoteNumber, Entry.Track, *Entry.Action);
     }
-
-    FFileHelper::SaveStringToFile(FileContent, *FilePath);
+    
+    if (FFileHelper::SaveStringToFile(FileContent, *FilePath))
+    {
+        UE_LOG(LogTemp, Log, TEXT("CSV file successfully saved to: %s"), *FilePath);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to save CSV file to: %s"), *FilePath);
+    }
 }
 
 void UCSVWidget::UpdateVisualization()
 {
     if (!EntriesListView) return;
-
-    // Clear existing items from the list view
+    
     EntriesListView->ClearListItems();
-
-    // Populate the list view with updated entries
+    
     for (const FCSVEntry& Entry : CSVEntries)
     {
         AddItemToList(
@@ -204,7 +219,6 @@ int32 UCSVWidget::FindCSVEntryIndex(USongDataEntry* DataEntry)
             return i;
         }
     }
-
     return INDEX_NONE; // Not found
 }
 
