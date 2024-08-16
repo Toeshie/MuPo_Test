@@ -149,45 +149,40 @@ void AConcertGameMode::BeginPlay()
     {
         UE_LOG(LogTemp, Error, TEXT("CameraActor not found"));
     }
-
+    
     if (MusicWave)
     {
         SongDuration = MusicWave->Duration;
         UE_LOG(LogTemp, Log, TEXT("MusicWave duration: %f seconds"), SongDuration);
-
-        // Adding a buffer time after the song ends before showing the end game menu
-        float EndGameMenuDelay = SongDuration + 5.0f;
-        UE_LOG(LogTemp, Log, TEXT("Scheduling end game menu to appear in: %f seconds"), EndGameMenuDelay);
-        ScheduleEndGameMenu(EndGameMenuDelay);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("MusicWave is null. Cannot schedule end game menu."));
+        UE_LOG(LogTemp, Error, TEXT("MusicWave is null. Trying to calculate duration from Note Data."));
     }
 
     FString LevelName = GetWorld()->GetMapName();
     LevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-    // Load the appropriate MusicWave based on the level name
-    if (LevelName == "ConcertLocation_1")
+    if (SongDuration <= 0.0f) // If MusicWave duration is invalid or not available, fallback to note data
     {
-        MusicWave = LoadObject<USoundWave>(nullptr, TEXT("/Game/Sounds/Nobody__Not_Even_the_Rain_｜_La_Dispute__2018_.Nobody__Not_Even_the_Rain_｜_La_Dispute__2018_"));
-    }
-    else if (LevelName == "ConcertLocation_2")
-    {
-        MusicWave = LoadObject<USoundWave>(nullptr, TEXT("/Game/Sounds/Rhythmic_Vol2_Chankura_MainMarks.Rhythmic_Vol2_Chankura_MainMarks"));
+        GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+        if (GameInstance)
+        {
+            SongDuration = GameInstance->GetSongDuration(FName(*LevelName));
+            UE_LOG(LogTemp, Log, TEXT("Calculated song duration from Note Data: %f seconds"), SongDuration);
+        }
     }
 
-    // Check if the MusicWave is successfully loaded
-    if (MusicWave)
+    // Schedule the end game menu with a buffer time
+    if (SongDuration > 0.0f)
     {
-        UE_LOG(LogTemp, Log, TEXT("Successfully loaded MusicWave for %s"), *LevelName);
-        SongDuration = MusicWave->Duration;
-        ScheduleEndGameMenu(SongDuration + 5.0f);
+        float EndGameMenuDelay = SongDuration + 9.0f;
+        UE_LOG(LogTemp, Log, TEXT("Scheduling end game menu to appear in: %f seconds"), EndGameMenuDelay);
+        ScheduleEndGameMenu(EndGameMenuDelay);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to load MusicWave for level %s"), *LevelName);
+        UE_LOG(LogTemp, Error, TEXT("Failed to determine song duration. End game menu will not be scheduled."));
     }
 
     // Load the song data for this level

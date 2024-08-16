@@ -49,7 +49,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Music")
 	USoundWave* MusicWave;
 
-	float SongDuration;
+	float SongDuration = 0.0f;
 
 private:
 	UPROPERTY()
