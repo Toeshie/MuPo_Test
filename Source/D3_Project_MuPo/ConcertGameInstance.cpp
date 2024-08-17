@@ -65,13 +65,7 @@ float UConcertGameInstance::GetSongDuration(FName LevelName) const
             return ConcertLocation2Data.NotesData.Last().TimeMs / 1000.0f;
         }
     }
-    else if (LevelName == "ConcertLocation_3")
-    {
-        if (ConcertLocation3Data.NotesData.Num() > 0)
-        {
-            return ConcertLocation3Data.NotesData.Last().TimeMs / 1000.0f;
-        }
-    }
+    
 
     return 0.0f;
 }
@@ -87,10 +81,7 @@ const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelNa
     {
         return ConcertLocation2Data.NotesData;
     }
-    else if (LevelName == "ConcertLocation_3")
-    {
-        return ConcertLocation3Data.NotesData;
-    }
+    
 
     static TArray<FNoteData> EmptyArray;
     return EmptyArray;

@@ -20,6 +20,7 @@ void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const TA
 {
 	if (SongNameTextBlock)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Setting Song Name to: %s"), *SongName);
 		SongNameTextBlock->SetText(FText::FromString(SongName));
 	}
 

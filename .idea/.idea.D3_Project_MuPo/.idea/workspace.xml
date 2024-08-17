@@ -12,16 +12,17 @@
   <component name="ChangeListManager">
     <list default="true" id="873f9cfc-470e-4d78-8e81-92c494a3c8a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_ThirdPersonCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_ThirdPersonCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/BP_SongSelectionWDG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/UI/BP_SongSelectionWDG.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/Overworld.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/Overworld.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SongData/DeadNeverStayDeadCSV.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/SongData/LaDisputeCSV.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/SongData/LagosCSV.csv" beforeDir="false" afterPath="$PROJECT_DIR$/Content/SongData/LagosCSV.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Architecture/Floor_400x400.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/D3_Project_MuPoCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/D3_Project_MuPoCharacter.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +41,7 @@
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/SongDataEntry.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/SongDataEntry.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../UE_5.3/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
@@ -216,6 +218,7 @@
       <workItem from="1723727354726" duration="3197000" />
       <workItem from="1723767808634" duration="5055000" />
       <workItem from="1723858157396" duration="6305000" />
+      <workItem from="1723902221488" duration="1870000" />
     </task>
     <servers />
   </component>
