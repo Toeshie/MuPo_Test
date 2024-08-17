@@ -38,9 +38,13 @@ public:
 	void SetSelectedCharacter(const FString& CharacterName);
 	FString GetSelectedCharacter() const;
 
+	void SetSelectedSong(const FString& SongName);
+	FString GetSelectedSong() const;
+
 private:
 	FLevelSongData ConcertLocation1Data;
 	FLevelSongData ConcertLocation2Data;
 	FLevelSongData ConcertLocation3Data;
 	FString SelectedCharacter;
+	FString SelectedSong;
 };

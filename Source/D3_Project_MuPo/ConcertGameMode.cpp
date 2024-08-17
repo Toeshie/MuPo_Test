@@ -8,6 +8,7 @@
 #include "NoteSpawner.h"
 #include "Camera/CameraActor.h"
 #include "ConcertGameInstance.h"
+#include "SongDataParserSubsystem.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
 
@@ -21,7 +22,7 @@ AConcertGameMode::AConcertGameMode()
     TotalNotes = 0;
     GoodHits = 0;
     PerfectHits = 0;
-    TotalNotesInSong = 0; // Initialize total notes in song
+    TotalNotesInSong = 0; 
 
     static ConstructorHelpers::FClassFinder<UUserWidget> MenuWidgetClass(TEXT("/Game/Blueprints/BP_EndGameMenu"));
     if (MenuWidgetClass.Succeeded())
@@ -81,8 +82,7 @@ void AConcertGameMode::NoteHit(bool bIsCorrect, bool bIsPerfect)
         ScoreMultiplier = 1;
         UE_LOG(LogTemp, Log, TEXT("Streak reset. Multiplier reset to 1"));
     }
-
-    // Update the HUD with the new streak, multiplier, and hit counts
+    
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
     if (PlayerController)
     {
@@ -163,7 +163,7 @@ void AConcertGameMode::BeginPlay()
     FString LevelName = GetWorld()->GetMapName();
     LevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-    if (SongDuration <= 0.0f) // If MusicWave duration is invalid or not available, fallback to note data
+    if (SongDuration <= 0.0f) // either or approach
     {
         GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
         if (GameInstance)
@@ -184,8 +184,7 @@ void AConcertGameMode::BeginPlay()
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to determine song duration. End game menu will not be scheduled."));
     }
-
-    // Load the song data for this level
+    
     LoadSongData();
 }
 
@@ -207,11 +206,32 @@ void AConcertGameMode::LoadSongData()
             const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation2Data();
             NoteSpawner->SetNotesData(NotesData);
         }
-        /*else if (CurrentLevelName == "ConcertLocation_3")
+        GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+        if (GameInstance)
         {
-            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation3Data();
-            NoteSpawner->SetNotesData(NotesData);
-        }*/
+            FString SelectedSong = GameInstance->GetSelectedSong();
+            if (!SelectedSong.IsEmpty())
+            {
+                FString FilePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("HiddenSongs/"), SelectedSong);
+                UE_LOG(LogTemp, Log, TEXT("Loading song from: %s"), *FilePath);
+
+                // Parse and load the selected song data
+                USongDataParserSubsystem* ParserSubsystem = GameInstance->GetSubsystem<USongDataParserSubsystem>();
+                if (ParserSubsystem && ParserSubsystem->ParseSongData(*FilePath))
+                {
+                    const TArray<FNoteData>& NotesData = ParserSubsystem->GetParsedNotesData();
+                    NoteSpawner->SetNotesData(NotesData);
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("Failed to parse song data for %s"), *SelectedSong);
+                }
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("No song selected for ConcertLocation_CustomSongs."));
+            }
+        }
     }
 }
 

@@ -22,30 +22,27 @@ void UConcertGameInstance::LoadAllSongData()
 
     if (ParserSubsystem)
     {
-        // Load data for ConcertLocation_1
+        
         if (ParserSubsystem->ParseSongData(TEXT("LagosCSV.csv")))
         {
-            ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
+            ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData(); 
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_1, total notes: %d"), ConcertLocation1Data.NotesData.Num());
         }
-
-        // Clear NotesData before parsing the next file
+        
         ParserSubsystem->NotesData.Empty();
-
-        // Load data for ConcertLocation_2
+        
         if (ParserSubsystem->ParseSongData(TEXT("ChankuraCSV.csv")))
         {
-            ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
+            ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData(); 
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_2, total notes: %d"), ConcertLocation2Data.NotesData.Num());
         }
-
-        // Clear NotesData before parsing the next file (if needed)
+        
         ParserSubsystem->NotesData.Empty();
 
        
         if (ParserSubsystem->ParseSongData(TEXT("DeadNeverStavDeadCSV.csv")))
         {
-            ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();  // Copy the data
+            ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();  
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_3, total notes: %d"), ConcertLocation3Data.NotesData.Num());
         }
         
@@ -140,6 +137,16 @@ void UConcertGameInstance::SetSelectedCharacter(const FString& CharacterName)
 FString UConcertGameInstance::GetSelectedCharacter() const
 {
     return SelectedCharacter;
+}
+
+void UConcertGameInstance::SetSelectedSong(const FString& SongName)
+{
+    SelectedSong = SongName; 
+}
+
+FString UConcertGameInstance::GetSelectedSong() const
+{
+    return SelectedSong;
 }
 
 

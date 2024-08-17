@@ -15,16 +15,16 @@ class D3_PROJECT_MUPO_API AConcertGameMode : public AGameModeBase
 	GENERATED_BODY()
     
 	int32 Player1Score;
-	int32 CurrentStreak; // To keep track of the current streak of correct notes
-	int32 ScoreMultiplier; // To keep track of the current score multiplier
-	const int32 MaxMultiplier = 4; // Maximum multiplier
-	const int32 StreakToIncreaseMultiplier = 10; // Number of correct notes needed to increase the multiplier
+	int32 CurrentStreak; 
+	int32 ScoreMultiplier; 
+	const int32 MaxMultiplier = 4; 
+	const int32 StreakToIncreaseMultiplier = 10; 
 
-	int32 TotalNotes; // Total number of notes spawned
-	int32 GoodHits; // Number of good hits
-	int32 PerfectHits; // Number of perfect hits
+	int32 TotalNotes; 
+	int32 GoodHits; 
+	int32 PerfectHits; 
 
-	int32 TotalNotesInSong; // Total number of notes in the current song
+	int32 TotalNotesInSong;
 
 	
 	void ScheduleEndGameMenu(float Delay);
@@ -41,7 +41,7 @@ public:
 
 	void DisplayScore();
 
-	void NoteHit(bool bIsCorrect, bool bIsPerfect); // New function to handle note hits with type
+	void NoteHit(bool bIsCorrect, bool bIsPerfect); 
 
 protected:
 	virtual void BeginPlay() override;
@@ -59,14 +59,14 @@ private:
 	class UConcertGameInstance* GameInstance;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	TSubclassOf<UUserWidget> EndGameMenuClass; // Widget class for the end game menu
+	TSubclassOf<UUserWidget> EndGameMenuClass;
 
 	UFUNCTION()
 	void HandleNoteSpawned();
 
 	void LoadSongData();
 
-	void ShowEndGameMenu(); // Function to display the end game menu
+	void ShowEndGameMenu(); 
 	
 	
 };

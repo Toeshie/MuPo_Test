@@ -48,4 +48,6 @@ protected:
 
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION()
+	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
 };
