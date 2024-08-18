@@ -39,13 +39,13 @@ void UConcertGameInstance::LoadAllSongData()
         
         ParserSubsystem->NotesData.Empty();
 
-       
+       /*
         if (ParserSubsystem->ParseSongData(TEXT("DeadNeverStavDeadCSV.csv")))
         {
             ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();  
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_3, total notes: %d"), ConcertLocation3Data.NotesData.Num());
         }
-        
+        */
     }
 }
 
@@ -65,8 +65,15 @@ float UConcertGameInstance::GetSongDuration(FName LevelName) const
             return ConcertLocation2Data.NotesData.Last().TimeMs / 1000.0f;
         }
     }
-    
-
+    /*
+    else if (LevelName == "ConcertLocation_CustomSongs")
+    {
+        if (ConcertLocation2Data.NotesData.Num() > 0)
+        {
+            return ConcertLocation2Data.NotesData.Last().TimeMs / 1000.0f;
+        }
+    }
+    */
     return 0.0f;
 }
 
@@ -111,10 +118,6 @@ FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
     else if (LevelName == "ConcertLocation_2")
     {
         return TEXT("Chankura");
-    }
-    else if (LevelName == "ConcertLocation_3")
-    {
-        return TEXT("Song for Concert Location 3");
     }
     
     return TEXT("Unknown Song");
