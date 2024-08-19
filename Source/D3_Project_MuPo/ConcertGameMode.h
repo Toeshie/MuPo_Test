@@ -41,7 +41,10 @@ public:
 
 	void DisplayScore();
 
-	void NoteHit(bool bIsCorrect, bool bIsPerfect); 
+	void NoteHit(bool bIsCorrect, bool bIsPerfect);
+	
+	int32 GetFinalScore() const;
+	float GetCorrectNotePercentage() const;
 
 protected:
 	virtual void BeginPlay() override;

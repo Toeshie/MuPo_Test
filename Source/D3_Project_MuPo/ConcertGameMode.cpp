@@ -8,6 +8,7 @@
 #include "NoteSpawner.h"
 #include "Camera/CameraActor.h"
 #include "ConcertGameInstance.h"
+#include "EndGameMenu.h"
 #include "SongDataParserSubsystem.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
@@ -96,6 +97,22 @@ void AConcertGameMode::NoteHit(bool bIsCorrect, bool bIsPerfect)
             HUD->SetTotalNotes(TotalNotes);
         }
     }
+}
+
+int32 AConcertGameMode::GetFinalScore() const
+{
+    return Player1Score;
+}
+
+float AConcertGameMode::GetCorrectNotePercentage() const
+{
+    if (TotalNotes == 0)
+    {
+        return 0.0f;
+    }
+
+    int32 TotalHits = GoodHits + PerfectHits;
+    return static_cast<float>(TotalHits) / TotalNotes * 100.0f;
 }
 
 void AConcertGameMode::DisplayScore()
@@ -273,12 +290,15 @@ void AConcertGameMode::ShowEndGameMenu()
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
         if (PlayerController)
         {
-            UUserWidget* EndGameMenu = CreateWidget<UUserWidget>(PlayerController, EndGameMenuClass);
+            UEndGameMenu* EndGameMenu = CreateWidget<UEndGameMenu>(PlayerController, EndGameMenuClass);
             if (EndGameMenu)
             {
                 UE_LOG(LogTemp, Warning, TEXT("End game menu widget created."));
                 EndGameMenu->AddToViewport();
-                // Set input mode to UI only and show the mouse cursor
+                
+                EndGameMenu->SetFinalScore(GetFinalScore());
+                EndGameMenu->SetStarsBasedOnPercentage(GetCorrectNotePercentage());
+                
                 FInputModeUIOnly InputMode;
                 InputMode.SetWidgetToFocus(EndGameMenu->TakeWidget());
                 PlayerController->SetInputMode(InputMode);
