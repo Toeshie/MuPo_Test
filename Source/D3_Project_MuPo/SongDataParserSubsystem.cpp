@@ -7,6 +7,8 @@
 
 bool USongDataParserSubsystem::ParseSongData(const FString& FileName)
 {
+	NotesData.Empty();
+	
 	// Construct the full path to the file in the Content/SongData directory
 	FString FullPath = FPaths::ProjectContentDir() + TEXT("SongData/") + FileName;
 

@@ -18,9 +18,10 @@ public:
 	AOverworldConcertActor();
     
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* ConcertLocationMesh;
 
+	UPROPERTY(BlueprintReadOnly)
+	UStaticMeshComponent* BuildingMesh;
+	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Collider")
 	UBoxComponent* ConcertCollider;
 

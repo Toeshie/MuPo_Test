@@ -40,6 +40,8 @@ public:
 
 	void SetSelectedSong(const FString& SongName);
 	FString GetSelectedSong() const;
+	TArray<FString> GetAvailableCustomSongs() const;
+	TArray<FString> GetAvailableHiddenSongs() const;
 
 private:
 	FLevelSongData ConcertLocation1Data;

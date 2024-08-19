@@ -191,47 +191,54 @@ void AConcertGameMode::BeginPlay()
 void AConcertGameMode::LoadSongData()
 {
     GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (GameInstance)
+    if (!GameInstance)
     {
-        FString CurrentLevelName = GetWorld()->GetMapName();
-        CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
+        UE_LOG(LogTemp, Error, TEXT("Failed to cast GameInstance"));
+        return;
+    }
 
-        if (CurrentLevelName == "ConcertLocation_1")
+    FString CurrentLevelName = GetWorld()->GetMapName();
+    CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
+
+    // Check which level is currently loaded
+    if (CurrentLevelName == "ConcertLocation_1")
+    {
+        const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation1Data();
+        NoteSpawner->SetNotesData(NotesData);
+    }
+    else if (CurrentLevelName == "ConcertLocation_2")
+    {
+        const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation2Data();
+        NoteSpawner->SetNotesData(NotesData);
+    }
+    else if (CurrentLevelName == "ConcertLocation_CustomSongs")
+    {
+        // Only for ConcertLocation_CustomSongs, load the custom-selected song
+        FString SelectedSong = GameInstance->GetSelectedSong();
+        if (!SelectedSong.IsEmpty())
         {
-            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation1Data();
-            NoteSpawner->SetNotesData(NotesData);
-        }
-        else if (CurrentLevelName == "ConcertLocation_2")
-        {
-            const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation2Data();
-            NoteSpawner->SetNotesData(NotesData);
-        }
-        GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-        if (GameInstance)
-        {
-            FString SelectedSong = GameInstance->GetSelectedSong();
-            if (!SelectedSong.IsEmpty())
+            FString FilePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomSongs/"), SelectedSong);
+            UE_LOG(LogTemp, Log, TEXT("Loading song from: %s"), *FilePath);
+
+            USongDataParserSubsystem* ParserSubsystem = GameInstance->GetSubsystem<USongDataParserSubsystem>();
+            if (ParserSubsystem && ParserSubsystem->ParseSongData(*FilePath))
             {
-                FString FilePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("HiddenSongs/"), SelectedSong);
-                UE_LOG(LogTemp, Log, TEXT("Loading song from: %s"), *FilePath);
-
-                // Parse and load the selected song data
-                USongDataParserSubsystem* ParserSubsystem = GameInstance->GetSubsystem<USongDataParserSubsystem>();
-                if (ParserSubsystem && ParserSubsystem->ParseSongData(*FilePath))
-                {
-                    const TArray<FNoteData>& NotesData = ParserSubsystem->GetParsedNotesData();
-                    NoteSpawner->SetNotesData(NotesData);
-                }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("Failed to parse song data for %s"), *SelectedSong);
-                }
+                const TArray<FNoteData>& NotesData = ParserSubsystem->GetParsedNotesData();
+                NoteSpawner->SetNotesData(NotesData);
             }
             else
             {
-                UE_LOG(LogTemp, Warning, TEXT("No song selected for ConcertLocation_CustomSongs."));
+                UE_LOG(LogTemp, Error, TEXT("Failed to parse song data for %s"), *SelectedSong);
             }
         }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("No song selected for ConcertLocation_CustomSongs."));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No specific logic for the current level: %s"), *CurrentLevelName);
     }
 }
 

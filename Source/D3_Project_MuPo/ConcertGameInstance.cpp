@@ -143,4 +143,33 @@ FString UConcertGameInstance::GetSelectedSong() const
     return SelectedSong;
 }
 
+TArray<FString> UConcertGameInstance::GetAvailableCustomSongs() const
+{
+    TArray<FString> AvailableSongs;
+
+    // Ensure the path points directly to the CustomSongs folder inside the Content directory
+    FString Path = FPaths::ProjectContentDir();  // Get the Content directory
+    Path = FPaths::Combine(Path, TEXT("CustomSongs/"));  // Combine with CustomSongs subfolder
+
+    IFileManager& FileManager = IFileManager::Get();
+    FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
+
+    // Log the path for debugging purposes
+    UE_LOG(LogTemp, Log, TEXT("Looking for songs in directory: %s"), *Path);
+
+    return AvailableSongs;
+}
+
+TArray<FString> UConcertGameInstance::GetAvailableHiddenSongs() const
+{
+    TArray<FString> AvailableSongs;
+    // Correct path to the CustomSongs folder within the Content directory
+    FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("HiddenSongs/"));
+
+    IFileManager& FileManager = IFileManager::Get();
+    FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
+
+    return AvailableSongs;
+}
+
 

@@ -58,27 +58,30 @@ void UNoteSpawner::HandleNoteSpawning()
 
 void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
 {
-    FVector SpawnLocation;
-    FRotator SpawnRotation = GetComponentRotation(); // Use the rotation of the spawner component
+    FVector SpawnLocation = GetComponentLocation(); // Base location
+    FRotator SpawnRotation = GetComponentRotation(); // Rotation of the spawner component
     FActorSpawnParameters SpawnParameters;
     SpawnParameters.Owner = GetOwner();  // Set the owner to the actor that owns this component
 
-    bool isHighNote = Note.NoteNumber >= HighNoteValue && Note.Track == 0;
-    bool isSpawnAction = Note.Action.Equals(TEXT("spawn"), ESearchCase::IgnoreCase);
-
-    if (isSpawnAction)
+    // Adjust spawn location based on note data
+    if (Note.NoteNumber >= HighNoteValue && Note.Track == 0)
     {
-        SpawnLocation = isHighNote ? GetComponentLocation() + LocalOffsetHigh : GetComponentLocation() + LocalOffsetLow;
-        TSubclassOf<AActor> NoteClass = isHighNote ? BP_DrumNoteHigh : BP_DrumNoteLow;
+        SpawnLocation += LocalOffsetHigh;
+    }
+    else
+    {
+        SpawnLocation += LocalOffsetLow;
+    }
 
-        if (NoteClass)
+    TSubclassOf<AActor> NoteClass = (Note.NoteNumber >= HighNoteValue && Note.Track == 0) ? BP_DrumNoteHigh : BP_DrumNoteLow;
+
+    if (NoteClass)
+    {
+        AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(NoteClass, SpawnLocation, SpawnRotation, SpawnParameters);
+        if (SpawnedActor)
         {
-            AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(NoteClass, SpawnLocation, SpawnRotation, SpawnParameters);
-            if (SpawnedActor)
-            {
-                SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
-                OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
-            }
+            SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+            OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
         }
     }
 }

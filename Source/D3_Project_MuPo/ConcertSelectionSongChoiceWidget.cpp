@@ -2,12 +2,17 @@
 
 
 #include "ConcertSelectionSongChoiceWidget.h"
+
+#include "ConcertGameInstance.h"
 #include "Components/ComboBoxString.h"
 #include "Components/Button.h"
+#include "Kismet/GameplayStatics.h"
 
 void UConcertSelectionSongChoiceWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	SongNameTextBlock->SetText(FText::FromString(TEXT("Concert of the Custom Songs!")));
 
 	if (ConfirmButton)
 	{
@@ -53,6 +58,15 @@ void UConcertSelectionSongChoiceWidget::OnPlayButtonClicked()
 {
 	FString SelectedSong = GetSelectedSong();
 	FString SelectedCharacter = GetSelectedCharacter();
+
+	UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance)
+	{
+		// Log to verify the selected song
+		UE_LOG(LogTemp, Log, TEXT("Selected song: %s"), *SelectedSong);
+		GameInstance->SetSelectedSong(SelectedSong);
+		GameInstance->SetSelectedCharacter(SelectedCharacter);
+	}
 
 	OnSongChosen.Broadcast(SelectedSong, SelectedCharacter);
 }

@@ -112,7 +112,7 @@ void UCSVWidget::OnExportCSV()
         FileName += TEXT(".csv");
     }
     
-    FString FolderPath = FPaths::ProjectContentDir() + "Custom Songs/";
+    FString FolderPath = FPaths::ProjectContentDir() + "CustomSongs/";
     
     IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
     if (!PlatformFile.DirectoryExists(*FolderPath))
