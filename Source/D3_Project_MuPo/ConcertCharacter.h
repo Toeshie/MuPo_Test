@@ -18,33 +18,33 @@ public:
 	// Sets default values for this character's properties
 	AConcertCharacter();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	void ToggleProxyMenuPause();
-	
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual void InitializeInputMappings();
 
+protected:
+	
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	virtual void HandleHighNoteInput(const FInputActionValue& Value);
+	virtual void HandleLowNoteInput(const FInputActionValue& Value);
+	virtual void ToggleProxyMenuPause();
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UPauseMenuWidget> PauseMenuClass;
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "UI")
 	class UPauseMenuWidget* PauseMenuWidgetInstance;
 
-protected:
-	void HandleHighNoteInput(const FInputActionValue& Value);
-	void HandleLowNoteInput(const FInputActionValue& Value);
-	void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
-	void PlaySound(USoundCue* SoundCue);
+	UPROPERTY()
+	TObjectPtr<AMainConcertCameraActor> ConcertCameraActor;
 
+	
+	virtual void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
+	void PlaySound(USoundCue* SoundCue);
+	
+	
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* HighNoteHitSound;
 
@@ -68,8 +68,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> IMC_Drums;
 
-	UPROPERTY()
-	TObjectPtr<AMainConcertCameraActor> ConcertCameraActor;
+	
 	
 };
 

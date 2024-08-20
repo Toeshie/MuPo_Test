@@ -4,7 +4,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
-
+#include "Kismet/GameplayStatics.h"
 
 AMarimbaCharacter::AMarimbaCharacter()
 {
@@ -15,12 +15,8 @@ AMarimbaCharacter::AMarimbaCharacter()
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteLowAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_MarimbaNoteLow.IA_MarimbaNoteLow'"));
     IA_MarimbaNoteLow = Cast<UInputAction>(MarimbaNoteLowAction.Object);
 
-    static ConstructorHelpers::FObjectFinder<UInputAction> Pause(TEXT("InputAction'/Game/Blueprints/Inputs/IA_Pause.IA_Pause'"));
-    IA_Pause = Cast<UInputAction>(Pause.Object);
-
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> MarimbaContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Marimba.IMC_Marimba'"));
     IMC_Marimba = Cast<UInputMappingContext>(MarimbaContext.Object);
-    
 }
 
 void AMarimbaCharacter::BeginPlay()
@@ -54,18 +50,20 @@ void AMarimbaCharacter::InitializeInputMappings()
     }
 }
 
-// Ensure that the correct input actions are bound
-void AMarimbaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+// Override to handle the Marimba-specific high note input
+void AMarimbaCharacter::HandleHighNoteInput(const FInputActionValue& Value)
 {
-    Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
-    {
-        EnhancedInputComponent->BindAction(IA_MarimbaNoteHigh.Get(), ETriggerEvent::Triggered, this, &AConcertCharacter::HandleHighNoteInput);
-        EnhancedInputComponent->BindAction(IA_MarimbaNoteLow.Get(), ETriggerEvent::Triggered, this, &AConcertCharacter::HandleLowNoteInput);
-
-        // Bind the pause action using the base class action (IA_Pause)
-        EnhancedInputComponent->BindAction(IA_Pause.Get(), ETriggerEvent::Triggered, this, &AConcertCharacter::ToggleProxyMenuPause);
-    }
+    Super::HandleHighNoteInput(Value);  // Call the base class method
 }
 
+// Override to handle the Marimba-specific low note input
+void AMarimbaCharacter::HandleLowNoteInput(const FInputActionValue& Value)
+{
+    Super::HandleLowNoteInput(Value);  // Call the base class method
+}
+
+// Override to handle the Marimba-specific pause menu toggle
+void AMarimbaCharacter::ToggleProxyMenuPause()
+{
+    Super::ToggleProxyMenuPause();  // Call the base class method
+}

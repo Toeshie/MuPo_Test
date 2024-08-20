@@ -19,7 +19,11 @@ protected:
 
 	// Initialize input mappings specifically for MarimbaCharacter
 	virtual void InitializeInputMappings() override;
-	void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent);
+
+	// Override note input handlers and pause toggle to use inherited functionality
+	virtual void HandleHighNoteInput(const FInputActionValue& Value) override;
+	virtual void HandleLowNoteInput(const FInputActionValue& Value) override;
+	virtual void ToggleProxyMenuPause() override;
 
 private:
 	// New input actions for MarimbaCharacter
@@ -28,9 +32,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> IA_MarimbaNoteLow;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
-	TObjectPtr<UInputAction> IA_Pause;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> IMC_Marimba;
