@@ -31,7 +31,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	void InitializeInputMappings();
+	virtual void InitializeInputMappings();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UPauseMenuWidget> PauseMenuClass;
@@ -39,7 +39,7 @@ public:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category = "UI")
 	class UPauseMenuWidget* PauseMenuWidgetInstance;
 
-private:
+protected:
 	void HandleHighNoteInput(const FInputActionValue& Value);
 	void HandleLowNoteInput(const FInputActionValue& Value);
 	void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
