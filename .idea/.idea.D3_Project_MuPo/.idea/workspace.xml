@@ -13,10 +13,10 @@
     <list default="true" id="873f9cfc-470e-4d78-8e81-92c494a3c8a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_EndGameMenu.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_EndGameMenu.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/Overworld.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/Overworld.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/D3_Project_MuPo.Build.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/D3_Project_MuPo.Build.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/EndGameMenu.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/EndGameMenu.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/EndGameMenu.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/EndGameMenu.h" afterDir="false" />
     </list>
@@ -33,6 +33,8 @@
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/HighScoreSaveGame.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/HighScoreSaveGame.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/SongDataEntry.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -216,7 +218,9 @@
       <workItem from="1723858157396" duration="6305000" />
       <workItem from="1723902221488" duration="1870000" />
       <workItem from="1723946488550" duration="2575000" />
-      <workItem from="1724026109422" duration="6066000" />
+      <workItem from="1724026109422" duration="6204000" />
+      <workItem from="1724081086770" duration="1135000" />
+      <workItem from="1724116053025" duration="2456000" />
     </task>
     <servers />
   </component>

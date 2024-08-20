@@ -9,6 +9,7 @@
 #include "Camera/CameraActor.h"
 #include "ConcertGameInstance.h"
 #include "EndGameMenu.h"
+#include "HighScoreSaveGame.h"
 #include "SongDataParserSubsystem.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
@@ -284,7 +285,47 @@ void AConcertGameMode::HandleNoteSpawned()
 
 void AConcertGameMode::ShowEndGameMenu()
 {
+    {
     UE_LOG(LogTemp, Warning, TEXT("Attempting to show end game menu."));
+    
+    // Load existing save game or create a new one
+    UHighScoreSaveGame* SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot("HighScoresSlot", 0));
+    if (!SaveGameInstance)
+    {
+        SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+    }
+
+    FString CurrentLevelName = GetWorld()->GetMapName();
+    CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
+
+    float CurrentPercentage = GetCorrectNotePercentage();
+
+    // Check if the current score and percentage are higher than the saved values for this level
+    if (SaveGameInstance->LevelScores.Contains(CurrentLevelName))
+    {
+        FLevelScoreData& LevelData = SaveGameInstance->LevelScores[CurrentLevelName];
+        if (Player1Score > LevelData.HighScore)
+        {
+            LevelData.HighScore = Player1Score;
+        }
+        if (CurrentPercentage > LevelData.SuccessPercentage)
+        {
+            LevelData.SuccessPercentage = CurrentPercentage;
+        }
+    }
+    else
+    {
+        // If the level has no saved data, add the current score and percentage
+        FLevelScoreData NewLevelData;
+        NewLevelData.HighScore = Player1Score;
+        NewLevelData.SuccessPercentage = CurrentPercentage;
+        SaveGameInstance->LevelScores.Add(CurrentLevelName, NewLevelData);
+    }
+
+    // Save the game to preserve the high score and percentage
+    UGameplayStatics::SaveGameToSlot(SaveGameInstance, "HighScoresSlot", 0);
+
+    // Display the end game menu as before
     if (EndGameMenuClass)
     {
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -295,10 +336,20 @@ void AConcertGameMode::ShowEndGameMenu()
             {
                 UE_LOG(LogTemp, Warning, TEXT("End game menu widget created."));
                 EndGameMenu->AddToViewport();
-                
+
+                // Set the final score and star rating
                 EndGameMenu->SetFinalScore(GetFinalScore());
                 EndGameMenu->SetStarsBasedOnPercentage(GetCorrectNotePercentage());
-                
+
+                // Display the high score and percentage
+                if (SaveGameInstance->LevelScores.Contains(CurrentLevelName))
+                {
+                    FLevelScoreData LevelData = SaveGameInstance->LevelScores[CurrentLevelName];
+                    EndGameMenu->SetHighScore(LevelData.HighScore);
+                    //EndGameMenu->SetStarsBasedOnHighestPercentage(LevelData.SuccessPercentage);
+                }
+
+                // Set input mode to UI only and show the mouse cursor
                 FInputModeUIOnly InputMode;
                 InputMode.SetWidgetToFocus(EndGameMenu->TakeWidget());
                 PlayerController->SetInputMode(InputMode);
@@ -318,4 +369,5 @@ void AConcertGameMode::ShowEndGameMenu()
     {
         UE_LOG(LogTemp, Error, TEXT("EndGameMenuClass is null."));
     }
+}
 }

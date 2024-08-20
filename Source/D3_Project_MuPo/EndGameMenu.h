@@ -37,7 +37,16 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	UHorizontalBox* StarBox;
 
+	UPROPERTY(meta = (BindWidget))
+	UHorizontalBox* HighStarBox;
+
+	UPROPERTY(meta = (BindWidget))
+	UTextBlock* HighScoreText;
+
+
 public:
 	void SetFinalScore(int32 Score);
 	void SetStarsBasedOnPercentage(float Percentage);
+	void SetHighScore(int32 HighScore);
+	void SetStarsBasedOnHighestPercentage(float Percentage);
 };
