@@ -60,7 +60,7 @@ void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const F
         return;
     }
 
-    WidgetInstance->InitializeWidget(SongName, TArray<FString>({ TEXT("Concert Character") }), LevelName, BestStars);
+    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);
     WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
     WidgetInstance->AddToViewport();
 
@@ -80,7 +80,7 @@ void AOverworldConcertActor::ShowCustomSongSelectionWidget(UConcertGameInstance*
     FString LevelName = TEXT("CustomSongs");
     int32 BestStars = GameInstance->GetBestStarsForLevel(LevelName);
 
-    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->InitializeWidgetWithSongs(SongName, { TEXT("Concert Character") }, AvailableSongs, LevelName, BestStars);
+    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->InitializeWidgetWithSongs(SongName, AvailableSongs, LevelName, BestStars);
     WidgetInstance->AddToViewport();
 
     EnablePlayerInteraction();
@@ -100,12 +100,6 @@ void AOverworldConcertActor::LoadLevel()
 {
     if (WidgetInstance)
     {
-        UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-        if (GameInstance)
-        {
-            GameInstance->SetSelectedCharacter(WidgetInstance->GetSelectedCharacter());
-        }
-
         WidgetInstance->RemoveFromParent();
         WidgetInstance = nullptr;
 
@@ -155,7 +149,7 @@ void AOverworldConcertActor::OnSongChosen(const FString& SelectedSongName, const
     if (GameInstance)
     {
         GameInstance->SetSelectedSong(SelectedSongName);
-        GameInstance->SetSelectedCharacter(SelectedCharacter);
+        //GameInstance->SetSelectedCharacter(SelectedCharacter);
     }
 
     UGameplayStatics::OpenLevel(this, FName("ConcertLocation_CustomSongs"));

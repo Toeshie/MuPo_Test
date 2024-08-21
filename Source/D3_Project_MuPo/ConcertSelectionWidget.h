@@ -20,10 +20,7 @@ class D3_PROJECT_MUPO_API UConcertSelectionWidget : public UUserWidget
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitializeWidget(const FString& SongName, const TArray<FString>& CharacterOptions, const FString& LevelName, int32 BestStars);
-
-	UFUNCTION(BlueprintCallable)
-	FString GetSelectedCharacter() const;
+	void InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars);
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnConfirmDelegate OnConfirm;
@@ -33,16 +30,13 @@ protected:
 	UTextBlock* SongNameTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* LevelNameTextBlock;  // For displaying "Alentejo" or "Porto"
-
-	UPROPERTY(meta = (BindWidget))
-	UComboBoxString* CharacterComboBox;
+	UTextBlock* LevelNameTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ConfirmButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UHorizontalBox* StarBox;  // Horizontal box to hold the stars
+	UHorizontalBox* StarBox;
 
 	virtual void NativeConstruct() override;
 

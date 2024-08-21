@@ -19,10 +19,9 @@ void UConcertSelectionSongChoiceWidget::NativeConstruct()
     }
 }
 
-void UConcertSelectionSongChoiceWidget::InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& CharacterOptions, const TArray<FString>& AvailableSongs, const FString& LevelName, int32 BestStars)
+void UConcertSelectionSongChoiceWidget::InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& AvailableSongs, const FString& LevelName, int32 BestStars)
 {
-    // Call the base class InitializeWidget method with all necessary parameters
-    InitializeWidget(SongName, CharacterOptions, LevelName, BestStars);
+    InitializeWidget(SongName, LevelName, BestStars);
 
     if (SongComboBox)
     {
@@ -57,16 +56,13 @@ FString UConcertSelectionSongChoiceWidget::GetSelectedSong() const
 void UConcertSelectionSongChoiceWidget::OnPlayButtonClicked()
 {
     FString SelectedSong = GetSelectedSong();
-    FString SelectedCharacter = GetSelectedCharacter();
 
     UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
     if (GameInstance)
     {
-        // Log to verify the selected song
         UE_LOG(LogTemp, Log, TEXT("Selected song: %s"), *SelectedSong);
         GameInstance->SetSelectedSong(SelectedSong);
-        GameInstance->SetSelectedCharacter(SelectedCharacter);
     }
 
-    OnSongChosen.Broadcast(SelectedSong, SelectedCharacter);
+    OnSongChosen.Broadcast(SelectedSong);
 }

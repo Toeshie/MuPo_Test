@@ -6,11 +6,7 @@
 #include "ConcertSelectionWidget.h"
 #include "ConcertSelectionSongChoiceWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnSongChosenDelegate, const FString&, SelectedSongName, const FString&, SelectedCharacter);
-
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSongChosenDelegate, const FString&, SelectedSongName);
 
 UCLASS()
 class D3_PROJECT_MUPO_API UConcertSelectionSongChoiceWidget : public UConcertSelectionWidget
@@ -19,7 +15,7 @@ class D3_PROJECT_MUPO_API UConcertSelectionSongChoiceWidget : public UConcertSel
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& CharacterOptions, const TArray<FString>& AvailableSongs, const FString& LevelName, int32 BestStars);
+	void InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& AvailableSongs, const FString& LevelName, int32 BestStars);
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnSongChosenDelegate OnSongChosen;

@@ -19,7 +19,7 @@ void UConcertSelectionWidget::NativeConstruct()
     }
 }
 
-void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const TArray<FString>& CharacterOptions, const FString& LevelName, int32 BestStars)
+void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
 {
     if (SongNameTextBlock)
     {
@@ -59,16 +59,6 @@ void UConcertSelectionWidget::UpdateStars(int32 BestStars)
     }
 
     UE_LOG(LogTemp, Warning, TEXT("Updated Stars in Widget: %d"), BestStars);
-}
-
-FString UConcertSelectionWidget::GetSelectedCharacter() const
-{
-    if (CharacterComboBox)
-    {
-        return CharacterComboBox->GetSelectedOption();
-    }
-
-    return FString();
 }
 
 void UConcertSelectionWidget::OnConfirmButtonClicked()

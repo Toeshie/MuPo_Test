@@ -1,6 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ConcertGameInstance.h"
 #include "NoteData.h"
 #include "HighScoreSaveGame.h"
@@ -54,7 +53,6 @@ void UConcertGameInstance::Init()
 
     LoadHighScoreData();
     LoadAllSongData();
-    //ResetAllHighScores();
 }
 
 void UConcertGameInstance::LoadAllSongData()
@@ -63,7 +61,6 @@ void UConcertGameInstance::LoadAllSongData()
 
     if (ParserSubsystem)
     {
-        
         if (ParserSubsystem->ParseSongData(TEXT("LagosCSV.csv")))
         {
             ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData(); 
@@ -77,16 +74,6 @@ void UConcertGameInstance::LoadAllSongData()
             ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData(); 
             UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_2, total notes: %d"), ConcertLocation2Data.NotesData.Num());
         }
-        
-        ParserSubsystem->NotesData.Empty();
-
-       /*
-        if (ParserSubsystem->ParseSongData(TEXT("DeadNeverStavDeadCSV.csv")))
-        {
-            ConcertLocation3Data.NotesData = ParserSubsystem->GetParsedNotesData();  
-            UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for ConcertLocation_3, total notes: %d"), ConcertLocation3Data.NotesData.Num());
-        }
-        */
     }
 }
 
@@ -106,15 +93,6 @@ float UConcertGameInstance::GetSongDuration(FName LevelName) const
             return ConcertLocation2Data.NotesData.Last().TimeMs / 1000.0f;
         }
     }
-    /*
-    else if (LevelName == "ConcertLocation_CustomSongs")
-    {
-        if (ConcertLocation2Data.NotesData.Num() > 0)
-        {
-            return ConcertLocation2Data.NotesData.Last().TimeMs / 1000.0f;
-        }
-    }
-    */
     return 0.0f;
 }
 
@@ -128,14 +106,7 @@ void UConcertGameInstance::ResetAllHighScores()
             LevelScorePair.Value.SuccessPercentage = 0.0f;
         }
 
-        // Save the reset data
         UGameplayStatics::SaveGameToSlot(HighScoreSaveGame, SaveSlotName, UserIndex);
-
-        UE_LOG(LogTemp, Warning, TEXT("All high scores and percentages have been reset to 0."));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("No save game data found to reset."));
     }
 }
 
@@ -149,25 +120,19 @@ const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelNa
     {
         return ConcertLocation2Data.NotesData;
     }
-    
 
     static TArray<FNoteData> EmptyArray;
     return EmptyArray;
 }
 
-const TArray<::FNoteData>& UConcertGameInstance::GetConcertLocation1Data() const
+const TArray<FNoteData>& UConcertGameInstance::GetConcertLocation1Data() const
 {
     return ConcertLocation1Data.NotesData;
 }
 
-const TArray<::FNoteData>& UConcertGameInstance::GetConcertLocation2Data() const
+const TArray<FNoteData>& UConcertGameInstance::GetConcertLocation2Data() const
 {
     return ConcertLocation2Data.NotesData;
-}
-
-const TArray<::FNoteData>& UConcertGameInstance::GetConcertLocation3Data() const
-{
-    return ConcertLocation3Data.NotesData;
 }
 
 FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
@@ -184,16 +149,6 @@ FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
     return TEXT("Unknown Song");
 }
 
-void UConcertGameInstance::SetSelectedCharacter(const FString& CharacterName)
-{
-    SelectedCharacter = CharacterName;
-}
-
-FString UConcertGameInstance::GetSelectedCharacter() const
-{
-    return SelectedCharacter;
-}
-
 void UConcertGameInstance::SetSelectedSong(const FString& SongName)
 {
     SelectedSong = SongName; 
@@ -207,16 +162,11 @@ FString UConcertGameInstance::GetSelectedSong() const
 TArray<FString> UConcertGameInstance::GetAvailableCustomSongs() const
 {
     TArray<FString> AvailableSongs;
-
-    // Ensure the path points directly to the CustomSongs folder inside the Content directory
-    FString Path = FPaths::ProjectContentDir();  // Get the Content directory
-    Path = FPaths::Combine(Path, TEXT("CustomSongs/"));  // Combine with CustomSongs subfolder
+    FString Path = FPaths::ProjectContentDir();
+    Path = FPaths::Combine(Path, TEXT("CustomSongs/"));
 
     IFileManager& FileManager = IFileManager::Get();
     FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
-
-    // Log the path for debugging purposes
-    UE_LOG(LogTemp, Log, TEXT("Looking for songs in directory: %s"), *Path);
 
     return AvailableSongs;
 }
@@ -224,7 +174,6 @@ TArray<FString> UConcertGameInstance::GetAvailableCustomSongs() const
 TArray<FString> UConcertGameInstance::GetAvailableHiddenSongs() const
 {
     TArray<FString> AvailableSongs;
-    // Correct path to the CustomSongs folder within the Content directory
     FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("HiddenSongs/"));
 
     IFileManager& FileManager = IFileManager::Get();
@@ -239,12 +188,5 @@ void UConcertGameInstance::LoadHighScoreData()
     if (!HighScoreSaveGame)
     {
         HighScoreSaveGame = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
-        UE_LOG(LogTemp, Warning, TEXT("Created new HighScoreSaveGame instance"));
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("HighScoreSaveGame loaded successfully"));
     }
 }
-
-

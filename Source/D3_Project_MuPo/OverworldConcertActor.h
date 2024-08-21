@@ -22,10 +22,10 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	UStaticMeshComponent* BuildingMesh;
 	
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Collider")
+	UPROPERTY(BlueprintReadWrite, Category = "Collider")
 	UBoxComponent* ConcertCollider;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Root")
+	UPROPERTY(BlueprintReadWrite, Category = "Root")
 	USceneComponent* RootRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")

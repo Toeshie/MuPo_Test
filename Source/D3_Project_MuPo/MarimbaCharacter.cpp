@@ -9,13 +9,13 @@
 AMarimbaCharacter::AMarimbaCharacter()
 {
     // Load new input actions for MarimbaCharacter
-    static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_MarimbaNoteHigh.IA_MarimbaNoteHigh'"));
+    static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaHighNote.IA_MarimbaHighNote'"));
     IA_MarimbaNoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);
 
-    static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteLowAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_MarimbaNoteLow.IA_MarimbaNoteLow'"));
+    static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteLowAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbalowNote.IA_MarimbaLowNote'"));
     IA_MarimbaNoteLow = Cast<UInputAction>(MarimbaNoteLowAction.Object);
 
-    static ConstructorHelpers::FObjectFinder<UInputMappingContext> MarimbaContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Marimba.IMC_Marimba'"));
+    static ConstructorHelpers::FObjectFinder<UInputMappingContext> MarimbaContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/MarimbaInputs/IMC_Marimba.IMC_Marimba'"));
     IMC_Marimba = Cast<UInputMappingContext>(MarimbaContext.Object);
 
     // Load specific sounds for MarimbaCharacter

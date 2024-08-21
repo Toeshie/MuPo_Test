@@ -22,13 +22,12 @@ class D3_PROJECT_MUPO_API UConcertGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
-	
 	UFUNCTION(BlueprintCallable, Category = "Scores")
 	void SaveLevelScore(const FString& LevelName, int32 Score, float SuccessPercentage);
 
 	UFUNCTION(BlueprintCallable, Category = "Scores")
 	int32 GetBestStarsForLevel(const FString& LevelName) const;
-	
+
 	virtual void Init() override;
 	void LoadAllSongData();
 	float GetSongDuration(FName LevelName) const;
@@ -44,9 +43,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Songs")
 	FString GetSongNameForLevel(FName LevelName) const;
 
-	void SetSelectedCharacter(const FString& CharacterName);
-	FString GetSelectedCharacter() const;
-
 	void SetSelectedSong(const FString& SongName);
 	FString GetSelectedSong() const;
 	TArray<FString> GetAvailableCustomSongs() const;
@@ -56,7 +52,6 @@ private:
 	FLevelSongData ConcertLocation1Data;
 	FLevelSongData ConcertLocation2Data;
 	FLevelSongData ConcertLocation3Data;
-	FString SelectedCharacter;
 	FString SelectedSong;
 
 	UPROPERTY()
