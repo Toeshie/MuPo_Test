@@ -19,7 +19,7 @@ class D3_PROJECT_MUPO_API UConcertSelectionSongChoiceWidget : public UConcertSel
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& CharacterOptions, const TArray<FString>& AvailableSongs);
+	void InitializeWidgetWithSongs(const FString& SongName, const TArray<FString>& CharacterOptions, const TArray<FString>& AvailableSongs, const FString& LevelName, int32 BestStars);
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnSongChosenDelegate OnSongChosen;
@@ -35,5 +35,4 @@ protected:
 
 private:
 	FString GetSelectedSong() const;
-	
 };

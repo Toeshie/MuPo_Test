@@ -17,6 +17,16 @@ AMarimbaCharacter::AMarimbaCharacter()
 
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> MarimbaContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Marimba.IMC_Marimba'"));
     IMC_Marimba = Cast<UInputMappingContext>(MarimbaContext.Object);
+
+    // Load specific sounds for MarimbaCharacter
+    static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaHighNoteHitCue(TEXT("SoundCue'/Game/Sounds/MarimbaHighNoteHitCue.MarimbaHighNoteHitCue'"));
+    MarimbaHighNoteHitSound = MarimbaHighNoteHitCue.Object;
+
+    static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaLowNoteHitCue(TEXT("SoundCue'/Game/Sounds/MarimbaLowNoteHitCue.MarimbaLowNoteHitCue'"));
+    MarimbaLowNoteHitSound = MarimbaLowNoteHitCue.Object;
+
+    static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaMissNoteCue(TEXT("SoundCue'/Game/Sounds/MarimbaMissNoteCue.MarimbaMissNoteCue'"));
+    MarimbaMissNoteSound = MarimbaMissNoteCue.Object;
 }
 
 void AMarimbaCharacter::BeginPlay()
@@ -53,17 +63,54 @@ void AMarimbaCharacter::InitializeInputMappings()
 // Override to handle the Marimba-specific high note input
 void AMarimbaCharacter::HandleHighNoteInput(const FInputActionValue& Value)
 {
-    Super::HandleHighNoteInput(Value);  // Call the base class method
+    // Call the base class method
+    Super::ValidateNoteHit(Value, true);  
 }
 
 // Override to handle the Marimba-specific low note input
 void AMarimbaCharacter::HandleLowNoteInput(const FInputActionValue& Value)
 {
-    Super::HandleLowNoteInput(Value);  // Call the base class method
+    // Call the base class method
+    Super::ValidateNoteHit(Value, false);  
 }
 
 // Override to handle the Marimba-specific pause menu toggle
 void AMarimbaCharacter::ToggleProxyMenuPause()
 {
     Super::ToggleProxyMenuPause();  // Call the base class method
+}
+
+void AMarimbaCharacter::PlaySound(USoundCue* SoundCue)
+{
+    if (SoundCue == nullptr) return;
+
+    // Use Marimba-specific sound cues
+    if (SoundCue == HighNoteHitSound)
+    {
+        Super::PlaySound(MarimbaHighNoteHitSound);
+    }
+    else if (SoundCue == LowNoteHitSound)
+    {
+        Super::PlaySound(MarimbaLowNoteHitSound);
+    }
+    else if (SoundCue == MissNoteSound)
+    {
+        Super::PlaySound(MarimbaMissNoteSound);
+    }
+    else
+    {
+        Super::PlaySound(SoundCue);  // Fallback to the provided sound cue
+    }
+}
+
+void AMarimbaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EnhancedInputComponent->BindAction(IA_MarimbaNoteHigh.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::HandleHighNoteInput);
+        EnhancedInputComponent->BindAction(IA_MarimbaNoteLow.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::HandleLowNoteInput);
+        EnhancedInputComponent->BindAction(IA_Pause.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::ToggleProxyMenuPause);
+    }
 }

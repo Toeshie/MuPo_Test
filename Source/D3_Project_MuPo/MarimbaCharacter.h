@@ -14,7 +14,6 @@ public:
 	AMarimbaCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	// Initialize input mappings specifically for MarimbaCharacter
@@ -24,6 +23,8 @@ protected:
 	virtual void HandleHighNoteInput(const FInputActionValue& Value) override;
 	virtual void HandleLowNoteInput(const FInputActionValue& Value) override;
 	virtual void ToggleProxyMenuPause() override;
+	virtual void PlaySound(USoundCue* SoundCue) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
 	// New input actions for MarimbaCharacter
@@ -35,4 +36,14 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> IMC_Marimba;
+
+	// Marimba-specific sound cues
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* MarimbaHighNoteHitSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* MarimbaLowNoteHitSound;
+
+	UPROPERTY(EditAnywhere, Category = "Sound")
+	USoundCue* MarimbaMissNoteSound;
 };

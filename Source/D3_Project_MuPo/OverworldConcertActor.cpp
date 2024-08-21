@@ -8,7 +8,6 @@
 #include "ConcertGameInstance.h"
 #include "ConcertSelectionSongChoiceWidget.h"
 
-// Sets default values
 AOverworldConcertActor::AOverworldConcertActor()
 {
     PrimaryActorTick.bCanEverTick = true;
@@ -16,15 +15,11 @@ AOverworldConcertActor::AOverworldConcertActor()
     BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BuildingMesh"));
     RootComponent = BuildingMesh;  // Set the mesh as the root
 
-    // Initialize the collider
-    ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Concert Collider"));
+    ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ConcertCollider"));
     ConcertCollider->SetupAttachment(BuildingMesh);
+    ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));
+    ConcertCollider->SetCollisionProfileName(TEXT("Trigger"));
 
-    // Set default values for the collider, such as its extent
-    ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));  // Example size
-    ConcertCollider->SetCollisionProfileName(TEXT("Trigger"));  // Set the collision profile to Trigger (adjust as needed)
-
-    // Attach overlap events (if necessary)
     ConcertCollider->OnComponentBeginOverlap.AddDynamic(this, &AOverworldConcertActor::OnBeginOverlap);
     ConcertCollider->OnComponentEndOverlap.AddDynamic(this, &AOverworldConcertActor::OnEndOverlap);
 }
@@ -36,52 +31,70 @@ void AOverworldConcertActor::BeginPlay()
 
 void AOverworldConcertActor::ShowWidget()
 {
-    if (!WidgetClass || WidgetInstance)
-    {
-        return;
-    }
+    if (!WidgetClass || WidgetInstance) return;
 
     UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (!GameInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to get GameInstance."));
-        return;
-    }
+    if (!GameInstance) return;
+
+    FString SongName = GameInstance->GetSongNameForLevel(LevelToLoad);
+    FString LevelName;
+    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
 
     if (LevelToLoad == "ConcertLocation_CustomSongs")
     {
-        WidgetInstance = CreateWidget<UConcertSelectionSongChoiceWidget>(GetWorld(), WidgetClass);
+        ShowCustomSongSelectionWidget(GameInstance, SongName);
     }
     else
     {
-        WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
-    }
-
-    if (WidgetInstance)
-    {
-        WidgetInstance->AddToViewport();
-        EnablePlayerInteraction();
-
-        // If it's a custom song selection widget, initialize it accordingly
-        if (UConcertSelectionSongChoiceWidget* CustomWidget = Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance))
-        {
-            TArray<FString> AvailableSongs = GameInstance->GetAvailableCustomSongs();
-            CustomWidget->InitializeWidgetWithSongs(GameInstance->GetSongNameForLevel(LevelToLoad), { TEXT("Concert Character") }, AvailableSongs);
-            CustomWidget->OnSongChosen.AddDynamic(this, &AOverworldConcertActor::OnSongChosen);
-        }
-        else
-        {
-            WidgetInstance->InitializeWidget(GameInstance->GetSongNameForLevel(LevelToLoad), { TEXT("Concert Character") });
-            WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance."));
+        LevelName = (LevelToLoad == "ConcertLocation_1") ? TEXT("Alentejo") : TEXT("Porto");
+        ShowStandardWidget(SongName, LevelName, BestStars);
     }
 }
- 
 
+void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
+{
+    WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
+    if (!WidgetInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance."));
+        return;
+    }
+
+    WidgetInstance->InitializeWidget(SongName, TArray<FString>({ TEXT("Concert Character") }), LevelName, BestStars);
+    WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
+    WidgetInstance->AddToViewport();
+
+    EnablePlayerInteraction();
+}
+
+void AOverworldConcertActor::ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName)
+{
+    WidgetInstance = CreateWidget<UConcertSelectionSongChoiceWidget>(GetWorld(), WidgetClass);
+    if (!WidgetInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to create custom song selection widget instance."));
+        return;
+    }
+
+    TArray<FString> AvailableSongs = GameInstance->GetAvailableCustomSongs();
+    FString LevelName = TEXT("CustomSongs");
+    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelName);
+
+    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->InitializeWidgetWithSongs(SongName, { TEXT("Concert Character") }, AvailableSongs, LevelName, BestStars);
+    WidgetInstance->AddToViewport();
+
+    EnablePlayerInteraction();
+}
+
+void AOverworldConcertActor::EnablePlayerInteraction()
+{
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        PlayerController->bShowMouseCursor = true;
+        PlayerController->bEnableClickEvents = true;
+        PlayerController->bEnableMouseOverEvents = true;
+    }
+}
 
 void AOverworldConcertActor::LoadLevel()
 {
@@ -115,20 +128,17 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-    if (Cast<AD3_Project_MuPoCharacter>(OtherActor))
+    if (Cast<AD3_Project_MuPoCharacter>(OtherActor) && WidgetInstance)
     {
-        if (WidgetInstance)
-        {
-            WidgetInstance->RemoveFromParent();
-            WidgetInstance = nullptr;
+        WidgetInstance->RemoveFromParent();
+        WidgetInstance = nullptr;
 
-            APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-            if (PlayerController)
-            {
-                PlayerController->bShowMouseCursor = false;
-                PlayerController->bEnableClickEvents = false;
-                PlayerController->bEnableMouseOverEvents = false;
-            }
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = false;
+            PlayerController->bEnableClickEvents = false;
+            PlayerController->bEnableMouseOverEvents = false;
         }
     }
 }
@@ -149,63 +159,4 @@ void AOverworldConcertActor::OnSongChosen(const FString& SelectedSongName, const
     }
 
     UGameplayStatics::OpenLevel(this, FName("ConcertLocation_CustomSongs"));
-}
-
-void AOverworldConcertActor::ShowStandardWidget(const FString& SongName)
-{
-    WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
-    if (!WidgetInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create standard widget instance."));
-        return;
-    }
-
-    WidgetInstance->InitializeWidget(SongName, TArray<FString>({ TEXT("Concert Character") }));
-    WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
-    WidgetInstance->AddToViewport();
-
-    EnablePlayerInteraction();
-}
-
-void AOverworldConcertActor::ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName)
-{
-    WidgetInstance = CreateWidget<UConcertSelectionSongChoiceWidget>(GetWorld(), WidgetClass);
-    if (!WidgetInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create custom song selection widget instance."));
-        return;
-    }
-
-    TArray<FString> AvailableSongs;
-    IFileManager& FileManager = IFileManager::Get();
-    FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomSongs/"));
-    FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
-
-    if (AvailableSongs.Num() == 0)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("No songs found in directory: %s"), *Path);
-    }
-    else
-    {
-        for (const FString& Song : AvailableSongs)
-        {
-            UE_LOG(LogTemp, Log, TEXT("Found song: %s"), *Song);
-        }
-    }
-
-    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->InitializeWidgetWithSongs(SongName, TArray<FString>({ TEXT("Concert Character") }), AvailableSongs);
-    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->OnSongChosen.AddDynamic(this, &AOverworldConcertActor::OnSongChosen);
-    WidgetInstance->AddToViewport();
-
-    EnablePlayerInteraction();
-}
-
-void AOverworldConcertActor::EnablePlayerInteraction()
-{
-    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-    {
-        PlayerController->bShowMouseCursor = true;
-        PlayerController->bEnableClickEvents = true;
-        PlayerController->bEnableMouseOverEvents = true;
-    }
 }

@@ -7,3 +7,14 @@ UHighScoreSaveGame::UHighScoreSaveGame()
 {
 	
 }
+
+int32 FLevelScoreData::GetStarRating() const
+{
+	if (SuccessPercentage >= 80.0f) return 5;
+	if (SuccessPercentage >= 60.0f) return 4;
+	if (SuccessPercentage >= 40.0f) return 3;
+	if (SuccessPercentage >= 20.0f) return 2;
+	if (SuccessPercentage > 0.0f) return 1;
+	return 0;
+}
+

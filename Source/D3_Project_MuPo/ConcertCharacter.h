@@ -42,7 +42,7 @@ protected:
 
 	
 	virtual void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
-	void PlaySound(USoundCue* SoundCue);
+	virtual void PlaySound(USoundCue* SoundCue);
 	
 	
 	UPROPERTY(EditAnywhere, Category = "Sound")

@@ -52,7 +52,7 @@ protected:
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION()
 	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
-	void ShowStandardWidget(const FString& SongName);
+	void ShowStandardWidget(const FString& SongName,const FString& LevelName, int32 BestStars);
 	void ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName);
 	void EnablePlayerInteraction();
 };

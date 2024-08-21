@@ -3,17 +3,58 @@
 
 #include "ConcertGameInstance.h"
 #include "NoteData.h"
+#include "HighScoreSaveGame.h"
 #include "SongDataParserSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogConcertGameInstance, Log, All);
 DEFINE_LOG_CATEGORY(LogConcertGameInstance);
 
+void UConcertGameInstance::SaveLevelScore(const FString& LevelName, int32 Score, float SuccessPercentage)
+{
+    if (HighScoreSaveGame)
+    {
+        FLevelScoreData* LevelScoreData = HighScoreSaveGame->LevelScores.Find(LevelName);
+        if (LevelScoreData)
+        {
+            LevelScoreData->HighScore = FMath::Max(LevelScoreData->HighScore, Score);
+            LevelScoreData->SuccessPercentage = FMath::Max(LevelScoreData->SuccessPercentage, SuccessPercentage);
+        }
+        else
+        {
+            FLevelScoreData NewScoreData;
+            NewScoreData.HighScore = Score;
+            NewScoreData.SuccessPercentage = SuccessPercentage;
+            HighScoreSaveGame->LevelScores.Add(LevelName, NewScoreData);
+        }
+        UGameplayStatics::SaveGameToSlot(HighScoreSaveGame, SaveSlotName, UserIndex);
+    }
+}
+
+int32 UConcertGameInstance::GetBestStarsForLevel(const FString& LevelName) const
+{
+    if (HighScoreSaveGame)
+    {
+        const FLevelScoreData* LevelScoreData = HighScoreSaveGame->LevelScores.Find(LevelName);
+        if (LevelScoreData)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Retrieved Stars: %d for Level: %s"), LevelScoreData->GetStarRating(), *LevelName);
+            return LevelScoreData->GetStarRating();
+        }
+    }
+    UE_LOG(LogTemp, Warning, TEXT("No data found for Level: %s, returning 0 stars"), *LevelName);
+    return 0;
+}
+
 void UConcertGameInstance::Init()
 {
     Super::Init();
-    UE_LOG(LogTemp, Warning, TEXT("Game Instance Initialized."));
+    SaveSlotName = TEXT("HighScoreSlot");
+    UserIndex = 0;
+
+    LoadHighScoreData();
     LoadAllSongData();
-    
+    //ResetAllHighScores();
 }
 
 void UConcertGameInstance::LoadAllSongData()
@@ -77,6 +118,26 @@ float UConcertGameInstance::GetSongDuration(FName LevelName) const
     return 0.0f;
 }
 
+void UConcertGameInstance::ResetAllHighScores()
+{
+    if (HighScoreSaveGame)
+    {
+        for (auto& LevelScorePair : HighScoreSaveGame->LevelScores)
+        {
+            LevelScorePair.Value.HighScore = 0;
+            LevelScorePair.Value.SuccessPercentage = 0.0f;
+        }
+
+        // Save the reset data
+        UGameplayStatics::SaveGameToSlot(HighScoreSaveGame, SaveSlotName, UserIndex);
+
+        UE_LOG(LogTemp, Warning, TEXT("All high scores and percentages have been reset to 0."));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("No save game data found to reset."));
+    }
+}
 
 const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelName) const
 {
@@ -170,6 +231,20 @@ TArray<FString> UConcertGameInstance::GetAvailableHiddenSongs() const
     FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
 
     return AvailableSongs;
+}
+
+void UConcertGameInstance::LoadHighScoreData()
+{
+    HighScoreSaveGame = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot("HighScoresSlot", 0));
+    if (!HighScoreSaveGame)
+    {
+        HighScoreSaveGame = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+        UE_LOG(LogTemp, Warning, TEXT("Created new HighScoreSaveGame instance"));
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("HighScoreSaveGame loaded successfully"));
+    }
 }
 
 

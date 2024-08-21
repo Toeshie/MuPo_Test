@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/GameInstance.h"
-#include "NoteData.h" 
+#include "NoteData.h"
+#include "HighScoreSaveGame.h"
 #include "ConcertGameInstance.generated.h"
 
 USTRUCT()
@@ -21,9 +22,17 @@ class D3_PROJECT_MUPO_API UConcertGameInstance : public UGameInstance
 	GENERATED_BODY()
 
 public:
+	
+	UFUNCTION(BlueprintCallable, Category = "Scores")
+	void SaveLevelScore(const FString& LevelName, int32 Score, float SuccessPercentage);
+
+	UFUNCTION(BlueprintCallable, Category = "Scores")
+	int32 GetBestStarsForLevel(const FString& LevelName) const;
+	
 	virtual void Init() override;
 	void LoadAllSongData();
 	float GetSongDuration(FName LevelName) const;
+	void ResetAllHighScores();
 
 	UFUNCTION(BlueprintCallable, Category = "Songs")
 	const TArray<FNoteData>& GetSongDataForLevel(FName LevelName) const;
@@ -49,4 +58,12 @@ private:
 	FLevelSongData ConcertLocation3Data;
 	FString SelectedCharacter;
 	FString SelectedSong;
+
+	UPROPERTY()
+	UHighScoreSaveGame* HighScoreSaveGame;
+
+	FString SaveSlotName;
+	uint32 UserIndex;
+
+	void LoadHighScoreData();
 };
