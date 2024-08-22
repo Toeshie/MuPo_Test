@@ -15,6 +15,8 @@ void UConcertSelectionWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
+    UIManager = NewObject<UUIGameManager>(this);
+
     if (ConfirmButton)
     {
         ConfirmButton->OnClicked.AddDynamic(this, &UConcertSelectionWidget::OnConfirmButtonClicked);
@@ -66,7 +68,11 @@ void UConcertSelectionWidget::UpdateStars(int32 BestStars)
 
 void UConcertSelectionWidget::OnConfirmButtonClicked()
 {
-    ShowCharacterSelectionWidget();
+    if (UIManager)
+    {
+        // Use the UIManager to load the character selection widget
+        UIManager->LoadCharacterSelectionWidget();
+    }
 }
 
 void UConcertSelectionWidget::ShowCharacterSelectionWidget()

@@ -21,9 +21,13 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+	UFUNCTION()
 	void OnCharacter1ButtonClicked();
+	UFUNCTION()
 	void OnCharacter2ButtonClicked();
+	UFUNCTION()
 	void OnCharacter3ButtonClicked();
+	UFUNCTION()
 	void OnCharacter4ButtonClicked();
 
 	UFUNCTION()

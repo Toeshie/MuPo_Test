@@ -17,7 +17,8 @@ class D3_PROJECT_MUPO_API UNoteSpawner : public USceneComponent
 public:
 	UNoteSpawner();
 
-	void SetNotesData(const TArray<FNoteData>& NotesData);
+	TArray<FNoteData> NotesData;
+	void SetNotesData(const TArray<FNoteData>& NewNotesData);
 	void ClearScheduledNotes();
 
 	UPROPERTY(BlueprintAssignable, Category = "Events")

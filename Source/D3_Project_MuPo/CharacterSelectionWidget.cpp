@@ -35,15 +35,12 @@ void UCharacterSelectionWidget::NativeConstruct()
     CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character4Mesh.Character4Mesh"));
 
     // Optionally, set images to buttons (ensure these paths are correct)
-    CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character1Image.Character1Image")));
-    CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character2Image.Character2Image")));
-    CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character3Image.Character3Image")));
-    CharacterImage4->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character4Image.Character4Image")));
+    CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
+    CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
+    CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
+    CharacterImage4->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
     
-    CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character1Image.Character1Image")));
-    CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character1Image.Character1Image")));
-    CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character1Image.Character1Image")));
-    CharacterImage4->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Path/To/Character1Image.Character1Image")));
+   
 }
 
 // Separate functions for each button click event
@@ -70,11 +67,7 @@ void UCharacterSelectionWidget::OnCharacter4ButtonClicked()
 void UCharacterSelectionWidget::OnCharacterButtonClicked(int32 CharacterIndex)
 {
     SetCharacterMesh(CharacterIndex);
-
-    // Notify that a character has been selected
     OnCharacterSelected.Broadcast(CharacterIndex);
-
-    // Optionally, close the character selection widget
     RemoveFromParent();
 }
 

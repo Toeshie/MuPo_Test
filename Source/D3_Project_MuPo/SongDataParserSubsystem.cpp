@@ -8,22 +8,19 @@
 bool USongDataParserSubsystem::ParseSongData(const FString& FileName)
 {
 	NotesData.Empty();
-	
-	// Construct the full path to the file in the Content/SongData directory
+
 	FString FullPath = FPaths::ProjectContentDir() + TEXT("SongData/") + FileName;
 
 	TArray<FString> Lines;
 	if (FFileHelper::LoadFileToStringArray(Lines, *FullPath))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("File read successfully from: %s"), *FullPath);
-		for (int32 i = 1; i < Lines.Num(); ++i) // Start at 1 to skip header
+		for (int32 i = 1; i < Lines.Num(); ++i)
 		{
 			TArray<FString> Columns;
 			Lines[i].ParseIntoArray(Columns, TEXT(","), true);
 
-			UE_LOG(LogTemp, Warning, TEXT("Line %d: Found %d columns."), i, Columns.Num());
-
-			if (Columns.Num() == 4) // Ensure there are exactly 4 columns
+			if (Columns.Num() == 4)
 			{
 				FNoteData NoteData;
 				NoteData.TimeMs = FCString::Atoi(*Columns[0]);
@@ -31,26 +28,36 @@ bool USongDataParserSubsystem::ParseSongData(const FString& FileName)
 				NoteData.Track = FCString::Atoi(*Columns[2]);
 				NoteData.Action = Columns[3];
 
-				NotesData.Add(NoteData);
-				UE_LOG(LogTemp, Warning, TEXT("Line %d: Note data added: %s"), i, *NoteData.ToString());
+				if (NoteData.IsValid())
+				{
+					NotesData.Add(NoteData);
+					UE_LOG(LogTemp, Warning, TEXT("Note added: %s"), *NoteData.ToString());
+				}
+				else
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Invalid note data at line %d: %s"), i, *Lines[i]);
+				}
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Line %d: Incorrect number of columns."), i);
+				UE_LOG(LogTemp, Warning, TEXT("Incorrect number of columns at line %d"), i);
 			}
 		}
 
 		if (NotesData.Num() > 0)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Success parsing data. Total notes added: %d"), NotesData.Num());
-			return true; // Parsing successful
+			UE_LOG(LogTemp, Warning, TEXT("Successfully parsed %d notes"), NotesData.Num());
+			return true;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("No valid note data found in file: %s"), *FullPath);
-			return false; // No valid data found
+			UE_LOG(LogTemp, Warning, TEXT("No valid notes found in file: %s"), *FullPath);
 		}
 	}
-	UE_LOG(LogTemp, Warning, TEXT("Failed to read file: %s"), *FullPath);
-	return false; // File could not be loaded or parsed
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to read file: %s"), *FullPath);
+	}
+
+	return false;
 }

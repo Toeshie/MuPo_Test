@@ -218,47 +218,24 @@ void AConcertGameMode::LoadSongData()
     FString CurrentLevelName = GetWorld()->GetMapName();
     CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-    // Check which level is currently loaded
-    if (CurrentLevelName == "ConcertLocation_1")
-    {
-        const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation1Data();
-        NoteSpawner->SetNotesData(NotesData);
-    }
-    else if (CurrentLevelName == "ConcertLocation_2")
-    {
-        const TArray<FNoteData>& NotesData = GameInstance->GetConcertLocation2Data();
-        NoteSpawner->SetNotesData(NotesData);
-    }
-    else if (CurrentLevelName == "ConcertLocation_CustomSongs")
-    {
-        // Only for ConcertLocation_CustomSongs, load the custom-selected song
-        FString SelectedSong = GameInstance->GetSelectedSong();
-        if (!SelectedSong.IsEmpty())
-        {
-            FString FilePath = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomSongs/"), SelectedSong);
-            UE_LOG(LogTemp, Log, TEXT("Loading song from: %s"), *FilePath);
+    const TArray<FNoteData>& LevelNotesData = GameInstance->GetSongDataForLevel(FName(*CurrentLevelName));
 
-            USongDataParserSubsystem* ParserSubsystem = GameInstance->GetSubsystem<USongDataParserSubsystem>();
-            if (ParserSubsystem && ParserSubsystem->ParseSongData(*FilePath))
-            {
-                const TArray<FNoteData>& NotesData = ParserSubsystem->GetParsedNotesData();
-                NoteSpawner->SetNotesData(NotesData);
-            }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("Failed to parse song data for %s"), *SelectedSong);
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("No song selected for ConcertLocation_CustomSongs."));
-        }
+    if (LevelNotesData.Num() == 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No note data found for level: %s"), *CurrentLevelName);
+        return;
+    }
+
+    if (NoteSpawner)
+    {
+        NoteSpawner->SetNotesData(LevelNotesData);
     }
     else
     {
-        UE_LOG(LogTemp, Warning, TEXT("No specific logic for the current level: %s"), *CurrentLevelName);
+        UE_LOG(LogTemp, Error, TEXT("NoteSpawner is null. Cannot set notes data."));
     }
 }
+
 
 void AConcertGameMode::HandleNoteSpawned()
 {

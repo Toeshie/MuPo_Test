@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UIGameManager.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Button.h"
@@ -54,4 +55,6 @@ private:
 	void HandleCharacterSelected(int32 CharacterIndex); // Added function to handle character selection
 
 	void LoadCharacterSelectionWidgetClass();
+
+	UUIGameManager* UIManager;
 };

@@ -11,18 +11,21 @@ UNoteSpawner::UNoteSpawner()
     static ConstructorHelpers::FClassFinder<ANoteBaseClass> BP_DrumNoteHighClassFinder(TEXT("/Game/Blueprints/NoteStuff/C++Stuff/Notes/BP_DrumNoteHigh"));
     static ConstructorHelpers::FClassFinder<ANoteBaseClass> BP_DrumNoteLowClassFinder(TEXT("/Game/Blueprints/NoteStuff/C++Stuff/Notes/BP_DrumNoteLow"));
 
-    BP_DrumNoteHigh = BP_DrumNoteHighClassFinder.Class;
-    BP_DrumNoteLow = BP_DrumNoteLowClassFinder.Class;
+    if (BP_DrumNoteHighClassFinder.Succeeded() && BP_DrumNoteLowClassFinder.Succeeded())
+    {
+        BP_DrumNoteHigh = BP_DrumNoteHighClassFinder.Class;
+        BP_DrumNoteLow = BP_DrumNoteLowClassFinder.Class;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to find note classes."));
+    }
 }
 
 void UNoteSpawner::BeginPlay()
 {
     Super::BeginPlay();
-
-    if (CurrentNotesData.Num() > 0)
-    {
-        GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.005f, true);
-    }
+    
 }
 
 void UNoteSpawner::InitializeComponent()
@@ -35,26 +38,29 @@ void UNoteSpawner::InitializeComponent()
 void UNoteSpawner::HandleNoteSpawning()
 {
     float CurrentTime = GetWorld()->GetTimeSeconds();
+    UE_LOG(LogTemp, Log, TEXT("Current Time: %f, Current Note Index: %d"), CurrentTime, CurrentNoteIndex);
 
-    // Check if there are notes to spawn
     while (CurrentNoteIndex < CurrentNotesData.Num())
     {
         const FNoteData& Note = CurrentNotesData[CurrentNoteIndex];
 
-        // Convert note time to seconds
         float NoteTime = Note.TimeMs / 1000.0f;
+        UE_LOG(LogTemp, Log, TEXT("Next Note Time: %f"), NoteTime);
 
         if (CurrentTime >= NoteTime)
         {
+            UE_LOG(LogTemp, Log, TEXT("Spawning note at index: %d"), CurrentNoteIndex);
             SpawnNoteBasedOnNoteData(Note);
             CurrentNoteIndex++;
         }
         else
         {
-            break; // Break if it's not yet time for the next note
+            UE_LOG(LogTemp, Log, TEXT("Not time yet for next note."));
+            break;
         }
     }
 }
+
 
 void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
 {
@@ -86,18 +92,22 @@ void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
     }
 }
 
-void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NotesData)
+void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NewNotesData)
 {
-    CurrentNotesData = NotesData;
-    CurrentNoteIndex = 0;
-
-    if (CurrentNotesData.Num() > 0 && HasBegunPlay())
+    if (NewNotesData.Num() == 0)
     {
-        GetWorld()->GetTimerManager().ClearTimer(NoteSpawnTimerHandle);
-        GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.01f, true);
+        UE_LOG(LogTemp, Warning, TEXT("SetNotesData received an empty array"));
+        return;
     }
-}
 
+    this->NotesData = NewNotesData;
+    CurrentNotesData = NewNotesData;  // Ensure this is set
+    
+    UE_LOG(LogTemp, Log, TEXT("SetNotesData successfully updated NotesData."));
+
+    // Start the note spawning timer here instead
+    GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.005f, true);
+}
 void UNoteSpawner::ClearScheduledNotes()
 {
     GetWorld()->GetTimerManager().ClearTimer(NoteSpawnTimerHandle);
