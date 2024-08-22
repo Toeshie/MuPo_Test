@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ConcertSelectionWidget.h"
+#include "Components/ComboBoxString.h"
 #include "ConcertSelectionSongChoiceWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSongChosenDelegate, const FString&, SelectedSongName);

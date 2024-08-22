@@ -5,10 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
-#include "Components/ComboBoxString.h"
 #include "Components/Button.h"
 #include "Components/HorizontalBox.h"
-#include "Components/Image.h"
 #include "ConcertSelectionWidget.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnConfirmDelegate);
@@ -45,4 +43,15 @@ protected:
 
 private:
 	void UpdateStars(int32 BestStars);
+	
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UUserWidget> CharacterSelectionWidgetClass;
+
+	UFUNCTION()
+	void ShowCharacterSelectionWidget();
+
+	UFUNCTION()
+	void HandleCharacterSelected(int32 CharacterIndex); // Added function to handle character selection
+
+	void LoadCharacterSelectionWidgetClass();
 };

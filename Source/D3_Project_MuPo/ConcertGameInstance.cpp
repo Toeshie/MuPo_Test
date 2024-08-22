@@ -135,6 +135,16 @@ const TArray<FNoteData>& UConcertGameInstance::GetConcertLocation2Data() const
     return ConcertLocation2Data.NotesData;
 }
 
+void UConcertGameInstance::SetSelectedCharacterMesh(UStaticMesh* Mesh)
+{
+    SelectedCharacterMesh = Mesh;
+}
+
+UStaticMesh* UConcertGameInstance::GetSelectedCharacterMesh() const
+{
+    return SelectedCharacterMesh;
+}
+
 FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
 {
     if (LevelName == "ConcertLocation_1")

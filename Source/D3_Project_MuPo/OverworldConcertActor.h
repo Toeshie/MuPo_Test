@@ -16,6 +16,9 @@ class D3_PROJECT_MUPO_API AOverworldConcertActor : public AActor
 public:    
 	// Sets default values for this actor's properties
 	AOverworldConcertActor();
+
+	UFUNCTION()
+	void LoadLevel();
     
 protected:
 
@@ -41,10 +44,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	void ShowWidget();
-
-	UFUNCTION()
-	void LoadLevel();
-
+	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
