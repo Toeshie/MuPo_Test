@@ -79,7 +79,7 @@ private:
 	void LoadAllSongData();
 	FLevelSongData ConcertLocation1Data;
 	FLevelSongData ConcertLocation2Data;
-	FLevelSongData ConcertLocation3Data;
+	
 
 	// Selected States
 	UPROPERTY()

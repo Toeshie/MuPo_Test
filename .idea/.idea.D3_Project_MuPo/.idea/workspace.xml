@@ -12,14 +12,13 @@
   <component name="ChangeListManager">
     <list default="true" id="873f9cfc-470e-4d78-8e81-92c494a3c8a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_2.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertCharacter.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/NoteSpawner.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/NoteSpawner.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ScoreHUD.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ScoreHUD.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ScoreHUD.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ScoreHUD.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -232,7 +231,7 @@
       <workItem from="1724253110326" duration="8325000" />
       <workItem from="1724300424743" duration="206000" />
       <workItem from="1724331688499" duration="9798000" />
-      <workItem from="1724380827480" duration="1269000" />
+      <workItem from="1724380827480" duration="1947000" />
     </task>
     <servers />
   </component>

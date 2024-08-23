@@ -60,5 +60,5 @@ private:
 	UPROPERTY(meta = (BindWidget))
 	UImage* CharacterImage4;
 
-	UStaticMesh* CharacterMeshes[4]; // Array to hold different character meshes
+	UStaticMesh* CharacterMeshes[4]; 
 };

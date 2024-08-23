@@ -49,7 +49,7 @@ private:
 	class UNoteSpawner* NoteSpawner;
 
 	UPROPERTY()
-	class UConcertGameInstance* GameInstance;
+	UConcertGameInstance* GameInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Music", meta = (AllowPrivateAccess = "true"))
 	USoundWave* MusicWave;

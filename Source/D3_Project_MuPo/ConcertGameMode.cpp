@@ -97,7 +97,7 @@ float AConcertGameMode::GetCorrectNotePercentage()
 {
     if (TotalNotes == 0)
     {
-        return 0.0f;  // Avoid division by zero
+        return 0.0f; 
     }
 
     int32 TotalHits = GoodHits + PerfectHits;
@@ -150,8 +150,7 @@ void AConcertGameMode::BeginPlay()
             }
         }
     }
-
-    // Initialize the NoteSpawner
+    
     AActor* CameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass());
     if (CameraActor)
     {
@@ -257,8 +256,7 @@ void AConcertGameMode::HandleNoteSpawned()
 
     if (TotalNotes == TotalNotesInSong)
     {
-        UE_LOG(LogTemp, Warning, TEXT("All notes spawned. Setting timer to show end game menu."));
-        ScheduleEndGameMenu(12.0f); // Show end game menu after 5 seconds when all notes are spawned
+        ScheduleEndGameMenu(12.0f); 
     }
 }
 
@@ -306,7 +304,6 @@ void AConcertGameMode::ShowEndGameMenu()
             UEndGameMenu* EndGameMenu = CreateWidget<UEndGameMenu>(PlayerController, EndGameMenuClass);
             if (EndGameMenu)
             {
-                UE_LOG(LogTemp, Warning, TEXT("End game menu widget created."));
                 EndGameMenu->AddToViewport();
 
                 // Set the final score and star rating
@@ -327,18 +324,6 @@ void AConcertGameMode::ShowEndGameMenu()
                 PlayerController->SetInputMode(InputMode);
                 PlayerController->bShowMouseCursor = true;
             }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("Failed to create end game menu widget."));
-            }
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("PlayerController not found."));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("EndGameMenuClass is null."));
     }
 }

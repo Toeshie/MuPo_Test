@@ -10,7 +10,7 @@ void UCharacterSelectionWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    // Bind each button to its respective click event
+   
     if (CharacterButton1)
     {
         CharacterButton1->OnClicked.AddDynamic(this, &UCharacterSelectionWidget::OnCharacter1ButtonClicked);
@@ -28,13 +28,13 @@ void UCharacterSelectionWidget::NativeConstruct()
         CharacterButton4->OnClicked.AddDynamic(this, &UCharacterSelectionWidget::OnCharacter4ButtonClicked);
     }
 
-    // Load character meshes (ensure these paths are correct)
+    
     CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character1Mesh.Character1Mesh"));
     CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character2Mesh.Character2Mesh"));
     CharacterMeshes[2] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character3Mesh.Character3Mesh"));
     CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character4Mesh.Character4Mesh"));
 
-    // Optionally, set images to buttons (ensure these paths are correct)
+    
     CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
     CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
     CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));

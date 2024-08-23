@@ -75,7 +75,7 @@ const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelNa
 		return ConcertLocation2Data.NotesData;
 	}
 
-	static TArray<FNoteData> EmptyArray;  // Ensure this is correctly set as a static array
+	static TArray<FNoteData> EmptyArray;  
 	return EmptyArray;
 }
 
