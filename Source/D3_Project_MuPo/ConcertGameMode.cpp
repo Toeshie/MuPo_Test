@@ -10,7 +10,6 @@
 #include "ConcertGameInstance.h"
 #include "EndGameMenu.h"
 #include "HighScoreSaveGame.h"
-#include "SongDataParserSubsystem.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
 
@@ -48,8 +47,7 @@ void AConcertGameMode::ScheduleEndGameMenu(float Delay)
 
 void AConcertGameMode::UpdatePlayer1Score(int32 ScoreDelta)
 {
-    Player1Score += ScoreDelta * ScoreMultiplier; // Apply the multiplier to the score delta
-    UE_LOG(LogTemp, Log, TEXT("Player 1 Score: %d"), Player1Score);
+    Player1Score += ScoreDelta * ScoreMultiplier;
     DisplayScore();
 }
 
@@ -63,41 +61,31 @@ void AConcertGameMode::NoteHit(bool bIsCorrect, bool bIsPerfect)
     if (bIsCorrect)
     {
         CurrentStreak++;
+
         if (CurrentStreak % StreakToIncreaseMultiplier == 0 && ScoreMultiplier < MaxMultiplier)
         {
             ScoreMultiplier++;
-            UE_LOG(LogTemp, Log, TEXT("Multiplier increased to %d"), ScoreMultiplier);
         }
 
         if (bIsPerfect)
         {
             PerfectHits++;
+            UE_LOG(LogTemp, Log, TEXT("Perfect hit. PerfectHits: %d"), PerfectHits);
         }
         else
         {
             GoodHits++;
+            UE_LOG(LogTemp, Log, TEXT("Good hit. GoodHits: %d"), GoodHits);
         }
     }
     else
     {
         CurrentStreak = 0;
         ScoreMultiplier = 1;
-        UE_LOG(LogTemp, Log, TEXT("Streak reset. Multiplier reset to 1"));
     }
-    
-    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (PlayerController)
-    {
-        AScoreHUD* HUD = Cast<AScoreHUD>(PlayerController->GetHUD());
-        if (HUD)
-        {
-            HUD->SetStreak(CurrentStreak);
-            HUD->SetMultiplier(ScoreMultiplier);
-            HUD->SetGoodHits(GoodHits);
-            HUD->SetPerfectHits(PerfectHits);
-            HUD->SetTotalNotes(TotalNotes);
-        }
-    }
+
+    HitPercentage = GetCorrectNotePercentage();
+    DisplayScore();
 }
 
 int32 AConcertGameMode::GetFinalScore() const
@@ -105,15 +93,20 @@ int32 AConcertGameMode::GetFinalScore() const
     return Player1Score;
 }
 
-float AConcertGameMode::GetCorrectNotePercentage() const
+float AConcertGameMode::GetCorrectNotePercentage() 
 {
     if (TotalNotes == 0)
     {
-        return 0.0f;
+        return 0.0f;  // Avoid division by zero
     }
 
     int32 TotalHits = GoodHits + PerfectHits;
-    return static_cast<float>(TotalHits) / TotalNotes * 100.0f;
+    HitPercentage = static_cast<float>(TotalHits) / TotalNotes * 100.0f;
+
+    UE_LOG(LogTemp, Log, TEXT("Calculating Hit Percentage. TotalHits: %d, TotalNotes: %d, HitPercentage: %f"), TotalHits, TotalNotes, HitPercentage);
+
+    return HitPercentage;
+    
 }
 
 void AConcertGameMode::DisplayScore()
@@ -125,6 +118,15 @@ void AConcertGameMode::DisplayScore()
         if (HUD)
         {
             HUD->SetScore(Player1Score);
+            HUD->SetStreak(CurrentStreak);
+            HUD->SetMultiplier(ScoreMultiplier);
+            HUD->SetGoodHits(GoodHits);
+            HUD->SetPerfectHits(PerfectHits);
+            HUD->SetTotalNotes(TotalNotes);
+
+            // Update the HUD with the latest hit percentage
+            HUD->SetHitPercentage(GetCorrectNotePercentage());
+            UE_LOG(LogTemp, Log, TEXT("Updated HUD with HitPercentage: %f"), GetCorrectNotePercentage());
         }
     }
 }
@@ -240,7 +242,7 @@ void AConcertGameMode::LoadSongData()
 void AConcertGameMode::HandleNoteSpawned()
 {
     TotalNotes++;
-    UE_LOG(LogTemp, Warning, TEXT("Note spawned. TotalNotes: %d, TotalNotesInSong: %d"), TotalNotes, TotalNotesInSong);
+    UE_LOG(LogTemp, Warning, TEXT("Note spawned. TotalNotes: %d"), TotalNotes);
 
     // Update the HUD with the new total notes
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

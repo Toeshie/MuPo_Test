@@ -23,6 +23,8 @@ public:
 	void SetGoodHits(int32 NewGoodHits); // New method to set good hits
 	void SetPerfectHits(int32 NewPerfectHits); // New method to set perfect hits
 	void SetTotalNotes(int32 NewTotalNotes); // New method to set total notes
+	float CalculateHitPercentage() const; // New method to calculate the hit percentage
+	void SetHitPercentage(float NewHitPercentage);
 
 private:
 	int32 Player1Score;
@@ -32,6 +34,7 @@ private:
 	int32 PerfectHits; // New variable to store perfect hits
 	int32 TotalNotes; // New variable to store total notes
 	FVector2D TextSize;
+	float HitPercentage;
 
-	float CalculateHitPercentage() const; // New method to calculate the hit percentage
+	
 };

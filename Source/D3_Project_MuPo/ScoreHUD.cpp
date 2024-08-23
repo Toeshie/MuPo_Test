@@ -8,30 +8,24 @@
 void AScoreHUD::DrawHUD()
 {
     Super::DrawHUD();
-    
+
     FString ScoreText = FString::Printf(TEXT("Player 1 Score: %d"), Player1Score);
     FString StreakText = FString::Printf(TEXT("Streak: %d"), CurrentStreak);
     FString MultiplierText = FString::Printf(TEXT("Multiplier: x%d"), ScoreMultiplier);
     FString GoodHitsText = FString::Printf(TEXT("Good Hits: %d"), GoodHits);
     FString PerfectHitsText = FString::Printf(TEXT("Perfect Hits: %d"), PerfectHits);
-    FString HitPercentageText = FString::Printf(TEXT("Hit Percentage: %.2f%%"), CalculateHitPercentage());
-
-    float TextWidth = 10.0f;
-    float TextHeight = 10.0f;
-    if (GEngine && GEngine->GetLargeFont())
-    {
-        Canvas->StrLen(GEngine->GetLargeFont(), ScoreText, TextWidth, TextHeight);
-    }
+    FString HitPercentageText = FString::Printf(TEXT("Hit Percentage: %.2f%%"), HitPercentage);
 
     FVector2D ScreenPosition(50.0f, 50.0f);
     FLinearColor TextColor = FLinearColor::White;
 
+    // Update the HUD with the latest values
     DrawText(ScoreText, TextColor, ScreenPosition.X, ScreenPosition.Y, GEngine->GetLargeFont(), 1.5f, false);
-    DrawText(StreakText, TextColor, ScreenPosition.X, ScreenPosition.Y + TextHeight + 10.0f, GEngine->GetLargeFont(), 1.5f, false);
-    DrawText(MultiplierText, TextColor, ScreenPosition.X, ScreenPosition.Y + 2 * (TextHeight + 10.0f), GEngine->GetLargeFont(), 1.5f, false);
-    DrawText(GoodHitsText, TextColor, ScreenPosition.X, ScreenPosition.Y + 3 * (TextHeight + 10.0f), GEngine->GetLargeFont(), 1.5f, false);
-    DrawText(PerfectHitsText, TextColor, ScreenPosition.X, ScreenPosition.Y + 4 * (TextHeight + 10.0f), GEngine->GetLargeFont(), 1.5f, false);
-    DrawText(HitPercentageText, TextColor, ScreenPosition.X, ScreenPosition.Y + 5 * (TextHeight + 10.0f), GEngine->GetLargeFont(), 1.5f, false);
+    DrawText(StreakText, TextColor, ScreenPosition.X, ScreenPosition.Y + 30.0f, GEngine->GetLargeFont(), 1.5f, false);
+    DrawText(MultiplierText, TextColor, ScreenPosition.X, ScreenPosition.Y + 60.0f, GEngine->GetLargeFont(), 1.5f, false);
+    DrawText(GoodHitsText, TextColor, ScreenPosition.X, ScreenPosition.Y + 90.0f, GEngine->GetLargeFont(), 1.5f, false);
+    DrawText(PerfectHitsText, TextColor, ScreenPosition.X, ScreenPosition.Y + 120.0f, GEngine->GetLargeFont(), 1.5f, false);
+    DrawText(HitPercentageText, TextColor, ScreenPosition.X, ScreenPosition.Y + 150.0f, GEngine->GetLargeFont(), 1.5f, false);
 }
 
 void AScoreHUD::SetScore(int32 NewScore)
@@ -73,4 +67,9 @@ float AScoreHUD::CalculateHitPercentage() const
 
     int32 TotalHits = GoodHits + PerfectHits;
     return (static_cast<float>(TotalHits) / TotalNotes) * 100.0f;
+}
+
+void AScoreHUD::SetHitPercentage(float NewHitPercentage)
+{
+    HitPercentage = NewHitPercentage;
 }

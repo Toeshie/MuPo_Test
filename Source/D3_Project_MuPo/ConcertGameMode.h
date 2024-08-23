@@ -25,7 +25,9 @@ public:
 	void NoteHit(bool bIsCorrect, bool bIsPerfect);
 
 	int32 GetFinalScore() const;
-	float GetCorrectNotePercentage() const;
+	float GetCorrectNotePercentage();
+
+	float HitPercentage;
 
 protected:
 	virtual void BeginPlay() override;
@@ -51,7 +53,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Music", meta = (AllowPrivateAccess = "true"))
 	USoundWave* MusicWave;
-
+	
 	float SongDuration = 0.0f;
 	int32 TotalNotesInSong;
 
@@ -65,5 +67,6 @@ private:
 
 	void DisplayScore();
 	void LoadSongData();
+	UFUNCTION()
 	void HandleNoteSpawned();
 };

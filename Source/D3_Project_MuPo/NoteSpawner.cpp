@@ -38,24 +38,23 @@ void UNoteSpawner::InitializeComponent()
 void UNoteSpawner::HandleNoteSpawning()
 {
     float CurrentTime = GetWorld()->GetTimeSeconds();
-    UE_LOG(LogTemp, Log, TEXT("Current Time: %f, Current Note Index: %d"), CurrentTime, CurrentNoteIndex);
+    
 
     while (CurrentNoteIndex < CurrentNotesData.Num())
     {
         const FNoteData& Note = CurrentNotesData[CurrentNoteIndex];
 
         float NoteTime = Note.TimeMs / 1000.0f;
-        UE_LOG(LogTemp, Log, TEXT("Next Note Time: %f"), NoteTime);
+        
 
         if (CurrentTime >= NoteTime)
         {
-            UE_LOG(LogTemp, Log, TEXT("Spawning note at index: %d"), CurrentNoteIndex);
+           
             SpawnNoteBasedOnNoteData(Note);
             CurrentNoteIndex++;
         }
         else
         {
-            UE_LOG(LogTemp, Log, TEXT("Not time yet for next note."));
             break;
         }
     }
