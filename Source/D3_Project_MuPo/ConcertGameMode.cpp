@@ -10,8 +10,10 @@
 #include "ConcertGameInstance.h"
 #include "EndGameMenu.h"
 #include "HighScoreSaveGame.h"
+#include "MarimbaCharacter.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerStart.h"
 
 AConcertGameMode::AConcertGameMode()
 {
@@ -257,6 +259,79 @@ void AConcertGameMode::HandleNoteSpawned()
     if (TotalNotes == TotalNotesInSong)
     {
         ScheduleEndGameMenu(12.0f); 
+    }
+}
+
+void AConcertGameMode::SpawnSelectedCharacter()
+{
+    UConcertGameInstance* LocalGameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (!LocalGameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No GameInstance found!"));
+        return;
+    }
+
+    int32 SelectedCharacterIndex = LocalGameInstance->GetSelectedCharacter();
+    int32 SelectedInstrumentIndex = LocalGameInstance->GetSelectedInstrument();
+    UStaticMesh* SelectedCharacterMesh = Cast<UStaticMesh>(LocalGameInstance->GetSelectedCharacterMesh());
+
+    TSubclassOf<ACharacter> CharacterToSpawn = nullptr;
+
+    if (SelectedInstrumentIndex == 0)  // Assuming 0 is for ConcertCharacter
+    {
+        CharacterToSpawn = AConcertCharacter::StaticClass();
+    }
+    else if (SelectedInstrumentIndex == 1)  // Assuming 1 is for MarimbaCharacter
+    {
+        CharacterToSpawn = AMarimbaCharacter::StaticClass();
+    }
+
+    if (CharacterToSpawn)
+    {
+        AActor* PlayerStart = UGameplayStatics::GetActorOfClass(this, APlayerStart::StaticClass());
+        FVector SpawnLocation = FVector::ZeroVector;
+        FRotator SpawnRotation = FRotator::ZeroRotator;
+
+        if (PlayerStart)
+        {
+            SpawnLocation = PlayerStart->GetActorLocation();
+            SpawnRotation = PlayerStart->GetActorRotation();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("No PlayerStart found! Spawning at default location."));
+        }
+
+        ACharacter* SpawnedCharacter = GetWorld()->SpawnActor<ACharacter>(CharacterToSpawn, SpawnLocation, SpawnRotation);
+        if (SpawnedCharacter)
+        {
+            AConcertCharacter* ConcertCharacter = Cast<AConcertCharacter>(SpawnedCharacter);
+            if (ConcertCharacter && SelectedCharacterMesh)
+            {
+                if (ConcertCharacter->CharacterMesh)
+                {
+                    ConcertCharacter->CharacterMesh->SetStaticMesh(SelectedCharacterMesh);
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("Spawned character does not have a valid CharacterMesh component!"));
+                }
+            }
+
+            APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+            if (PlayerController)
+            {
+                PlayerController->Possess(SpawnedCharacter);
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn character!"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("No character class selected to spawn!"));
     }
 }
 

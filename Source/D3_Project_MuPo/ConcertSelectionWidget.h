@@ -48,12 +48,6 @@ private:
 	UPROPERTY(EditAnywhere, Category = "UI")
 	TSubclassOf<UUserWidget> CharacterSelectionWidgetClass;
 
-	UFUNCTION()
-	void ShowCharacterSelectionWidget();
-
-	UFUNCTION()
-	void HandleCharacterSelected(int32 CharacterIndex); // Added function to handle character selection
-
 	void LoadCharacterSelectionWidgetClass();
 
 	UUIGameManager* UIManager;

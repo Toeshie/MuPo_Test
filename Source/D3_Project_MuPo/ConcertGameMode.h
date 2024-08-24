@@ -69,4 +69,6 @@ private:
 	void LoadSongData();
 	UFUNCTION()
 	void HandleNoteSpawned();
+
+	void SpawnSelectedCharacter();
 };

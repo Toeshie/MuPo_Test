@@ -5,6 +5,7 @@
 #include "Components/Image.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
+#include "GameFramework/Character.h"
 
 void UCharacterSelectionWidget::NativeConstruct()
 {
@@ -28,6 +29,21 @@ void UCharacterSelectionWidget::NativeConstruct()
         CharacterButton4->OnClicked.AddDynamic(this, &UCharacterSelectionWidget::OnCharacter4ButtonClicked);
     }
 
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+    if (PlayerController)
+    {
+        ACharacter* PlayerCharacter = Cast<ACharacter>(PlayerController->GetPawn());
+        if (PlayerCharacter)
+        {
+            PlayerCharacter->EnableInput(PlayerController);
+        }
+
+        // Set input mode back to game only or game and UI, depending on your needs
+        PlayerController->SetInputMode(FInputModeGameOnly());
+    }
+
+    // Optionally, hide the mouse cursor if no further UI is being shown
+    PlayerController->bShowMouseCursor = false;
     
     CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character1Mesh.Character1Mesh"));
     CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character2Mesh.Character2Mesh"));

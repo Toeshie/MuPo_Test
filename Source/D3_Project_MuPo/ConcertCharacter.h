@@ -20,6 +20,11 @@ public:
 
 	virtual void InitializeInputMappings();
 
+	UPROPERTY()
+	UStaticMeshComponent* CharacterMesh;
+	UPROPERTY()
+	UStaticMeshComponent* InstrumentMesh;
+
 protected:
 	
 	virtual void BeginPlay() override;

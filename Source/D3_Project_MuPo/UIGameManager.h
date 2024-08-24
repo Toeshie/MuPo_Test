@@ -6,34 +6,36 @@
 #include "UObject/NoExportTypes.h"
 #include "UIGameManager.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class D3_PROJECT_MUPO_API UUIGameManager : public UObject
 {
 	GENERATED_BODY()
-	
+    
 public:
-
 	UUIGameManager();
-	
-	// Function to handle level loading
+    
 	UFUNCTION(BlueprintCallable)
 	void LoadLevel(const FName& LevelName);
 
-	// Function to set selected character
 	UFUNCTION(BlueprintCallable)
 	void SetSelectedCharacter(int32 CharacterIndex);
 
-	// Function to set selected instrument
 	UFUNCTION(BlueprintCallable)
 	void SetSelectedInstrument(int32 InstrumentIndex);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadCharacterSelectionWidget();
-	
+
+	UFUNCTION(BlueprintCallable)
+	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, class AOverworldConcertActor* OverworldConcertActor);
+
+	// New function that handles instrument selection and level loading
+	UFUNCTION()
+	void OnInstrumentSelected(int32 InstrumentIndex);
+
 private:
-	
 	TSubclassOf<class UCharacterSelectionWidget> CharacterSelectionWidgetClass;
+	TSubclassOf<class UInstrumentSelectionWidget> InstrumentSelectionWidgetClass;
+
+	AOverworldConcertActor* CachedOverworldConcertActor;  // Cache the actor for level loading
 };

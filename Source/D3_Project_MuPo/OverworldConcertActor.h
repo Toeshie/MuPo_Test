@@ -16,9 +16,8 @@ class D3_PROJECT_MUPO_API AOverworldConcertActor : public AActor
 public:    
 	// Sets default values for this actor's properties
 	AOverworldConcertActor();
-
-	UFUNCTION()
-	void LoadLevel();
+	
+	void LoadLevel();  // This method will load the level using LevelToLoad
     
 protected:
 
@@ -51,6 +50,7 @@ protected:
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 	UFUNCTION()
+	
 	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
 	void ShowStandardWidget(const FString& SongName,const FString& LevelName, int32 BestStars);
 	void ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName);

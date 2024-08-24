@@ -11,8 +11,13 @@ DEFINE_LOG_CATEGORY(LogConcertGameInstance);
 void UConcertGameInstance::Init()
 {
 	Super::Init();
-
+	
+	SelectedCharacterIndex = -1;
+	SelectedInstrumentIndex = -1;
+	SelectedCharacterMesh = nullptr;
+	
 	UIGameManager = NewObject<UUIGameManager>(this);
+	
 	LoadHighScoreData();
 	LoadAllSongData();
 }
@@ -150,6 +155,8 @@ void UConcertGameInstance::SetSelectedSong(const FString& SongName)
 	SelectedSong = SongName;
 }
 
+
+
 void UConcertGameInstance::SetSelectedCharacterMesh(UStaticMesh* Mesh)
 {
 	SelectedCharacterMesh = Mesh;
@@ -160,15 +167,31 @@ UStaticMesh* UConcertGameInstance::GetSelectedCharacterMesh() const
 	return SelectedCharacterMesh;
 }
 
+
+
 void UConcertGameInstance::SetSelectedCharacter(int32 CharacterIndex)
 {
 	SelectedCharacterIndex = CharacterIndex;
 }
 
+int32 UConcertGameInstance::GetSelectedCharacter() const
+{
+	return SelectedCharacterIndex;
+}
+
+
+
 void UConcertGameInstance::SetSelectedInstrument(int32 InstrumentIndex)
 {
 	SelectedInstrumentIndex = InstrumentIndex;
 }
+
+int32 UConcertGameInstance::GetSelectedInstrument() const
+{
+	return SelectedInstrumentIndex;
+}
+
+
 
 UUIGameManager* UConcertGameInstance::GetUIGameManager() const
 {

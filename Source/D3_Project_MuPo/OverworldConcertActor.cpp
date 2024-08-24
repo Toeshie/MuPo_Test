@@ -98,42 +98,58 @@ void AOverworldConcertActor::EnablePlayerInteraction()
 
 void AOverworldConcertActor::LoadLevel()
 {
-    if (WidgetInstance)
+    if (LevelToLoad != NAME_None)
     {
-        WidgetInstance->RemoveFromParent();
-        WidgetInstance = nullptr;
-
-        if (LevelToLoad != NAME_None)
-        {
-            UGameplayStatics::OpenLevel(this, LevelToLoad);
-        }
+        UGameplayStatics::OpenLevel(this, LevelToLoad);
     }
 }
 
 void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (Cast<AD3_Project_MuPoCharacter>(OtherActor))
+    if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        ShowWidget();
+        // Show the concert selection widget
+        if (WidgetClass && !WidgetInstance)
+        {
+            WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
+            if (WidgetInstance)
+            {
+                WidgetInstance->AddToViewport();
+            }
+        }
+
+        // Configure the player controller to show the mouse cursor and handle input
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->bEnableClickEvents = true;
+            PlayerController->bEnableMouseOverEvents = true;
+            PlayerController->SetInputMode(FInputModeGameAndUI());
+        }
     }
 }
 
 void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-    if (Cast<AD3_Project_MuPoCharacter>(OtherActor) && WidgetInstance)
+    if (!OtherActor || !OtherComp) return;
+
+    // Make sure the widget instance is valid before attempting to remove it
+    if (WidgetInstance)
     {
         WidgetInstance->RemoveFromParent();
         WidgetInstance = nullptr;
+    }
 
-        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-        if (PlayerController)
-        {
-            PlayerController->bShowMouseCursor = false;
-            PlayerController->bEnableClickEvents = false;
-            PlayerController->bEnableMouseOverEvents = false;
-        }
+    // Ensure the player controller is valid before modifying its properties
+    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+    if (PlayerController)
+    {
+        PlayerController->bShowMouseCursor = false;
+        PlayerController->bEnableClickEvents = false;
+        PlayerController->bEnableMouseOverEvents = false;
     }
 }
 

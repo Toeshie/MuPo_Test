@@ -63,7 +63,11 @@ public:
 	UStaticMesh* GetSelectedCharacterMesh() const;
 
 	void SetSelectedCharacter(int32 CharacterIndex);
+	int32 GetSelectedCharacter() const;
+	
 	void SetSelectedInstrument(int32 InstrumentIndex);
+	int32 GetSelectedInstrument() const;
+	
 
 	// Accessor for the UI Manager
 	UUIGameManager* GetUIGameManager() const;
@@ -95,4 +99,5 @@ private:
 	// Save Game Management
 	FString SaveSlotName = TEXT("HighScoreSlot");
 	uint32 UserIndex = 0;
+	
 };

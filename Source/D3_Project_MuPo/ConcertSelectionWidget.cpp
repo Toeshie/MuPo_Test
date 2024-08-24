@@ -16,12 +16,22 @@ void UConcertSelectionWidget::NativeConstruct()
     Super::NativeConstruct();
 
     UIManager = NewObject<UUIGameManager>(this);
-
+    
     if (ConfirmButton)
     {
         ConfirmButton->OnClicked.AddDynamic(this, &UConcertSelectionWidget::OnConfirmButtonClicked);
     }
+    ConfirmButton->SetKeyboardFocus();
     LoadCharacterSelectionWidgetClass();
+
+    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+    if (PlayerController)
+    {
+        PlayerController->bShowMouseCursor = true;
+        PlayerController->bEnableClickEvents = true;
+        PlayerController->bEnableMouseOverEvents = true;
+        PlayerController->SetInputMode(FInputModeGameAndUI());
+    }
 }
 
 void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
@@ -36,12 +46,16 @@ void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FS
         LevelNameTextBlock->SetText(FText::FromString(LevelName));
     }
 
-    UpdateStars(BestStars);
+    UpdateStars(BestStars);  // Ensure this is called
 }
 
 void UConcertSelectionWidget::UpdateStars(int32 BestStars)
 {
-    if (!StarBox) return;
+    if (!StarBox)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("StarBox is nullptr!"));
+        return;
+    }
 
     StarBox->ClearChildren();
 
@@ -70,48 +84,21 @@ void UConcertSelectionWidget::OnConfirmButtonClicked()
 {
     if (UIManager)
     {
-        // Use the UIManager to load the character selection widget
+        // Show the character selection widget when the confirm button is clicked
         UIManager->LoadCharacterSelectionWidget();
-    }
-}
 
-void UConcertSelectionWidget::ShowCharacterSelectionWidget()
-{
-    if (CharacterSelectionWidgetClass)
-    {
-        UCharacterSelectionWidget* CharacterSelectionWidget = CreateWidget<UCharacterSelectionWidget>(GetWorld(), CharacterSelectionWidgetClass);
-        if (CharacterSelectionWidget)
+        // Re-enable input handling for the new widget
+        APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+        if (PlayerController)
         {
-            CharacterSelectionWidget->AddToViewport();
-            this->RemoveFromParent();  // Remove the ConcertSelectionWidget from the viewport
-
-            // Optionally, bind the delegate if you want to handle character selection
-            CharacterSelectionWidget->OnCharacterSelected.AddDynamic(this, &UConcertSelectionWidget::HandleCharacterSelected);
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->bEnableClickEvents = true;
+            PlayerController->bEnableMouseOverEvents = true;
+            PlayerController->SetInputMode(FInputModeGameAndUI());
         }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Failed to create CharacterSelectionWidget instance"));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("CharacterSelectionWidgetClass is not set"));
-    }
-}
 
-void UConcertSelectionWidget::HandleCharacterSelected(int32 CharacterIndex)
-{
-    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (GameInstance)
-    {
-        UStaticMesh* SelectedCharacterMesh = GameInstance->GetSelectedCharacterMesh();
-
-        // This is where you can trigger the level loading after the character is selected
-        AOverworldConcertActor* OverworldConcertActor = Cast<AOverworldConcertActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AOverworldConcertActor::StaticClass()));
-        if (OverworldConcertActor)
-        {
-            OverworldConcertActor->LoadLevel();  // Trigger the level loading
-        }
+        // Remove the current widget from the viewport
+        this->RemoveFromParent();
     }
 }
 
