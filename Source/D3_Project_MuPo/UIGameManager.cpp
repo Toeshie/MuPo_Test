@@ -15,13 +15,7 @@ UUIGameManager::UUIGameManager()
     {
         CharacterSelectionWidgetClass = CharacterWidgetClassFinder.Class;
     }
-
-    // Load the Instrument Selection Widget Blueprint
-    static ConstructorHelpers::FClassFinder<UInstrumentSelectionWidget> InstrumentWidgetClassFinder(TEXT("/Game/Blueprints/UI/InstrumentSelectionWDG"));
-    if (InstrumentWidgetClassFinder.Succeeded())
-    {
-        InstrumentSelectionWidgetClass = InstrumentWidgetClassFinder.Class;
-    }
+    UE_LOG(LogTemp, Log, TEXT("UIGameManager Created"));
 }
 
 void UUIGameManager::LoadLevel(const FName& LevelName)
@@ -57,6 +51,7 @@ void UUIGameManager::LoadCharacterSelectionWidget()
         UCharacterSelectionWidget* CharacterSelectionWidget = CreateWidget<UCharacterSelectionWidget>(GetWorld(), CharacterSelectionWidgetClass);
         if (CharacterSelectionWidget)
         {
+            CharacterSelectionWidget->OnCharacterSelected.AddDynamic(this, &UUIGameManager::OnCharacterSelected);
             CharacterSelectionWidget->AddToViewport();
         }
         else
@@ -66,23 +61,52 @@ void UUIGameManager::LoadCharacterSelectionWidget()
     }
 }
 
+void UUIGameManager::OnCharacterSelected(int32 CharacterIndex, UTexture2D* SelectedCharacterImage)
+{
+    UE_LOG(LogTemp, Log, TEXT("Character %d selected, image: %s"), CharacterIndex, *SelectedCharacterImage->GetName());
+
+    SetSelectedCharacter(CharacterIndex);
+    
+    AOverworldConcertActor* OverworldActor = CachedOverworldConcertActor;
+    LoadInstrumentSelectionWidget(SelectedCharacterImage, OverworldActor);
+}
+
+
 void UUIGameManager::LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, AOverworldConcertActor* OverworldConcertActor)
 {
+    UE_LOG(LogTemp, Log, TEXT("Attempting to load InstrumentSelectionWidget dynamically..."));
+
+    // Corrected path based on your directory structure
+    InstrumentSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("/Game/Blueprints/InstrumentSelectionWDG.InstrumentSelectionWDG_C"));
+
     if (InstrumentSelectionWidgetClass)
     {
         UInstrumentSelectionWidget* InstrumentWidget = CreateWidget<UInstrumentSelectionWidget>(GetWorld(), InstrumentSelectionWidgetClass);
         if (InstrumentWidget)
         {
-            CachedOverworldConcertActor = OverworldConcertActor;  // Cache the actor for level loading
+            UE_LOG(LogTemp, Log, TEXT("Instrument selection widget created and added to viewport."));
+
+            CachedOverworldConcertActor = OverworldConcertActor;
 
             InstrumentWidget->InitializeInstrumentSelectionWidget(CharacterImage);
             InstrumentWidget->OnInstrumentSelected.AddDynamic(this, &UUIGameManager::OnInstrumentSelected);
             InstrumentWidget->AddToViewport();
+
+            APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+            if (PlayerController)
+            {
+                PlayerController->SetInputMode(FInputModeUIOnly());
+                PlayerController->bShowMouseCursor = true;
+            }
         }
         else
         {
             UE_LOG(LogTemp, Warning, TEXT("Failed to create InstrumentSelectionWidget instance"));
         }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to dynamically load InstrumentSelectionWidget class"));
     }
 }
 

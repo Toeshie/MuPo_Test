@@ -34,21 +34,25 @@ void AOverworldConcertActor::ShowWidget()
     if (!WidgetClass || WidgetInstance) return;
 
     UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (!GameInstance) return;
+    if (!GameInstance) {
+        UE_LOG(LogTemp, Error, TEXT("Failed to retrieve GameInstance."));
+        return;
+    }
 
     FString SongName = GameInstance->GetSongNameForLevel(LevelToLoad);
-    FString LevelName;
-    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
+    if (SongName.IsEmpty()) {
+        UE_LOG(LogTemp, Error, TEXT("Failed to retrieve SongName."));
+        return;
+    }
 
-    if (LevelToLoad == "ConcertLocation_CustomSongs")
-    {
-        ShowCustomSongSelectionWidget(GameInstance, SongName);
+    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
+    if (BestStars < 0) {
+        UE_LOG(LogTemp, Error, TEXT("Invalid BestStars retrieved."));
+        return;
     }
-    else
-    {
-        LevelName = (LevelToLoad == "ConcertLocation_1") ? TEXT("Alentejo") : TEXT("Porto");
-        ShowStandardWidget(SongName, LevelName, BestStars);
-    }
+
+    // Proceed to show the widget only if all data is valid
+    ShowStandardWidget(SongName, LevelToLoad.ToString(), BestStars);
 }
 
 void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
@@ -60,8 +64,7 @@ void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const F
         return;
     }
 
-    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);
-    WidgetInstance->OnConfirm.AddDynamic(this, &AOverworldConcertActor::LoadLevel);
+    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);  // Call InitializeWidget here
     WidgetInstance->AddToViewport();
 
     EnablePlayerInteraction();
@@ -115,6 +118,7 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
             WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
             if (WidgetInstance)
             {
+                ShowWidget();
                 WidgetInstance->AddToViewport();
             }
         }

@@ -25,6 +25,8 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadCharacterSelectionWidget();
+	UFUNCTION()
+	void OnCharacterSelected(int32 CharacterIndex, UTexture2D* SelectedCharacterImage);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, class AOverworldConcertActor* OverworldConcertActor);

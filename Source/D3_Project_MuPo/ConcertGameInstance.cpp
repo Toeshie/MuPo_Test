@@ -16,7 +16,17 @@ void UConcertGameInstance::Init()
 	SelectedInstrumentIndex = -1;
 	SelectedCharacterMesh = nullptr;
 	
+	// Ensure UIGameManager is created here
 	UIGameManager = NewObject<UUIGameManager>(this);
+	if (UIGameManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UIGameManager successfully created"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create UIGameManager"));
+	}
+
 	
 	LoadHighScoreData();
 	LoadAllSongData();

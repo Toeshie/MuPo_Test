@@ -10,24 +10,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="873f9cfc-470e-4d78-8e81-92c494a3c8a0" name="Changes" comment="">
+    <list default="true" id="eadd47a4-fa55-4a09-b8db-d7ded7525bd8" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/indexLayout.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/indexLayout.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/projectSettingsUpdater.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/projectSettingsUpdater.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/CharacterSelectionWDG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/UI/CharacterSelectionWDG.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_1.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/InstrumentSelectionWDG.uasset" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_2.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_2.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/ConcertLocation_CustomSongs.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/ConcertLocation_CustomSongs.umap" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/Overworld.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/Overworld.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/HDRI/HDRI_Epic_Courtyard_Daylight.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertCharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertCharacter.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameInstance.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertGameMode.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.h" afterDir="false" />
     </list>
@@ -39,59 +35,37 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/HighScoreSaveGame.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/HighScoreSaveGame.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/InstrumentSelectionWidget.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/InstrumentSelectionWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/MarimbaCharacter.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/MarimbaCharacter.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/SongDataEntry.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/SongDataEntry.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.cpp" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.h" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/../../UE_5.3/Engine/Source/Runtime/Engine/Classes/GameFramework/Character.h" root0="FORCE_HIGHLIGHTING" />
-  </component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 7
 }</component>
-  <component name="ProjectId" id="2kP5h7N5uxGXABzdyZxOmaC9Qaw" />
+  <component name="ProjectId" id="2l6rQX6aeMKcf9Hhd4wIF79Nf3l" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;C++ Project.D3_Project_MuPo.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;development__branch&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "development__branch",
+    "ignore.virus.scanning.warn.message": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;rider.external.source.directories&quot;: [
-      &quot;C:\\Users\\Pedro\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
-      &quot;C:\\Users\\Pedro\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
-      &quot;C:\\Users\\Pedro\\AppData\\Local\\Symbols\\src&quot;
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\Pedro\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
+      "C:\\Users\\Pedro\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
+      "C:\\Users\\Pedro\\AppData\\Local\\Symbols\\src"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="C++ Project.D3_Project_MuPo">
     <configuration name="D3_Project_MuPo" type="CppProject" factoryName="C++ Project">
       <configuration_1>
@@ -215,37 +189,15 @@
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="873f9cfc-470e-4d78-8e81-92c494a3c8a0" name="Changes" comment="" />
+      <changelist id="eadd47a4-fa55-4a09-b8db-d7ded7525bd8" name="Changes" comment="" />
       <created>1709401183378</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1709401183378</updated>
       <workItem from="1709401184519" duration="45000" />
       <workItem from="1709401502028" duration="99000" />
-      <workItem from="1723172491062" duration="1769000" />
-      <workItem from="1723174741849" duration="1029000" />
-      <workItem from="1723256556078" duration="5214000" />
-      <workItem from="1723297571884" duration="3176000" />
-      <workItem from="1723381636716" duration="2111000" />
-      <workItem from="1723418448567" duration="4792000" />
-      <workItem from="1723510994069" duration="3973000" />
-      <workItem from="1723594357870" duration="3053000" />
-      <workItem from="1723607091474" duration="661000" />
-      <workItem from="1723651643228" duration="5441000" />
-      <workItem from="1723727354726" duration="3197000" />
-      <workItem from="1723767808634" duration="5055000" />
-      <workItem from="1723858157396" duration="6305000" />
-      <workItem from="1723902221488" duration="1870000" />
-      <workItem from="1723946488550" duration="2575000" />
-      <workItem from="1724026109422" duration="6204000" />
-      <workItem from="1724081086770" duration="1135000" />
-      <workItem from="1724116053025" duration="6331000" />
-      <workItem from="1724175617448" duration="10652000" />
-      <workItem from="1724253110326" duration="8325000" />
-      <workItem from="1724300424743" duration="206000" />
-      <workItem from="1724331688499" duration="9798000" />
-      <workItem from="1724380827480" duration="1976000" />
-      <workItem from="1724423274778" duration="7252000" />
+      <workItem from="1724511355484" duration="1222000" />
+      <workItem from="1724512659950" duration="387000" />
     </task>
     <servers />
   </component>

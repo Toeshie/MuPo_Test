@@ -36,17 +36,27 @@ void UConcertSelectionWidget::NativeConstruct()
 
 void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
 {
-    if (SongNameTextBlock)
-    {
-        SongNameTextBlock->SetText(FText::FromString(SongName));
-    }
-
-    if (LevelNameTextBlock)
-    {
-        LevelNameTextBlock->SetText(FText::FromString(LevelName));
-    }
-
-    UpdateStars(BestStars);  // Ensure this is called
+    UE_LOG(LogTemp, Warning, TEXT("InitializeWidget called with SongName: %s, LevelName: %s, BestStars: %d"), *SongName, *LevelName, BestStars);
+    
+        if (SongNameTextBlock)
+        {
+            SongNameTextBlock->SetText(FText::FromString(SongName));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("SongNameTextBlock is nullptr"));
+        }
+    
+        if (LevelNameTextBlock)
+        {
+            LevelNameTextBlock->SetText(FText::FromString(LevelName));
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("LevelNameTextBlock is nullptr"));
+        }
+    
+        UpdateStars(BestStars);  // Ensure this is called
 }
 
 void UConcertSelectionWidget::UpdateStars(int32 BestStars)

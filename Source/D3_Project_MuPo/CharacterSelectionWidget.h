@@ -8,7 +8,7 @@
 #include "Components/Image.h"
 #include "CharacterSelectionWidget.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterSelected, int32, CharacterIndex);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCharacterSelected, int32, CharacterIndex, UTexture2D*, SelectedCharacterImage);
 
 UCLASS()
 class D3_PROJECT_MUPO_API UCharacterSelectionWidget : public UUserWidget
@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+    
 	UFUNCTION()
 	void OnCharacter1ButtonClicked();
 	UFUNCTION()
