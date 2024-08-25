@@ -11,8 +11,15 @@ void UListEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 	if (DataEntry)
 	{
 		TimeMsText->SetText(FText::AsNumber(DataEntry->TimeMs));
-		NoteNumberText->SetText(FText::AsNumber(DataEntry->NoteNumber));
-		TrackText->SetText(FText::AsNumber(DataEntry->Track));
+
+		
+		FString NoteDisplay = (DataEntry->NoteNumber == 35) ? TEXT("HighNote") : TEXT("LowNote");
+		NoteNumberText->SetText(FText::FromString(NoteDisplay));
+
+		
+		FString TrackDisplay = (DataEntry->Track == 0) ? TEXT("Drum") : TEXT("Marimba");
+		TrackText->SetText(FText::FromString(TrackDisplay));
+
 		ActionText->SetText(FText::FromString(DataEntry->Action));
 	}
 }

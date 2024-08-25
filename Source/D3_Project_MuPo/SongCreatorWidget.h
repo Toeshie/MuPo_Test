@@ -43,10 +43,10 @@ protected:
 	class UEditableTextBox* TimeMsTextBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* NoteNumberTextBox;
+	class UComboBoxString* NoteNumberComboBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* TrackTextBox;
+	class UComboBoxString* TrackComboBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UComboBoxString* ActionComboBox;
@@ -77,7 +77,7 @@ private:
 	UFUNCTION()
 	void OnExportCSV();
 
-	void UpdateDropdown();
+	//void UpdateDropdown();
 	void UpdateVisualization();
 	void ClearFields();
 	void OnRowSelect(UObject* SelectedItem);

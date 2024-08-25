@@ -13,7 +13,7 @@
 void UCSVWidget::NativeConstruct()
 {
     Super::NativeConstruct();
-    
+
     if (AddUpdateButton)
     {
         AddUpdateButton->OnClicked.AddDynamic(this, &UCSVWidget::OnAddUpdateEntry);
@@ -23,12 +23,26 @@ void UCSVWidget::NativeConstruct()
     {
         ExportButton->OnClicked.AddDynamic(this, &UCSVWidget::OnExportCSV);
     }
-    
+
+    if (NoteNumberComboBox)
+    {
+        NoteNumberComboBox->AddOption(TEXT("HighNote"));
+        NoteNumberComboBox->AddOption(TEXT("LowNote"));
+        NoteNumberComboBox->SetSelectedOption(TEXT("HighNote")); // Default selection
+    }
+
+    if (TrackComboBox)
+    {
+        TrackComboBox->AddOption(TEXT("Drum"));
+        TrackComboBox->AddOption(TEXT("Marimba"));
+        TrackComboBox->SetSelectedOption(TEXT("Drum")); // Default selection
+    }
+
     if (ActionComboBox)
     {
         ActionComboBox->AddOption(TEXT("spawn"));
         ActionComboBox->AddOption(TEXT("despawn"));
-        ActionComboBox->SetSelectedOption(TEXT("spawn"));
+        ActionComboBox->SetSelectedOption(TEXT("spawn")); // Default selection
     }
 
     if (EntriesListView)
@@ -66,37 +80,44 @@ void UCSVWidget::AddItemToList(const FString& TimeMs, const FString& NoteNumber,
     DataEntry->Track = FCString::Atoi(*Track);
     DataEntry->Action = Action;
 
-    // Add the data entry to the ListView
+    // Add the data entry directly to the ListView
     EntriesListView->AddItem(DataEntry);
 }
 
 void UCSVWidget::OnAddUpdateEntry()
 {
-    // Create a new data entry object
     USongDataEntry* DataEntry = NewObject<USongDataEntry>(this);
     DataEntry->TimeMs = FCString::Atoi(*TimeMsTextBox->GetText().ToString());
-    DataEntry->NoteNumber = FCString::Atoi(*NoteNumberTextBox->GetText().ToString());
-    DataEntry->Track = FCString::Atoi(*TrackTextBox->GetText().ToString());
+
+    
+    FString NoteString = NoteNumberComboBox->GetSelectedOption();
+    if (NoteString == TEXT("HighNote"))
+    {
+        DataEntry->NoteNumber = 35;
+    }
+    else if (NoteString == TEXT("LowNote"))
+    {
+        DataEntry->NoteNumber = 38;
+    }
+
+    
+    FString TrackString = TrackComboBox->GetSelectedOption();
+    DataEntry->Track = (TrackString == TEXT("Drum")) ? 0 : 1;
+
     DataEntry->Action = ActionComboBox->GetSelectedOption();
 
     if (SelectedIndex >= 0)
     {
-        // Update existing entry
         CSVEntries[SelectedIndex] = ConvertToFcsvEntry(DataEntry);
-
-        // Update the corresponding row in the list view
         EntriesListView->RequestRefresh();
     }
     else
     {
-        // Add new entry
         FCSVEntry NewEntry = ConvertToFcsvEntry(DataEntry);
         CSVEntries.Add(NewEntry);
-
-        // Add to ListView
         EntriesListView->AddItem(DataEntry);
     }
-    
+
     ClearFields();
     SelectedIndex = -1;
 }
@@ -163,19 +184,19 @@ void UCSVWidget::ClearFields()
         TimeMsTextBox->SetText(FText::GetEmpty());
     }
 
-    if (NoteNumberTextBox)
+    if (NoteNumberComboBox)
     {
-        NoteNumberTextBox->SetText(FText::GetEmpty());
+        NoteNumberComboBox->SetSelectedOption(TEXT("HighNote")); // Reset to default option
     }
 
-    if (TrackTextBox)
+    if (TrackComboBox)
     {
-        TrackTextBox->SetText(FText::GetEmpty());
+        TrackComboBox->SetSelectedOption(TEXT("Drum")); // Reset to default option
     }
 
     if (ActionComboBox)
     {
-        ActionComboBox->SetSelectedOption(TEXT("spawn")); // or a default action
+        ActionComboBox->SetSelectedOption(TEXT("spawn")); // Reset to default option
     }
 }
 
@@ -184,13 +205,15 @@ void UCSVWidget::OnRowSelect(UObject* SelectedItem)
     USongDataEntry* DataEntry = Cast<USongDataEntry>(SelectedItem);
     if (DataEntry)
     {
-        // Populate input fields with the selected row's data
         TimeMsTextBox->SetText(FText::AsNumber(DataEntry->TimeMs));
-        NoteNumberTextBox->SetText(FText::AsNumber(DataEntry->NoteNumber));
-        TrackTextBox->SetText(FText::AsNumber(DataEntry->Track));
-        ActionComboBox->SetSelectedOption(DataEntry->Action);
+        
+        FString NoteDisplay = (DataEntry->NoteNumber == 35) ? TEXT("HighNote") : TEXT("LowNote");
+        NoteNumberComboBox->SetSelectedOption(NoteDisplay);
+        
+        FString TrackDisplay = (DataEntry->Track == 0) ? TEXT("Drum") : TEXT("Marimba");
+        TrackComboBox->SetSelectedOption(TrackDisplay);
 
-        // Find the corresponding FCSVEntry index
+        ActionComboBox->SetSelectedOption(DataEntry->Action);
         SelectedIndex = FindCSVEntryIndex(DataEntry);
     }
 }
@@ -199,7 +222,16 @@ FCSVEntry UCSVWidget::ConvertToFcsvEntry(USongDataEntry* DataEntry)
 {
     FCSVEntry Entry;
     Entry.TimeMs = DataEntry->TimeMs;
-    Entry.NoteNumber = DataEntry->NoteNumber;
+    
+    if (DataEntry->NoteNumber == 35) 
+    {
+        Entry.NoteNumber = 35;
+    } 
+    else if (DataEntry->NoteNumber == 38) 
+    {
+        Entry.NoteNumber = 38;
+    }
+
     Entry.Track = DataEntry->Track;
     Entry.Action = DataEntry->Action;
     return Entry;
