@@ -12,14 +12,9 @@
   <component name="ChangeListManager">
     <list default="true" id="eadd47a4-fa55-4a09-b8db-d7ded7525bd8" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultGame.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultGame.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/InstrumentSelectionWDG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/InstrumentSelectionWDG.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/WDG_CSVCreator.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/UI/WDG_CSVCreator.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/Inputs/MarimbaInputs/IMC_Marimba.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/Inputs/MarimbaInputs/IMC_Marimba.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/CharacterSelectionWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ListEntryWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/SongCreatorWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/SongCreatorWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/SongCreatorWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/SongCreatorWidget.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/MarimbaCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/MarimbaCharacter.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +189,7 @@
       <workItem from="1724511355484" duration="1222000" />
       <workItem from="1724512659950" duration="1607000" />
       <workItem from="1724518311155" duration="651000" />
-      <workItem from="1724552544407" duration="1775000" />
+      <workItem from="1724552544407" duration="2301000" />
     </task>
     <servers />
   </component>
