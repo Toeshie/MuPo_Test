@@ -21,5 +21,6 @@ void UListEntryWidget::NativeOnListItemObjectSet(UObject* ListItemObject)
 		TrackText->SetText(FText::FromString(TrackDisplay));
 
 		ActionText->SetText(FText::FromString(DataEntry->Action));
+		
 	}
 }
