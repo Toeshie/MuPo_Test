@@ -18,6 +18,9 @@ public:
 	AOverworldConcertActor();
 	
 	void LoadLevel();  // This method will load the level using LevelToLoad
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	FName LevelToLoad;
     
 protected:
 
@@ -30,8 +33,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Root")
 	USceneComponent* RootRoot;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
-	FName LevelToLoad;
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UConcertSelectionWidget> WidgetClass;

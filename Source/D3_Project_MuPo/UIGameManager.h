@@ -27,9 +27,10 @@ public:
 	void LoadCharacterSelectionWidget();
 	UFUNCTION()
 	void OnCharacterSelected(int32 CharacterIndex, UTexture2D* SelectedCharacterImage);
+	void SetLevelToLoad(const FString& LevelName);
 
 	UFUNCTION(BlueprintCallable)
-	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, class AOverworldConcertActor* OverworldConcertActor);
+	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, AOverworldConcertActor* OverworldConcertActor);
 
 	// New function that handles instrument selection and level loading
 	UFUNCTION()
@@ -38,6 +39,8 @@ public:
 private:
 	TSubclassOf<class UCharacterSelectionWidget> CharacterSelectionWidgetClass;
 	TSubclassOf<class UInstrumentSelectionWidget> InstrumentSelectionWidgetClass;
+	
+	AOverworldConcertActor* CachedOverworldConcertActor;
 
-	AOverworldConcertActor* CachedOverworldConcertActor;  // Cache the actor for level loading
+	FString CachedLevelName;
 };

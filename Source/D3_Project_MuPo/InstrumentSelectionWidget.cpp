@@ -48,6 +48,11 @@ void UInstrumentSelectionWidget::InitializeInstrumentSelectionWidget(UTexture2D*
 	}
 }
 
+void UInstrumentSelectionWidget::SetCachedLevelName(const FString& LevelName)
+{
+	CachedLevelName = LevelName;
+}
+
 void UInstrumentSelectionWidget::OnConcertCharacterButtonClicked()
 {
 	// Handle the selection of the concert character
@@ -66,6 +71,7 @@ void UInstrumentSelectionWidget::OnConcertCharacterButtonClicked()
 
 	// Optionally, remove this widget if you're done with it
 	RemoveFromParent();
+	UGameplayStatics::OpenLevel(this, FName(*CachedLevelName));
 }
 
 void UInstrumentSelectionWidget::OnMarimbaCharacterButtonClicked()
@@ -86,4 +92,6 @@ void UInstrumentSelectionWidget::OnMarimbaCharacterButtonClicked()
 
 	// Optionally, remove this widget if you're done with it
 	RemoveFromParent();
+	UGameplayStatics::OpenLevel(this, FName(*CachedLevelName));
 }
+

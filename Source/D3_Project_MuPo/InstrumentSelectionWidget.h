@@ -25,6 +25,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InitializeInstrumentSelectionWidget(UTexture2D* CharacterImage);
 
+	void SetCachedLevelName(const FString& LevelName);
+
 protected:
 	virtual void NativeConstruct() override;
 
@@ -43,4 +45,7 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	UImage* SelectedCharacterImage;
+
+
+	FString CachedLevelName;
 };

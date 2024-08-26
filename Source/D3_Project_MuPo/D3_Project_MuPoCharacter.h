@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "OverworldConcertActor.h"
 #include "D3_Project_MuPoCharacter.generated.h"
 
 class USpringArmComponent;
@@ -84,11 +85,20 @@ protected:
 	
 	// To add mapping context
 	virtual void BeginPlay();
+	void NotifyActorBeginOverlap(AActor* OtherActor);
 
 public:
 	/** Returns CameraBoom subobject **/
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	AOverworldConcertActor* CachedOverworldConcertActor;
+	UUIGameManager* UIGameManager;
+
+	UPROPERTY()
+	UTexture2D* SelectedCharacterImage;
+
+	FString CachedLevelName;
 };
 

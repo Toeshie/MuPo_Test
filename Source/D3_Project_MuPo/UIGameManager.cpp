@@ -16,6 +16,16 @@ UUIGameManager::UUIGameManager()
         CharacterSelectionWidgetClass = CharacterWidgetClassFinder.Class;
     }
     UE_LOG(LogTemp, Log, TEXT("UIGameManager Created"));
+
+    static ConstructorHelpers::FClassFinder<UUserWidget> InstrumentSelectionBPClass(TEXT("/Game/Blueprints/UI/InstrumentSelectionWDG"));
+    if (InstrumentSelectionBPClass.Class != nullptr)
+    {
+        InstrumentSelectionWidgetClass = InstrumentSelectionBPClass.Class;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to find InstrumentSelectionWidget class at path: /Game/Blueprints/UI/InstrumentSelectionWDG"));
+    }
 }
 
 void UUIGameManager::LoadLevel(const FName& LevelName)
@@ -71,52 +81,41 @@ void UUIGameManager::OnCharacterSelected(int32 CharacterIndex, UTexture2D* Selec
     LoadInstrumentSelectionWidget(SelectedCharacterImage, OverworldActor);
 }
 
+void UUIGameManager::SetLevelToLoad(const FString& LevelName)
+{
+    CachedLevelName = LevelName;
+    UE_LOG(LogTemp, Log, TEXT("Level to load set to: %s"), *LevelName);
+}
 
 void UUIGameManager::LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, AOverworldConcertActor* OverworldConcertActor)
 {
-    UE_LOG(LogTemp, Log, TEXT("Attempting to load InstrumentSelectionWidget dynamically..."));
-
-    // Corrected path based on your directory structure
-    InstrumentSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("/Game/Blueprints/InstrumentSelectionWDG.InstrumentSelectionWDG_C"));
-
-    if (InstrumentSelectionWidgetClass)
+    if (!InstrumentSelectionWidgetClass)
     {
-        UInstrumentSelectionWidget* InstrumentWidget = CreateWidget<UInstrumentSelectionWidget>(GetWorld(), InstrumentSelectionWidgetClass);
-        if (InstrumentWidget)
-        {
-            UE_LOG(LogTemp, Log, TEXT("Instrument selection widget created and added to viewport."));
+        UE_LOG(LogTemp, Error, TEXT("InstrumentSelectionWidgetClass is null"));
+        return;
+    }
 
-            CachedOverworldConcertActor = OverworldConcertActor;
+    UInstrumentSelectionWidget* InstrumentWidget = CreateWidget<UInstrumentSelectionWidget>(GetWorld(), InstrumentSelectionWidgetClass);
+    if (InstrumentWidget)
+    {
+        // Additional logic to display the widget
+        InstrumentWidget->AddToViewport();
 
-            InstrumentWidget->InitializeInstrumentSelectionWidget(CharacterImage);
-            InstrumentWidget->OnInstrumentSelected.AddDynamic(this, &UUIGameManager::OnInstrumentSelected);
-            InstrumentWidget->AddToViewport();
-
-            APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-            if (PlayerController)
-            {
-                PlayerController->SetInputMode(FInputModeUIOnly());
-                PlayerController->bShowMouseCursor = true;
-            }
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Failed to create InstrumentSelectionWidget instance"));
-        }
+        // Ensure that the level name is correctly passed
+        InstrumentWidget->SetCachedLevelName(CachedLevelName);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to dynamically load InstrumentSelectionWidget class"));
+        UE_LOG(LogTemp, Warning, TEXT("Failed to create InstrumentSelectionWidget instance"));
     }
 }
 
 void UUIGameManager::OnInstrumentSelected(int32 InstrumentIndex)
 {
-    SetSelectedInstrument(InstrumentIndex);
+    // Temporary hardcoded level name for testing
+    FString TestLevelName = "ConcertLocation_1";
 
-    // Load the level using the cached OverworldConcertActor
-    if (CachedOverworldConcertActor)
-    {
-        CachedOverworldConcertActor->LoadLevel();
-    }
+    UE_LOG(LogTemp, Log, TEXT("Loading test level: %s"), *TestLevelName);
+    UGameplayStatics::OpenLevel(this, FName(*TestLevelName));
 }
+

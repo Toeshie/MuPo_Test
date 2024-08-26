@@ -17,7 +17,7 @@ AConcertCharacter::AConcertCharacter()
 {
     // Set this character to call Tick() every frame. You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
-
+    
     // Initialize input actions
     static ConstructorHelpers::FObjectFinder<UInputAction> NoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_NoteHigh.IA_NoteHigh'"));
     IA_NoteHigh = Cast<UInputAction>(NoteHighAction.Object);
