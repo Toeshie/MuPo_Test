@@ -30,10 +30,10 @@ void UCharacterSelectionWidget::NativeConstruct()
     }
 
     // Load character meshes if not already done
-    CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character1.Characters_Character1"));
-    CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character2.Characters_Character2"));
-    CharacterMeshes[2] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character3.Characters_Character3"));
-    CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character4.Characters_Character4"));
+    CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character1Mesh.Character1Mesh"));
+    CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character2Mesh.Character2Mesh"));
+    CharacterMeshes[2] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character3Mesh.Character3Mesh"));
+    CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/Path/To/Character4Mesh.Character4Mesh"));
 
     // Set character images (optional, depending on your implementation)
     CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));

@@ -48,50 +48,24 @@ void UInstrumentSelectionWidget::InitializeInstrumentSelectionWidget(UTexture2D*
 	}
 }
 
-void UInstrumentSelectionWidget::SetCachedLevelName(const FString& LevelName)
-{
-	CachedLevelName = LevelName;
-}
-
 void UInstrumentSelectionWidget::OnConcertCharacterButtonClicked()
 {
-	// Handle the selection of the concert character
-	UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (GameInstance)
-	{
-		GameInstance->SetSelectedInstrument(0);  // 0 for Concert Character
-	}
-
-	// Notify the UIGameManager to proceed with the next step (like loading a level)
-	UUIGameManager* GameManager = GameInstance->GetUIGameManager();
+	UUIGameManager* GameManager = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this))->GetUIGameManager();
 	if (GameManager)
 	{
-		GameManager->OnInstrumentSelected(0);
+		GameManager->OnInstrumentSelected(0);  // Assuming 0 is for Concert Character
 	}
 
-	// Optionally, remove this widget if you're done with it
 	RemoveFromParent();
-	UGameplayStatics::OpenLevel(this, FName(*CachedLevelName));
 }
 
 void UInstrumentSelectionWidget::OnMarimbaCharacterButtonClicked()
 {
-	// Handle the selection of the marimba character
-	UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-	if (GameInstance)
-	{
-		GameInstance->SetSelectedInstrument(1);  // 1 for Marimba Character
-	}
-
-	// Notify the UIGameManager to proceed with the next step (like loading a level)
-	UUIGameManager* GameManager = GameInstance->GetUIGameManager();
+	UUIGameManager* GameManager = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this))->GetUIGameManager();
 	if (GameManager)
 	{
-		GameManager->OnInstrumentSelected(1);
+		GameManager->OnInstrumentSelected(1);  // Assuming 1 is for Marimba Character
 	}
 
-	// Optionally, remove this widget if you're done with it
 	RemoveFromParent();
-	UGameplayStatics::OpenLevel(this, FName(*CachedLevelName));
 }
-

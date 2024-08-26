@@ -13,13 +13,12 @@
 #include "InputActionValue.h"
 #include "UIGameManager.h"
 #include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
 //////////////////////////////////////////////////////////////////////////
 // AD3_Project_MuPoCharacter
-
-
 
 AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 {
@@ -58,7 +57,6 @@ AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 	{
 		PauseMenuClass = PauseMenuBPClass.Class;
 	}
-	
 }
 
 void AD3_Project_MuPoCharacter::BeginPlay()
@@ -76,39 +74,6 @@ void AD3_Project_MuPoCharacter::BeginPlay()
 	if (PauseMenuClass)
 	{
 		PauseMenuWidgetInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
-	}
-	
-	if (!UIGameManager)
-	{
-		UIGameManager = NewObject<UUIGameManager>(this);
-		
-	}
-}
-
-void AD3_Project_MuPoCharacter::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	if (OtherActor)
-	{
-		AOverworldConcertActor* OverworldActor = Cast<AOverworldConcertActor>(OtherActor);
-		if (OverworldActor)
-		{
-			CachedLevelName = OverworldActor->LevelToLoad.ToString(); // Convert FName to FString
-
-			if (!CachedLevelName.IsEmpty())
-			{
-				UE_LOG(LogTemp, Log, TEXT("Cached level to load: %s"), *CachedLevelName);
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("LevelToLoad is empty on actor: %s"), *OverworldActor->GetName());
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Failed to cast OtherActor to AOverworldConcertActor"));
-		}
 	}
 }
 
@@ -218,4 +183,14 @@ void AD3_Project_MuPoCharacter::SpawnNewConcertLocation()
 	{
 		UE_LOG(LogTemplateCharacter, Error, TEXT("Failed to load BP_SecretConcertLocation"));
 	}
+}
+
+UUIGameManager* AD3_Project_MuPoCharacter::GetUIGameManager() const
+{
+	UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance)
+	{
+		return GameInstance->GetUIGameManager();  // Assuming that GetUIGameManager() is a function in your GameInstance
+	}
+	return nullptr;
 }

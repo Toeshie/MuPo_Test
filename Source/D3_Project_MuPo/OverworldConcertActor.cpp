@@ -50,8 +50,7 @@ void AOverworldConcertActor::ShowWidget()
         UE_LOG(LogTemp, Error, TEXT("Invalid BestStars retrieved."));
         return;
     }
-
-    // Proceed to show the widget only if all data is valid
+    
     ShowStandardWidget(SongName, LevelToLoad.ToString(), BestStars);
 }
 
@@ -64,7 +63,7 @@ void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const F
         return;
     }
 
-    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);  // Call InitializeWidget here
+    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);  
     WidgetInstance->AddToViewport();
 
     EnablePlayerInteraction();
@@ -112,7 +111,6 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 {
     if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        // Show the concert selection widget
         if (WidgetClass && !WidgetInstance)
         {
             WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
@@ -122,8 +120,7 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
                 WidgetInstance->AddToViewport();
             }
         }
-
-        // Configure the player controller to show the mouse cursor and handle input
+        
         APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
         if (PlayerController)
         {
@@ -131,6 +128,13 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
             PlayerController->bEnableClickEvents = true;
             PlayerController->bEnableMouseOverEvents = true;
             PlayerController->SetInputMode(FInputModeGameAndUI());
+        }
+
+        // Cache the actor in the GameManager
+        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();  
+        if (GameManager)
+        {
+            GameManager->CacheOverworldConcertActor(this);
         }
     }
 }
