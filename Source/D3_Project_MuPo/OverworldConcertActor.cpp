@@ -1,103 +1,116 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OverworldConcertActor.h"
+#include "ConcertSelectionWidget.h"
 #include "D3_Project_MuPoCharacter.h"
-#include "Blueprint/UserWidget.h"
+#include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "GameFramework/PlayerController.h"
 #include "ConcertGameInstance.h"
 
-// Sets default values
 AOverworldConcertActor::AOverworldConcertActor()
 {
     PrimaryActorTick.bCanEverTick = true;
 
-    RootRoot = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
-    RootComponent = RootRoot;
+    BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BuildingMesh"));
+    RootComponent = BuildingMesh; 
 
-    ConcertLocationMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Concert Mesh"));
-    ConcertLocationMesh->SetupAttachment(RootRoot);
-
-    ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("Concert Collider"));
-    ConcertCollider->SetupAttachment(RootComponent);
+    ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ConcertCollider"));
+    ConcertCollider->SetupAttachment(BuildingMesh);
     ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));
-    
+    ConcertCollider->SetCollisionProfileName(TEXT("Trigger"));
+
     ConcertCollider->OnComponentBeginOverlap.AddDynamic(this, &AOverworldConcertActor::OnBeginOverlap);
     ConcertCollider->OnComponentEndOverlap.AddDynamic(this, &AOverworldConcertActor::OnEndOverlap);
+    
 }
 
-// Called when the game starts or when spawned
 void AOverworldConcertActor::BeginPlay()
 {
     Super::BeginPlay();
+    
+    FString ActorName = GetName();
+    UE_LOG(LogTemp, Log, TEXT("BeginPlay - ActorName: %s"), *ActorName);
+    
+    if (ActorName.Contains("BP_OverworldConcertLocation_C_2"))
+    {
+        SongName = "Lagos";
+        ConcertName = "Alentejo";
+    }
+    else if (ActorName.Contains("BP_OverworldConcertLocation_C_0"))
+    {
+        SongName = "Chankura";
+        ConcertName = "Porto";
+    }
+    else
+    {
+        SongName = "Default Song";
+        ConcertName = "Default Concert";
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("BeginPlay - SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
+}
+
+
+
+void AOverworldConcertActor::EnablePlayerInteraction()
+{
+    if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
+    {
+        PlayerController->bShowMouseCursor = true;
+        PlayerController->bEnableClickEvents = true;
+        PlayerController->bEnableMouseOverEvents = true;
+    }
+}
+
+FString AOverworldConcertActor::GetSongName()
+{
+    UE_LOG(LogTemp, Log, TEXT("GetSongName called: %s"), *SongName);
+    return SongName;
+}
+
+FString AOverworldConcertActor::GetConcertName()
+{
+    UE_LOG(LogTemp, Log, TEXT("GetConcertName called: %s"), *ConcertName);
+    return ConcertName;
+}
+
+int32 AOverworldConcertActor::GetBestStars() const
+{
+    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (GameInstance)
+    {
+        return GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
+    }
+    return 0;
 }
 
 void AOverworldConcertActor::LoadLevel()
 {
     if (LevelToLoad != NAME_None)
     {
-        UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-        if (GameInstance)
-        {
-            const TArray<FNoteData>& NotesData = GameInstance->GetSongDataForLevel(LevelToLoad);
-            // You can now use NotesData in your level to set up the song
-
-            // Proceed to load the level
-            UGameplayStatics::OpenLevel(this, LevelToLoad);
-        }
+        UGameplayStatics::OpenLevel(this, LevelToLoad);
     }
-}
-
-void AOverworldConcertActor::ShowWidget()
-{
-    if (WidgetClass && !WidgetInstance)
-    {
-        WidgetInstance = CreateWidget<UUserWidget>(GetWorld(), WidgetClass);
-        if (WidgetInstance)
-        {
-            WidgetInstance->AddToViewport();
-            
-            if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-            {
-                PlayerController->bShowMouseCursor = true;
-                PlayerController->bEnableClickEvents = true;
-                PlayerController->bEnableMouseOverEvents = true;
-            }
-        }
-    }
-}
-
-void AOverworldConcertActor::DismissWidget()
-{
-    if (WidgetInstance)
-    {
-        WidgetInstance->RemoveFromParent();
-        WidgetInstance = nullptr;
-        
-        if (APlayerController* PlayerController = GetWorld()->GetFirstPlayerController())
-        {
-            PlayerController->bShowMouseCursor = false;
-            PlayerController->bEnableClickEvents = false;
-            PlayerController->bEnableMouseOverEvents = false;
-        }
-    }
-}
-
-// Called every frame
-void AOverworldConcertActor::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
 }
 
 void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    if (OtherActor && OtherActor != this && OtherComp)
+    if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
         {
-            //UE_LOG(LogTemp, Warning, TEXT("IN"));
-            LoadLevel();
+            PlayerController->bShowMouseCursor = true;
+            PlayerController->bEnableClickEvents = true;
+            PlayerController->bEnableMouseOverEvents = true;
+            PlayerController->SetInputMode(FInputModeGameAndUI());
+        }
+
+        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();
+        if (GameManager)
+        {
+            GameManager->CacheOverworldConcertActor(this);  // Cache the actor
+            UE_LOG(LogTemp, Log, TEXT("OnBeginOverlap - Cached Actor: %s"), *this->GetName());
         }
     }
 }
@@ -105,13 +118,38 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-    if (OtherActor && OtherActor != this && OtherComp)
+    if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
+        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();
+        if (GameManager)
         {
-            //UE_LOG(LogTemp, Warning, TEXT("OUT"));
-            //DismissWidget();
+            GameManager->RemoveConcertSelectionWidget();
+            UE_LOG(LogTemp, Log, TEXT("OnEndOverlap - Removed ConcertSelectionWidget from viewport"));
+        }
+        
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = false;
+            PlayerController->SetInputMode(FInputModeGameOnly());
         }
     }
 }
 
+void AOverworldConcertActor::OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter)
+{
+    if (SelectedSongName.IsEmpty())
+    {
+        UE_LOG(LogTemp, Warning, TEXT("No song selected."));
+        return;
+    }
+
+    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (GameInstance)
+    {
+        GameInstance->SetSelectedSong(SelectedSongName);
+        //GameInstance->SetSelectedCharacter(SelectedCharacter);
+    }
+
+    UGameplayStatics::OpenLevel(this, FName("ConcertLocation_CustomSongs"));
+}

@@ -9,6 +9,6 @@ public class D3_Project_MuPo : ModuleRules
 		PrivateDependencyModuleNames.AddRange(new string[] { "AITestSuite"});
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "SlateCore", "Slate" });
 	}
 }

@@ -3,12 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SongDataEntry.h"
 #include "Blueprint/UserWidget.h"
 #include "SongCreatorWidget.generated.h"
 
-/**
- * 
- */
 USTRUCT(BlueprintType)
 struct FCSVEntry
 {
@@ -25,6 +23,8 @@ struct FCSVEntry
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	FString Action;
+
+	int32 Index;  // New property to track the entry's position
 };
 
 UCLASS()
@@ -34,16 +34,19 @@ class D3_PROJECT_MUPO_API UCSVWidget : public UUserWidget
 
 public:
 	virtual void NativeConstruct() override;
+	void TestListView();
+
+	void AddItemToList(const FString& TimeMs, const FString& NoteNumber, const FString& Track, const FString& Action);
 
 protected:
 	UPROPERTY(meta = (BindWidget))
 	class UEditableTextBox* TimeMsTextBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* NoteNumberTextBox;
+	class UComboBoxString* NoteNumberComboBox;
 
 	UPROPERTY(meta = (BindWidget))
-	class UEditableTextBox* TrackTextBox;
+	class UComboBoxString* TrackComboBox;
 
 	UPROPERTY(meta = (BindWidget))
 	class UComboBoxString* ActionComboBox;
@@ -57,8 +60,16 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	class UListView* EntriesListView;
 
+	UPROPERTY(meta = (BindWidget))
+	class UEditableTextBox* FileNameTextBox;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widgets")
+	TSubclassOf<UUserWidget> ListEntryWidgetBPClass;
+
 private:
 	TArray<FCSVEntry> CSVEntries;
+
+	int32 SelectedIndex = -1;  // Initialize directly here
 
 	UFUNCTION()
 	void OnAddUpdateEntry();
@@ -66,8 +77,10 @@ private:
 	UFUNCTION()
 	void OnExportCSV();
 
-	void UpdateDropdown();
+	//void UpdateDropdown();
 	void UpdateVisualization();
 	void ClearFields();
-	void OnRowSelect();
+	void OnRowSelect(UObject* SelectedItem);
+	FCSVEntry ConvertToFcsvEntry(USongDataEntry* DataEntry);
+	int32 FindCSVEntryIndex(USongDataEntry* DataEntry);
 };

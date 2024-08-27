@@ -3,14 +3,17 @@
 #include "D3_Project_MuPoCharacter.h"
 #include "Engine/LocalPlayer.h"
 #include "Camera/CameraComponent.h"
+#include "OverworldConcertActor.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
 #include "PauseMenuWidget.h"
-#include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "UIGameManager.h"
+#include "EnhancedInputSubsystems.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -20,7 +23,7 @@ DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(200.f, 100.0f);
 		
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -31,8 +34,6 @@ AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 
-	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
-	// instead of recompiling to adjust them
 	GetCharacterMovement()->JumpZVelocity = 700.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
@@ -51,9 +52,6 @@ AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
 	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
 
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
-
 	static ConstructorHelpers::FClassFinder<UUserWidget> PauseMenuBPClass(TEXT("/Game/Blueprints/UI/PauseMenu"));
 	if (PauseMenuBPClass.Class != nullptr)
 	{
@@ -63,10 +61,8 @@ AD3_Project_MuPoCharacter::AD3_Project_MuPoCharacter()
 
 void AD3_Project_MuPoCharacter::BeginPlay()
 {
-	// Call the base class  
 	Super::BeginPlay();
 
-	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -74,56 +70,46 @@ void AD3_Project_MuPoCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
 	if (PauseMenuClass)
 	{
-		// Create the widget and keep a reference to it
 		PauseMenuWidgetInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
 void AD3_Project_MuPoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
-	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
-		// Jumping
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
-		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AD3_Project_MuPoCharacter::Move);
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AD3_Project_MuPoCharacter::TogglePauseMenuProxy);
 
-		// Looking
+		InputComponent->BindKey(EKeys::H, IE_Pressed, this, &AD3_Project_MuPoCharacter::OnKeyInput);
+		InputComponent->BindKey(EKeys::E, IE_Pressed, this, &AD3_Project_MuPoCharacter::OnKeyInput);
+		InputComponent->BindKey(EKeys::A, IE_Pressed, this, &AD3_Project_MuPoCharacter::OnKeyInput);
+		InputComponent->BindKey(EKeys::V, IE_Pressed, this, &AD3_Project_MuPoCharacter::OnKeyInput);
+		InputComponent->BindKey(EKeys::Y, IE_Pressed, this, &AD3_Project_MuPoCharacter::OnKeyInput);
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AD3_Project_MuPoCharacter::Look);
-	}
-	else
-	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
 	}
 }
 
 void AD3_Project_MuPoCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
-		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
-		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
 		AddMovementInput(ForwardDirection, MovementVector.Y);
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
@@ -131,12 +117,10 @@ void AD3_Project_MuPoCharacter::Move(const FInputActionValue& Value)
 
 void AD3_Project_MuPoCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
-		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
@@ -148,4 +132,65 @@ void AD3_Project_MuPoCharacter::TogglePauseMenuProxy()
 	{
 		PauseMenuWidgetInstance->TogglePauseMenu();
 	}
+}
+
+void AD3_Project_MuPoCharacter::OnKeyInput(FKey PressedKey)
+{
+	FString PressedKeyString = PressedKey.GetDisplayName().ToString();
+
+	CurrentInput += PressedKeyString;
+
+	if (CheatCode.StartsWith(CurrentInput))
+	{
+		if (CurrentInput == CheatCode)
+		{
+			SpawnNewConcertLocation();
+			CurrentInput.Empty();
+		}
+	}
+	else
+	{
+		CurrentInput.Empty();
+	}
+}
+
+void AD3_Project_MuPoCharacter::SpawnNewConcertLocation()
+{
+	// Check if the location has already been spawned
+	if (bHasSpawnedSecretConcertLocation)
+	{
+		return; // Exit the function if it's already spawned
+	}
+
+	FVector SpawnLocation = FVector(-3391.0, 551.0, -92.9999); // Specify your desired spawn location
+	FRotator SpawnRotation = FRotator::ZeroRotator;
+
+	// Load the specified blueprint
+	UClass* ConcertLocationClass = StaticLoadClass(UObject::StaticClass(), nullptr, TEXT("/Game/Blueprints/Overworld/BP_SecretConcertLocation.BP_SecretConcertLocation_C"));
+	if (ConcertLocationClass)
+	{
+		UWorld* World = GetWorld();
+		if (World)
+		{
+			AActor* SpawnedActor = World->SpawnActor<AActor>(ConcertLocationClass, SpawnLocation, SpawnRotation);
+			if (SpawnedActor)
+			{
+				bHasSpawnedSecretConcertLocation = true; // Set the flag to prevent further spawns
+			}
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemplateCharacter, Error, TEXT("Failed to load BP_SecretConcertLocation"));
+	}
+}
+
+UUIGameManager* AD3_Project_MuPoCharacter::GetUIGameManager() const
+{
+	UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+	if (GameInstance)
+	{
+		return GameInstance->GetUIGameManager();  // Assuming that GetUIGameManager() is a function in your GameInstance
+	}
+	return nullptr;
 }

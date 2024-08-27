@@ -6,6 +6,9 @@
 #include "ConcertCharacter.h"
 #include "OverworldCarCharacter.h"
 #include "Components/Button.h"
+#include "Components/HorizontalBox.h"
+#include "Components/Image.h"
+#include "Components/TextBlock.h"
 #include "Kismet/GameplayStatics.h"
 
 
@@ -68,3 +71,105 @@ void UEndGameMenu::SetupInputContexts()
 		}
 	}
 }
+
+void UEndGameMenu::SetFinalScore(int32 Score)
+{
+	if (FinalScoreText)
+	{
+		FinalScoreText->SetText(FText::AsNumber(Score));
+	}
+}
+
+void UEndGameMenu::SetStarsBasedOnPercentage(float Percentage)
+{
+	if (StarBox)
+	{
+		StarBox->ClearChildren();
+
+		int32 StarCount = FMath::Clamp(FMath::FloorToInt(Percentage / 20.0f), 0, 5);
+
+		// Load your star textures
+		UTexture2D* FilledStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")); 
+		UTexture2D* EmptyStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/13595.13595"));  
+
+		for (int32 i = 0; i < 5; i++)  // Ensure exactly 5 stars are displayed
+		{
+			UImage* StarImage = NewObject<UImage>(StarBox);
+
+			if (i < StarCount)
+			{
+				// Set the filled star texture
+				if (FilledStarTexture)
+				{
+					FSlateBrush Brush;
+					Brush.SetResourceObject(FilledStarTexture);
+					StarImage->SetBrush(Brush);
+				}
+			}
+			else
+			{
+				// Set the empty star texture
+				if (EmptyStarTexture)
+				{
+					FSlateBrush Brush;
+					Brush.SetResourceObject(EmptyStarTexture);
+					StarImage->SetBrush(Brush);
+				}
+			}
+
+			StarBox->AddChild(StarImage);
+		}
+	}
+}
+
+void UEndGameMenu::SetHighScore(int32 HighScore)
+{
+	if (HighScoreText)
+	{
+		HighScoreText->SetText(FText::AsNumber(HighScore));
+	}
+}
+
+void UEndGameMenu::SetStarsBasedOnHighestPercentage(float Percentage)
+{
+	if (StarBox)
+	{
+		StarBox->ClearChildren();
+
+		int32 StarCount = FMath::Clamp(FMath::FloorToInt(Percentage / 20.0f), 0, 5);
+
+		// Load your star textures
+		UTexture2D* FilledStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")); 
+		UTexture2D* EmptyStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/13595.13595"));   
+
+		for (int32 i = 0; i < 5; i++)  // Ensure exactly 5 stars are displayed
+		{
+			UImage* StarImage = NewObject<UImage>(StarBox);
+
+			if (i < StarCount)
+			{
+				// Set the filled star texture
+				if (FilledStarTexture)
+				{
+					FSlateBrush Brush;
+					Brush.SetResourceObject(FilledStarTexture);
+					StarImage->SetBrush(Brush);
+				}
+			}
+			else
+			{
+				// Set the empty star texture
+				if (EmptyStarTexture)
+				{
+					FSlateBrush Brush;
+					Brush.SetResourceObject(EmptyStarTexture);
+					StarImage->SetBrush(Brush);
+				}
+			}
+
+			StarBox->AddChild(StarImage);
+		}
+	}
+	
+}
+

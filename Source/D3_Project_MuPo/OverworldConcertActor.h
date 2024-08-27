@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ConcertGameInstance.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "OverworldConcertActor.generated.h"
@@ -15,38 +16,44 @@ class D3_PROJECT_MUPO_API AOverworldConcertActor : public AActor
 public:    
 	// Sets default values for this actor's properties
 	AOverworldConcertActor();
+	
+	void LoadLevel();  // This method will load the level using LevelToLoad
     
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
-	UStaticMeshComponent* ConcertLocationMesh;
 
+	UPROPERTY(BlueprintReadOnly)
+	UStaticMeshComponent* BuildingMesh;
+	
 	UPROPERTY(BlueprintReadWrite, Category = "Collider")
 	UBoxComponent* ConcertCollider;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Root")
+	UPROPERTY(BlueprintReadWrite, Category = "Root")
 	USceneComponent* RootRoot;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
 	FName LevelToLoad;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UUserWidget> WidgetClass;
 
-	UPROPERTY()
-	UUserWidget* WidgetInstance;
-
+	
 	virtual void BeginPlay() override;
-
-	void ShowWidget();
-	void DismissWidget();
-	void Tick(float DeltaTime);
-
-	UFUNCTION()
-	void LoadLevel();
-
+	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 	UFUNCTION()
 	void OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION()
+	
+	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
+	void EnablePlayerInteraction();
+public:
+	FString GetSongName();
+	FString GetConcertName();
+	int32 GetBestStars() const; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	FString ConcertName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	FString SongName;
 };

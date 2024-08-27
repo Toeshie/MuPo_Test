@@ -63,8 +63,7 @@ void AConcertCharacter::BeginPlay()
         PlayerController->bShowMouseCursor = false;
     }
    
-
-    // Find and store a reference to the camera actor
+    
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMainConcertCameraActor::StaticClass(), FoundActors);
     if (FoundActors.Num() > 0)
@@ -179,35 +178,29 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
 
                     if (perfectHit)
                     {
-                        GameMode->UpdatePlayer1Score(50); // Perfect hit
-                        GameMode->NoteHit(true, true); // Update streak and multiplier with perfect hit
-                        PlaySound(bIsHighNote ? HighNoteHitSound : LowNoteHitSound); // Play appropriate note hit sound
+                        GameMode->UpdatePlayer1Score(50); 
+                        GameMode->NoteHit(true, true); 
+                        PlaySound(bIsHighNote ? HighNoteHitSound : LowNoteHitSound); 
                     }
                     else if (goodHit)
                     {
-                        GameMode->UpdatePlayer1Score(10); // Good hit
-                        GameMode->NoteHit(true, false); // Update streak and multiplier with good hit
-                        PlaySound(bIsHighNote ? HighNoteHitSound : LowNoteHitSound); // Play appropriate note hit sound
+                        GameMode->UpdatePlayer1Score(10); 
+                        GameMode->NoteHit(true, false); 
+                        PlaySound(bIsHighNote ? HighNoteHitSound : LowNoteHitSound);
                     }
 
                     Note->Destroy();
                 }
             }
-            else
-            {
-                UE_LOG(LogTemp, Warning, TEXT("Incorrect note type."));
-            }
         }
     }
-
-    // If no note was hit, reset the streak and multiplier
     if (!bNoteHit)
     {
         AConcertGameMode* GameMode = Cast<AConcertGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
         if (GameMode)
         {
             GameMode->NoteHit(false, false); // Reset streak and multiplier
-            PlaySound(MissNoteSound); // Play miss note sound
+            PlaySound(MissNoteSound);
         }
     }
 }

@@ -2,146 +2,116 @@
 
 #include "NoteSpawner.h"
 #include "NoteBaseClass.h"
-#include "SongDataParserSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
-
-
-// Sets default values for this component's properties
 UNoteSpawner::UNoteSpawner()
 {
     PrimaryComponentTick.bCanEverTick = true;
 
     static ConstructorHelpers::FClassFinder<ANoteBaseClass> BP_DrumNoteHighClassFinder(TEXT("/Game/Blueprints/NoteStuff/C++Stuff/Notes/BP_DrumNoteHigh"));
     static ConstructorHelpers::FClassFinder<ANoteBaseClass> BP_DrumNoteLowClassFinder(TEXT("/Game/Blueprints/NoteStuff/C++Stuff/Notes/BP_DrumNoteLow"));
-    
-    BP_DrumNoteHigh = BP_DrumNoteHighClassFinder.Class;
-    BP_DrumNoteLow = BP_DrumNoteLowClassFinder.Class;
+
+    if (BP_DrumNoteHighClassFinder.Succeeded() && BP_DrumNoteLowClassFinder.Succeeded())
+    {
+        BP_DrumNoteHigh = BP_DrumNoteHighClassFinder.Class;
+        BP_DrumNoteLow = BP_DrumNoteLowClassFinder.Class;
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to find note classes."));
+    }
 }
 
 void UNoteSpawner::BeginPlay()
 {
     Super::BeginPlay();
-	SetNotesData(CurrentNotesData);
+    
 }
 
 void UNoteSpawner::InitializeComponent()
 {
-	Super::InitializeComponent();
-	CurrentNotesData.Empty();
-	ClearScheduledNotes();
+    Super::InitializeComponent();
+    CurrentNotesData.Empty();
+    ClearScheduledNotes();
 }
 
-void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NotesData)
+void UNoteSpawner::HandleNoteSpawning()
 {
-	CurrentNotesData = NotesData;
-	UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
+    float CurrentTime = GetWorld()->GetTimeSeconds();
+    
 
-	// Schedule notes if already begun play
-	if (HasBegunPlay())
-	{
-		ClearScheduledNotes();
-		ScheduleNotes(CurrentNotesData);
-	}
+    while (CurrentNoteIndex < CurrentNotesData.Num())
+    {
+        const FNoteData& Note = CurrentNotesData[CurrentNoteIndex];
+
+        float NoteTime = Note.TimeMs / 1000.0f;
+        
+
+        if (CurrentTime >= NoteTime)
+        {
+           
+            SpawnNoteBasedOnNoteData(Note);
+            CurrentNoteIndex++;
+        }
+        else
+        {
+            break;
+        }
+    }
 }
+
 
 void UNoteSpawner::SpawnNoteBasedOnNoteData(const FNoteData& Note)
 {
-   FVector SpawnLocation;
-	FRotator SpawnRotation = GetOwner()->GetActorRotation();
-	FActorSpawnParameters SpawnParameters;
+    FVector SpawnLocation = GetComponentLocation(); // Base location
+    FRotator SpawnRotation = GetComponentRotation(); // Rotation of the spawner component
+    FActorSpawnParameters SpawnParameters;
+    SpawnParameters.Owner = GetOwner();  // Set the owner to the actor that owns this component
 
-	bool isHighNote = Note.NoteNumber >= HighNoteValue && Note.Track == 0;
-	bool isSpawnAction = Note.Action.Equals(TEXT("spawn"), ESearchCase::IgnoreCase);
-	bool isDespawnAction = Note.Action.Equals(TEXT("despawn"), ESearchCase::IgnoreCase);
-	
-	if (isSpawnAction)
-	{
-		if (isHighNote)
-		{
-			SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetHigh);
-			if (BP_DrumNoteHigh)
-			{
-				AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteHigh, SpawnLocation, SpawnRotation, SpawnParameters);
-				//UE_LOG(LogTemp, Warning, TEXT("Spawned High Note: %s"), (SpawnedActor != nullptr) ? TEXT("Yes") : TEXT("No"));
-				if (SpawnedActor)
-				{
-					SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
-					OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
-				}
-			}
-		}
-		else if (Note.NoteNumber <= LowNoteValue && Note.Track == 0)
-		{
-			SpawnLocation = GetOwner()->GetActorTransform().TransformPosition(LocalOffsetLow);
-			if (BP_DrumNoteLow)
-			{
-				AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(BP_DrumNoteLow, SpawnLocation, SpawnRotation, SpawnParameters);
-				//UE_LOG(LogTemp, Warning, TEXT("Spawned Low Note: %s"), (SpawnedActor != nullptr) ? TEXT("Yes") : TEXT("No"));
-				if (SpawnedActor)
-				{
-					SpawnedActor->AttachToActor(GetOwner(), FAttachmentTransformRules::KeepRelativeTransform);
-					OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
-				}
-			}
-		}
-	}
-	else if (isDespawnAction)
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Despawn action detected. Handling despawn logic here."));
-	}
+    // Adjust spawn location based on note data
+    if (Note.NoteNumber >= HighNoteValue && Note.Track == 0)
+    {
+        SpawnLocation += LocalOffsetHigh;
+    }
+    else
+    {
+        SpawnLocation += LocalOffsetLow;
+    }
+
+    TSubclassOf<AActor> NoteClass = (Note.NoteNumber >= HighNoteValue && Note.Track == 0) ? BP_DrumNoteHigh : BP_DrumNoteLow;
+
+    if (NoteClass)
+    {
+        AActor* SpawnedActor = GetWorld()->SpawnActor<ANoteBaseClass>(NoteClass, SpawnLocation, SpawnRotation, SpawnParameters);
+        if (SpawnedActor)
+        {
+            SpawnedActor->AttachToComponent(this, FAttachmentTransformRules::KeepRelativeTransform);
+            OnNoteSpawned.Broadcast(); // Notify that a note has been spawned
+        }
+    }
 }
 
-void UNoteSpawner::ScheduleNotes(const TArray<FNoteData>& InNotesData)
+void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NewNotesData)
 {
-	// Clear any existing timers before scheduling new ones
-	ClearScheduledNotes();
-	
+    if (NewNotesData.Num() == 0)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("SetNotesData received an empty array"));
+        return;
+    }
 
-	for (const FNoteData& Note : InNotesData)
-	{
-		if (!Note.IsValid())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Invalid Note: %s"), *Note.ToString());
-			continue;
-		}
+    this->NotesData = NewNotesData;
+    CurrentNotesData = NewNotesData;  // Ensure this is set
+    
+    UE_LOG(LogTemp, Log, TEXT("SetNotesData successfully updated NotesData."));
 
-		float Delay = Note.TimeMs / 1000.0f;
-		UE_LOG(LogTemp, Warning, TEXT("Setting timer for Note: %s with Delay: %f seconds"), *Note.ToString(), Delay);
-
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Note]() {
-			UE_LOG(LogTemp, Warning, TEXT("Timer Triggered for Note: %s"), *Note.ToString());
-			this->SpawnNoteBasedOnNoteData(Note);
-		}, Delay, false);
-
-		// Store the TimerHandle so it can be cleared later
-		NoteTimerHandles.Add(TimerHandle);
-	}	
+    // Start the note spawning timer here instead
+    GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.005f, true);
 }
 void UNoteSpawner::ClearScheduledNotes()
 {
-	// Iterate over all stored timer handles and clear them
-	for (FTimerHandle& TimerHandle : NoteTimerHandles)
-	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-	}
-
-	// Clear the array after all timers are cleared
-	NoteTimerHandles.Empty();
-
-	UE_LOG(LogTemp, Warning, TEXT("All scheduled notes have been cleared"));
+    GetWorld()->GetTimerManager().ClearTimer(NoteSpawnTimerHandle);
+    CurrentNoteIndex = 0;
 }
-
-
-void UNoteSpawner::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
-
-
-
-
-
 
 /*
 void UNoteSpawner::SpawnNote()

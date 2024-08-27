@@ -25,6 +25,9 @@ protected:
 	float MovementFrequency = 1.0f; // Adjust this value to control the speed of the movement
 
 	float TimeSinceBegin = 0.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Music")
+	float MusicStartTimer;
 	
 public:
 	AMainConcertCameraActor();

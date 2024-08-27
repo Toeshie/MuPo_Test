@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "UIGameManager.h"
 #include "D3_Project_MuPoCharacter.generated.h"
 
 class USpringArmComponent;
@@ -46,6 +47,16 @@ class AD3_Project_MuPoCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* PauseAction;
+	
+	// Cheat code sequence
+	FString CheatCode = TEXT("heavy");
+	FString CurrentInput;
+
+	void OnKeyInput(FKey PressedKey); // Function to handle key inputs
+	// Function to check the cheat code
+	void SpawnNewConcertLocation();
+
+	bool bHasSpawnedSecretConcertLocation = false;
 
 public:
 	AD3_Project_MuPoCharacter();
@@ -80,5 +91,7 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+
+	UUIGameManager* GetUIGameManager() const;
 };
 

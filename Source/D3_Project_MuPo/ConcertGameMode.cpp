@@ -8,8 +8,12 @@
 #include "NoteSpawner.h"
 #include "Camera/CameraActor.h"
 #include "ConcertGameInstance.h"
+#include "EndGameMenu.h"
+#include "HighScoreSaveGame.h"
+#include "MarimbaCharacter.h"
 #include "Sound/SoundWave.h"
 #include "Blueprint/UserWidget.h"
+#include "GameFramework/PlayerStart.h"
 
 AConcertGameMode::AConcertGameMode()
 {
@@ -21,7 +25,7 @@ AConcertGameMode::AConcertGameMode()
     TotalNotes = 0;
     GoodHits = 0;
     PerfectHits = 0;
-    TotalNotesInSong = 0; // Initialize total notes in song
+    TotalNotesInSong = 0; 
 
     static ConstructorHelpers::FClassFinder<UUserWidget> MenuWidgetClass(TEXT("/Game/Blueprints/BP_EndGameMenu"));
     if (MenuWidgetClass.Succeeded())
@@ -45,8 +49,7 @@ void AConcertGameMode::ScheduleEndGameMenu(float Delay)
 
 void AConcertGameMode::UpdatePlayer1Score(int32 ScoreDelta)
 {
-    Player1Score += ScoreDelta * ScoreMultiplier; // Apply the multiplier to the score delta
-    UE_LOG(LogTemp, Log, TEXT("Player 1 Score: %d"), Player1Score);
+    Player1Score += ScoreDelta * ScoreMultiplier;
     DisplayScore();
 }
 
@@ -60,42 +63,52 @@ void AConcertGameMode::NoteHit(bool bIsCorrect, bool bIsPerfect)
     if (bIsCorrect)
     {
         CurrentStreak++;
+
         if (CurrentStreak % StreakToIncreaseMultiplier == 0 && ScoreMultiplier < MaxMultiplier)
         {
             ScoreMultiplier++;
-            UE_LOG(LogTemp, Log, TEXT("Multiplier increased to %d"), ScoreMultiplier);
         }
 
         if (bIsPerfect)
         {
             PerfectHits++;
+            UE_LOG(LogTemp, Log, TEXT("Perfect hit. PerfectHits: %d"), PerfectHits);
         }
         else
         {
             GoodHits++;
+            UE_LOG(LogTemp, Log, TEXT("Good hit. GoodHits: %d"), GoodHits);
         }
     }
     else
     {
         CurrentStreak = 0;
         ScoreMultiplier = 1;
-        UE_LOG(LogTemp, Log, TEXT("Streak reset. Multiplier reset to 1"));
     }
 
-    // Update the HUD with the new streak, multiplier, and hit counts
-    APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-    if (PlayerController)
+    HitPercentage = GetCorrectNotePercentage();
+    DisplayScore();
+}
+
+int32 AConcertGameMode::GetFinalScore() const
+{
+    return Player1Score;
+}
+
+float AConcertGameMode::GetCorrectNotePercentage() 
+{
+    if (TotalNotes == 0)
     {
-        AScoreHUD* HUD = Cast<AScoreHUD>(PlayerController->GetHUD());
-        if (HUD)
-        {
-            HUD->SetStreak(CurrentStreak);
-            HUD->SetMultiplier(ScoreMultiplier);
-            HUD->SetGoodHits(GoodHits);
-            HUD->SetPerfectHits(PerfectHits);
-            HUD->SetTotalNotes(TotalNotes);
-        }
+        return 0.0f; 
     }
+
+    int32 TotalHits = GoodHits + PerfectHits;
+    HitPercentage = static_cast<float>(TotalHits) / TotalNotes * 100.0f;
+
+    UE_LOG(LogTemp, Log, TEXT("Calculating Hit Percentage. TotalHits: %d, TotalNotes: %d, HitPercentage: %f"), TotalHits, TotalNotes, HitPercentage);
+
+    return HitPercentage;
+    
 }
 
 void AConcertGameMode::DisplayScore()
@@ -107,6 +120,15 @@ void AConcertGameMode::DisplayScore()
         if (HUD)
         {
             HUD->SetScore(Player1Score);
+            HUD->SetStreak(CurrentStreak);
+            HUD->SetMultiplier(ScoreMultiplier);
+            HUD->SetGoodHits(GoodHits);
+            HUD->SetPerfectHits(PerfectHits);
+            HUD->SetTotalNotes(TotalNotes);
+
+            // Update the HUD with the latest hit percentage
+            HUD->SetHitPercentage(GetCorrectNotePercentage());
+            UE_LOG(LogTemp, Log, TEXT("Updated HUD with HitPercentage: %f"), GetCorrectNotePercentage());
         }
     }
 }
@@ -130,8 +152,7 @@ void AConcertGameMode::BeginPlay()
             }
         }
     }
-
-    // Initialize the NoteSpawner
+    
     AActor* CameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), ACameraActor::StaticClass());
     if (CameraActor)
     {
@@ -149,87 +170,80 @@ void AConcertGameMode::BeginPlay()
     {
         UE_LOG(LogTemp, Error, TEXT("CameraActor not found"));
     }
-
+    
     if (MusicWave)
     {
         SongDuration = MusicWave->Duration;
         UE_LOG(LogTemp, Log, TEXT("MusicWave duration: %f seconds"), SongDuration);
-
-        // Adding a buffer time after the song ends before showing the end game menu
-        float EndGameMenuDelay = SongDuration + 5.0f;
-        UE_LOG(LogTemp, Log, TEXT("Scheduling end game menu to appear in: %f seconds"), EndGameMenuDelay);
-        ScheduleEndGameMenu(EndGameMenuDelay);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("MusicWave is null. Cannot schedule end game menu."));
+        UE_LOG(LogTemp, Error, TEXT("MusicWave is null. Trying to calculate duration from Note Data."));
     }
 
     FString LevelName = GetWorld()->GetMapName();
     LevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-    // Load the appropriate MusicWave based on the level name
-    if (LevelName == "ConcertLocation_1")
+    if (SongDuration <= 0.0f) // either or approach
     {
-        MusicWave = LoadObject<USoundWave>(nullptr, TEXT("/Game/Sounds/Nobody__Not_Even_the_Rain_｜_La_Dispute__2018_.Nobody__Not_Even_the_Rain_｜_La_Dispute__2018_"));
-    }
-    else if (LevelName == "ConcertLocation_2")
-    {
-        MusicWave = LoadObject<USoundWave>(nullptr, TEXT("/Game/Sounds/Rhythmic_Vol2_Chankura_MainMarks.Rhythmic_Vol2_Chankura_MainMarks"));
+        GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+        if (GameInstance)
+        {
+            SongDuration = GameInstance->GetSongDuration(FName(*LevelName));
+            UE_LOG(LogTemp, Log, TEXT("Calculated song duration from Note Data: %f seconds"), SongDuration);
+        }
     }
 
-    // Check if the MusicWave is successfully loaded
-    if (MusicWave)
+    // Schedule the end game menu with a buffer time
+    if (SongDuration > 0.0f)
     {
-        UE_LOG(LogTemp, Log, TEXT("Successfully loaded MusicWave for %s"), *LevelName);
-        SongDuration = MusicWave->Duration;
-        ScheduleEndGameMenu(SongDuration + 5.0f);
+        float EndGameMenuDelay = SongDuration + 9.0f;
+        UE_LOG(LogTemp, Log, TEXT("Scheduling end game menu to appear in: %f seconds"), EndGameMenuDelay);
+        ScheduleEndGameMenu(EndGameMenuDelay);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to load MusicWave for level %s"), *LevelName);
+        UE_LOG(LogTemp, Error, TEXT("Failed to determine song duration. End game menu will not be scheduled."));
     }
-
-    // Load the song data for this level
+    
     LoadSongData();
 }
 
 void AConcertGameMode::LoadSongData()
 {
     GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (GameInstance)
+    if (!GameInstance)
     {
-        FString CurrentLevelName = GetWorld()->GetMapName();
-        CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
+        UE_LOG(LogTemp, Error, TEXT("Failed to cast GameInstance"));
+        return;
+    }
 
-        FName LevelName = FName(*CurrentLevelName);
-        UE_LOG(LogTemp, Warning, TEXT("Current Level Name (stripped): %s"), *LevelName.ToString());
+    FString CurrentLevelName = GetWorld()->GetMapName();
+    CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
 
-        const TArray<FNoteData>& NotesData = GameInstance->GetSongDataForLevel(LevelName);
-        UE_LOG(LogTemp, Warning, TEXT("Notes Data Count: %d for level: %s"), NotesData.Num(), *LevelName.ToString());
+    const TArray<FNoteData>& LevelNotesData = GameInstance->GetSongDataForLevel(FName(*CurrentLevelName));
 
-        TotalNotesInSong = NotesData.Num(); // Set the total number of notes in the current song
+    if (LevelNotesData.Num() == 0)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No note data found for level: %s"), *CurrentLevelName);
+        return;
+    }
 
-        if (NoteSpawner)
-        {
-            NoteSpawner->SetNotesData(NotesData);
-            UE_LOG(LogTemp, Warning, TEXT("SetNotesData called. Notes count: %d"), NotesData.Num());
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("NoteSpawner is null. Cannot set notes data."));
-        }
+    if (NoteSpawner)
+    {
+        NoteSpawner->SetNotesData(LevelNotesData);
     }
     else
     {
-        UE_LOG(LogTemp, Error, TEXT("GameInstance not found"));
+        UE_LOG(LogTemp, Error, TEXT("NoteSpawner is null. Cannot set notes data."));
     }
 }
+
 
 void AConcertGameMode::HandleNoteSpawned()
 {
     TotalNotes++;
-    UE_LOG(LogTemp, Warning, TEXT("Note spawned. TotalNotes: %d, TotalNotesInSong: %d"), TotalNotes, TotalNotesInSong);
+    UE_LOG(LogTemp, Warning, TEXT("Note spawned. TotalNotes: %d"), TotalNotes);
 
     // Update the HUD with the new total notes
     APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
@@ -244,42 +258,147 @@ void AConcertGameMode::HandleNoteSpawned()
 
     if (TotalNotes == TotalNotesInSong)
     {
-        UE_LOG(LogTemp, Warning, TEXT("All notes spawned. Setting timer to show end game menu."));
-        ScheduleEndGameMenu(12.0f); // Show end game menu after 5 seconds when all notes are spawned
+        ScheduleEndGameMenu(12.0f); 
+    }
+}
+
+void AConcertGameMode::SpawnSelectedCharacter()
+{
+    UConcertGameInstance* LocalGameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (!LocalGameInstance)
+    {
+        UE_LOG(LogTemp, Error, TEXT("No GameInstance found!"));
+        return;
+    }
+
+    int32 SelectedCharacterIndex = LocalGameInstance->GetSelectedCharacter();
+    int32 SelectedInstrumentIndex = LocalGameInstance->GetSelectedInstrument();
+    UStaticMesh* SelectedCharacterMesh = Cast<UStaticMesh>(LocalGameInstance->GetSelectedCharacterMesh());
+
+    TSubclassOf<ACharacter> CharacterToSpawn = nullptr;
+
+    if (SelectedInstrumentIndex == 0)  // Assuming 0 is for ConcertCharacter
+    {
+        CharacterToSpawn = AConcertCharacter::StaticClass();
+    }
+    else if (SelectedInstrumentIndex == 1)  // Assuming 1 is for MarimbaCharacter
+    {
+        CharacterToSpawn = AMarimbaCharacter::StaticClass();
+    }
+
+    if (CharacterToSpawn)
+    {
+        AActor* PlayerStart = UGameplayStatics::GetActorOfClass(this, APlayerStart::StaticClass());
+        FVector SpawnLocation = FVector::ZeroVector;
+        FRotator SpawnRotation = FRotator::ZeroRotator;
+
+        if (PlayerStart)
+        {
+            SpawnLocation = PlayerStart->GetActorLocation();
+            SpawnRotation = PlayerStart->GetActorRotation();
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("No PlayerStart found! Spawning at default location."));
+        }
+
+        ACharacter* SpawnedCharacter = GetWorld()->SpawnActor<ACharacter>(CharacterToSpawn, SpawnLocation, SpawnRotation);
+        if (SpawnedCharacter)
+        {
+            AConcertCharacter* ConcertCharacter = Cast<AConcertCharacter>(SpawnedCharacter);
+            if (ConcertCharacter && SelectedCharacterMesh)
+            {
+                if (ConcertCharacter->CharacterMesh)
+                {
+                    ConcertCharacter->CharacterMesh->SetStaticMesh(SelectedCharacterMesh);
+                }
+                else
+                {
+                    UE_LOG(LogTemp, Error, TEXT("Spawned character does not have a valid CharacterMesh component!"));
+                }
+            }
+
+            APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+            if (PlayerController)
+            {
+                PlayerController->Possess(SpawnedCharacter);
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to spawn character!"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("No character class selected to spawn!"));
     }
 }
 
 void AConcertGameMode::ShowEndGameMenu()
 {
-    UE_LOG(LogTemp, Warning, TEXT("Attempting to show end game menu."));
+    UHighScoreSaveGame* SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot("HighScoresSlot", 0));
+    if (!SaveGameInstance)
+    {
+        SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+    }
+
+    FString CurrentLevelName = GetWorld()->GetMapName();
+    CurrentLevelName.RemoveFromStart(TEXT("UEDPIE_0_"));
+
+    float CurrentPercentage = GetCorrectNotePercentage();
+
+    if (SaveGameInstance->LevelScores.Contains(CurrentLevelName))
+    {
+        FLevelScoreData& LevelData = SaveGameInstance->LevelScores[CurrentLevelName];
+        if (Player1Score > LevelData.HighScore)
+        {
+            LevelData.HighScore = Player1Score;
+        }
+        if (CurrentPercentage > LevelData.SuccessPercentage)
+        {
+            LevelData.SuccessPercentage = CurrentPercentage;
+        }
+    }
+    else
+    {
+        FLevelScoreData NewLevelData;
+        NewLevelData.HighScore = Player1Score;
+        NewLevelData.SuccessPercentage = CurrentPercentage;
+        SaveGameInstance->LevelScores.Add(CurrentLevelName, NewLevelData);
+    }
+
+    UGameplayStatics::SaveGameToSlot(SaveGameInstance, "HighScoresSlot", 0);
+
+    // Display the end game menu as before
     if (EndGameMenuClass)
     {
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
         if (PlayerController)
         {
-            UUserWidget* EndGameMenu = CreateWidget<UUserWidget>(PlayerController, EndGameMenuClass);
+            UEndGameMenu* EndGameMenu = CreateWidget<UEndGameMenu>(PlayerController, EndGameMenuClass);
             if (EndGameMenu)
             {
-                UE_LOG(LogTemp, Warning, TEXT("End game menu widget created."));
                 EndGameMenu->AddToViewport();
+
+                // Set the final score and star rating
+                EndGameMenu->SetFinalScore(GetFinalScore());
+                EndGameMenu->SetStarsBasedOnPercentage(GetCorrectNotePercentage());
+
+                // Display the high score and percentage
+                if (SaveGameInstance->LevelScores.Contains(CurrentLevelName))
+                {
+                    FLevelScoreData LevelData = SaveGameInstance->LevelScores[CurrentLevelName];
+                    EndGameMenu->SetHighScore(LevelData.HighScore);
+                    //EndGameMenu->SetStarsBasedOnHighestPercentage(LevelData.SuccessPercentage);
+                }
+
                 // Set input mode to UI only and show the mouse cursor
                 FInputModeUIOnly InputMode;
                 InputMode.SetWidgetToFocus(EndGameMenu->TakeWidget());
                 PlayerController->SetInputMode(InputMode);
                 PlayerController->bShowMouseCursor = true;
             }
-            else
-            {
-                UE_LOG(LogTemp, Error, TEXT("Failed to create end game menu widget."));
-            }
         }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("PlayerController not found."));
-        }
-    }
-    else
-    {
-        UE_LOG(LogTemp, Error, TEXT("EndGameMenuClass is null."));
     }
 }

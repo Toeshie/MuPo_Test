@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "ConcertGameInstance.h"
 #include "SongDataParserSubsystem.h"
-
+#include "UIGameManager.h"
+#include "Kismet/GameplayStatics.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogConcertGameInstance, Log, All);
 DEFINE_LOG_CATEGORY(LogConcertGameInstance);
@@ -11,9 +11,210 @@ DEFINE_LOG_CATEGORY(LogConcertGameInstance);
 void UConcertGameInstance::Init()
 {
 	Super::Init();
+	
+	SelectedCharacterIndex = -1;
+	SelectedInstrumentIndex = -1;
+	SelectedCharacterMesh = nullptr;
+	
+	// Ensure UIGameManager is created here
+	UIGameManager = NewObject<UUIGameManager>(this);
+	if (UIGameManager)
+	{
+		UE_LOG(LogTemp, Log, TEXT("UIGameManager successfully created"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to create UIGameManager"));
+	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Game Instance Initialized."));
+	
+	LoadHighScoreData();
 	LoadAllSongData();
+}
+
+void UConcertGameInstance::SaveLevelScore(const FString& LevelName, int32 Score, float SuccessPercentage)
+{
+	if (HighScoreSaveGame)
+	{
+		FLevelScoreData* LevelScoreData = HighScoreSaveGame->LevelScores.Find(LevelName);
+		if (LevelScoreData)
+		{
+			LevelScoreData->HighScore = FMath::Max(LevelScoreData->HighScore, Score);
+			LevelScoreData->SuccessPercentage = FMath::Max(LevelScoreData->SuccessPercentage, SuccessPercentage);
+		}
+		else
+		{
+			FLevelScoreData NewScoreData;
+			NewScoreData.HighScore = Score;
+			NewScoreData.SuccessPercentage = SuccessPercentage;
+			HighScoreSaveGame->LevelScores.Add(LevelName, NewScoreData);
+		}
+		UGameplayStatics::SaveGameToSlot(HighScoreSaveGame, SaveSlotName, UserIndex);
+	}
+}
+
+int32 UConcertGameInstance::GetBestStarsForLevel(const FString& LevelName) const
+{
+	if (HighScoreSaveGame)
+	{
+		const FLevelScoreData* LevelScoreData = HighScoreSaveGame->LevelScores.Find(LevelName);
+		if (LevelScoreData)
+		{
+			return LevelScoreData->GetStarRating();
+		}
+	}
+	return 0;
+}
+
+void UConcertGameInstance::ResetAllHighScores()
+{
+	if (HighScoreSaveGame)
+	{
+		for (auto& LevelScorePair : HighScoreSaveGame->LevelScores)
+		{
+			LevelScorePair.Value.HighScore = 0;
+			LevelScorePair.Value.SuccessPercentage = 0.0f;
+		}
+		UGameplayStatics::SaveGameToSlot(HighScoreSaveGame, SaveSlotName, UserIndex);
+	}
+}
+
+const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelName) const
+{
+	if (LevelName == "ConcertLocation_1")
+	{
+		return ConcertLocation1Data.NotesData;
+	}
+	else if (LevelName == "ConcertLocation_2")
+	{
+		return ConcertLocation2Data.NotesData;
+	}
+
+	static TArray<FNoteData> EmptyArray;  
+	return EmptyArray;
+}
+
+float UConcertGameInstance::GetSongDuration(FName LevelName) const
+{
+	const TArray<FNoteData>* NotesData = nullptr;
+
+	if (LevelName == "ConcertLocation_1")
+	{
+		NotesData = &ConcertLocation1Data.NotesData;
+	}
+	else if (LevelName == "ConcertLocation_2")
+	{
+		NotesData = &ConcertLocation2Data.NotesData;
+	}
+
+	if (NotesData && NotesData->Num() > 0)
+	{
+		return NotesData->Last().TimeMs / 1000.0f;
+	}
+
+	return 0.0f;
+}
+
+FString UConcertGameInstance::GetSongNameForLevel(FName LevelName) const
+{
+	if (LevelName == "ConcertLocation_1")
+	{
+		return TEXT("Lagos");
+	}
+	else if (LevelName == "ConcertLocation_2")
+	{
+		return TEXT("Chankura");
+	}
+	return TEXT("Unknown Song");
+}
+
+TArray<FString> UConcertGameInstance::GetAvailableCustomSongs() const
+{
+	TArray<FString> AvailableSongs;
+	FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("CustomSongs/"));
+
+	IFileManager& FileManager = IFileManager::Get();
+	FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
+
+	return AvailableSongs;
+}
+
+TArray<FString> UConcertGameInstance::GetAvailableHiddenSongs() const
+{
+	TArray<FString> AvailableSongs;
+	FString Path = FPaths::Combine(FPaths::ProjectContentDir(), TEXT("HiddenSongs/"));
+
+	IFileManager& FileManager = IFileManager::Get();
+	FileManager.FindFiles(AvailableSongs, *Path, TEXT("*.csv"));
+
+	return AvailableSongs;
+}
+
+const TArray<FNoteData>& UConcertGameInstance::GetConcertLocation1Data() const
+{
+	return ConcertLocation1Data.NotesData;
+}
+
+const TArray<FNoteData>& UConcertGameInstance::GetConcertLocation2Data() const
+{
+	return ConcertLocation2Data.NotesData;
+}
+
+void UConcertGameInstance::SetSelectedSong(const FString& SongName)
+{
+	SelectedSong = SongName;
+}
+
+
+
+void UConcertGameInstance::SetSelectedCharacterMesh(UStaticMesh* Mesh)
+{
+	SelectedCharacterMesh = Mesh;
+}
+
+UStaticMesh* UConcertGameInstance::GetSelectedCharacterMesh() const
+{
+	return SelectedCharacterMesh;
+}
+
+
+
+void UConcertGameInstance::SetSelectedCharacter(int32 CharacterIndex)
+{
+	SelectedCharacterIndex = CharacterIndex;
+}
+
+int32 UConcertGameInstance::GetSelectedCharacter() const
+{
+	return SelectedCharacterIndex;
+}
+
+
+
+void UConcertGameInstance::SetSelectedInstrument(int32 InstrumentIndex)
+{
+	SelectedInstrumentIndex = InstrumentIndex;
+}
+
+int32 UConcertGameInstance::GetSelectedInstrument() const
+{
+	return SelectedInstrumentIndex;
+}
+
+
+
+UUIGameManager* UConcertGameInstance::GetUIGameManager() const
+{
+	return UIGameManager;
+}
+
+void UConcertGameInstance::LoadHighScoreData()
+{
+	HighScoreSaveGame = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot(SaveSlotName, UserIndex));
+	if (!HighScoreSaveGame)
+	{
+		HighScoreSaveGame = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+	}
 }
 
 void UConcertGameInstance::LoadAllSongData()
@@ -22,50 +223,15 @@ void UConcertGameInstance::LoadAllSongData()
 
 	if (ParserSubsystem)
 	{
-		// Ensure these file paths and level names are correct
-		TMap<FString, FName> SongFiles = {
-			{TEXT("D:/UnrealProjects/MuPo/MuPo/D3_Project_MuPo/CSV/Nobody, Not Even the RainCSV.csv"),TEXT("ConcertLocation_1")},
-			{TEXT("D:/UnrealProjects/MuPo/MuPo/D3_Project_MuPo/CSV/ChankuraCSV.csv"), TEXT("ConcertLocation_2")}
-		};
-
-		for (const auto& SongFile : SongFiles)
+		if (ParserSubsystem->ParseSongData(TEXT("LagosCSV.csv")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Loading song data for file: %s, level: %s"), *SongFile.Key, *SongFile.Value.ToString());
-			if (ParserSubsystem->ParseSongData(SongFile.Key))
-			{
-				FLevelSongData LevelSongData;
-				LevelSongData.LevelName = SongFile.Value;
-				LevelSongData.NotesData = ParserSubsystem->GetParsedNotesData();
-				AllSongsData.Add(SongFile.Value, LevelSongData);
+			ConcertLocation1Data.NotesData = ParserSubsystem->GetParsedNotesData();
+		}
+		ParserSubsystem->NotesData.Empty();
 
-				UE_LOG(LogTemp, Warning, TEXT("Successfully loaded song data for level: %s, total notes: %d"), *SongFile.Value.ToString(), LevelSongData.NotesData.Num());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Failed to parse song data for file: %s"), *SongFile.Key);
-			}
+		if (ParserSubsystem->ParseSongData(TEXT("ChankuraCSV.csv")))
+		{
+			ConcertLocation2Data.NotesData = ParserSubsystem->GetParsedNotesData();
 		}
 	}
-}
-
-const TArray<FNoteData>& UConcertGameInstance::GetSongDataForLevel(FName LevelName) const
-{
-	if (const FLevelSongData* LevelSongData = AllSongsData.Find(LevelName))
-	{
-		return LevelSongData->NotesData;
-	}
-	static TArray<FNoteData> EmptyArray;
-	return EmptyArray;
-}
-
-float UConcertGameInstance::GetSongDuration(FName LevelName) const
-{
-	if (const FLevelSongData* LevelSongData = AllSongsData.Find(LevelName))
-	{
-		if (LevelSongData->NotesData.Num() > 0)
-		{
-			return LevelSongData->NotesData.Last().TimeMs / 1000.0f; // Convert milliseconds to seconds
-		}
-	}
-	return 0.0f;
 }
