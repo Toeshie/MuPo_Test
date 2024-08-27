@@ -6,6 +6,9 @@
 #include "UObject/NoExportTypes.h"
 #include "UIGameManager.generated.h"
 
+class AOverworldConcertActor;  // Forward declaration
+class UConcertSelectionWidget;
+
 UCLASS()
 class D3_PROJECT_MUPO_API UUIGameManager : public UObject
 {
@@ -13,7 +16,7 @@ class D3_PROJECT_MUPO_API UUIGameManager : public UObject
     
 public:
 	UUIGameManager();
-    
+
 	UFUNCTION(BlueprintCallable)
 	void LoadLevel(const FName& LevelName);
 
@@ -25,21 +28,32 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadCharacterSelectionWidget();
-	UFUNCTION()
-	void OnCharacterSelected(int32 CharacterIndex, UTexture2D* SelectedCharacterImage);
 
 	UFUNCTION(BlueprintCallable)
 	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, class AOverworldConcertActor* OverworldConcertActor);
 
-	// New function that handles instrument selection and level loading
+	// New method to update the widget based on the cached actor
+	UFUNCTION(BlueprintCallable)
+	void UpdateWidgetFromCachedActor();
+
+	UFUNCTION()
+	void OnCharacterSelected(int32 CharacterIndex, UTexture2D* SelectedCharacterImage);
+
 	UFUNCTION()
 	void OnInstrumentSelected(int32 InstrumentIndex);
+
 	UFUNCTION()
 	void CacheOverworldConcertActor(AOverworldConcertActor* OverworldConcertActor);
+
+	void RemoveConcertSelectionWidget();
 
 private:
 	TSubclassOf<class UCharacterSelectionWidget> CharacterSelectionWidgetClass;
 	TSubclassOf<class UInstrumentSelectionWidget> InstrumentSelectionWidgetClass;
 
-	AOverworldConcertActor* CachedOverworldConcertActor;  // Cache the actor for level loading
+	// Cached reference to the concert actor
+	AOverworldConcertActor* CachedOverworldConcertActor;
+
+	// Cached reference to the concert selection widget
+	UConcertSelectionWidget* CachedConcertSelectionWidget;
 };

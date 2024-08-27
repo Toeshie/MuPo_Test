@@ -3,6 +3,7 @@
 #include "UIGameManager.h"
 #include "CharacterSelectionWidget.h"
 #include "InstrumentSelectionWidget.h"
+#include "ConcertSelectionWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
 #include "OverworldConcertActor.h"
@@ -14,6 +15,10 @@ UUIGameManager::UUIGameManager()
     {
         CharacterSelectionWidgetClass = CharacterWidgetClassFinder.Class;
     }
+
+    // Initialize CachedConcertSelectionWidget as nullptr
+    CachedConcertSelectionWidget = nullptr;
+
     UE_LOG(LogTemp, Log, TEXT("UIGameManager Created"));
 }
 
@@ -70,7 +75,6 @@ void UUIGameManager::OnCharacterSelected(int32 CharacterIndex, UTexture2D* Selec
     LoadInstrumentSelectionWidget(SelectedCharacterImage, OverworldActor);
 }
 
-
 void UUIGameManager::LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, AOverworldConcertActor* OverworldConcertActor)
 {
     UE_LOG(LogTemp, Log, TEXT("Attempting to load InstrumentSelectionWidget dynamically..."));
@@ -111,7 +115,6 @@ void UUIGameManager::LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, A
 
 void UUIGameManager::OnInstrumentSelected(int32 InstrumentIndex)
 {
-    
     UE_LOG(LogTemp, Log, TEXT("Instrument selected: %d"), InstrumentIndex);
 
     SetSelectedInstrument(InstrumentIndex);
@@ -131,4 +134,70 @@ void UUIGameManager::OnInstrumentSelected(int32 InstrumentIndex)
 void UUIGameManager::CacheOverworldConcertActor(AOverworldConcertActor* OverworldConcertActor)
 {
     CachedOverworldConcertActor = OverworldConcertActor;
+
+    // Load and display the ConcertSelectionWidget using the cached actor
+    if (CachedConcertSelectionWidget == nullptr)
+    {
+        // Assuming you have a path for the ConcertSelectionWidget
+        TSubclassOf<UConcertSelectionWidget> ConcertSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("/Game/Blueprints/UI/BP_ConcertSelectionWidget.BP_ConcertSelectionWidget_C"));
+        
+        if (ConcertSelectionWidgetClass)
+        {
+            CachedConcertSelectionWidget = CreateWidget<UConcertSelectionWidget>(GetWorld(), ConcertSelectionWidgetClass);
+            if (CachedConcertSelectionWidget)
+            {
+                CachedConcertSelectionWidget->AddToViewport();
+
+                // Now update the widget using the cached actor
+                UpdateWidgetFromCachedActor();
+            }
+            else
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Failed to create ConcertSelectionWidget instance"));
+            }
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Failed to load ConcertSelectionWidget class"));
+        }
+    }
+    else
+    {
+        // If the widget is already cached, just update it
+        UpdateWidgetFromCachedActor();
+    }
+}
+
+void UUIGameManager::RemoveConcertSelectionWidget()
+{
+    if (CachedConcertSelectionWidget)
+    {
+        CachedConcertSelectionWidget->RemoveFromParent();
+        CachedConcertSelectionWidget = nullptr;  // Optionally reset the cached widget to null
+    }
+}
+
+void UUIGameManager::UpdateWidgetFromCachedActor()
+{
+    if (CachedOverworldConcertActor && CachedConcertSelectionWidget)
+    {
+        FString SongName = CachedOverworldConcertActor->GetSongName();
+        FString ConcertName = CachedOverworldConcertActor->GetConcertName();
+        int32 BestStars = CachedOverworldConcertActor->GetBestStars();
+
+        UE_LOG(LogTemp, Log, TEXT("UpdateWidgetFromCachedActor - SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
+
+        if (CachedConcertSelectionWidget)  // Ensure this is not null
+        {
+            CachedConcertSelectionWidget->InitializeWidget(SongName, ConcertName, BestStars);
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("CachedConcertSelectionWidget is null"));
+        }
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("CachedOverworldConcertActor or CachedConcertSelectionWidget is null"));
+    }
 }

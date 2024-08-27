@@ -33,16 +33,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
 	FName LevelToLoad;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<class UConcertSelectionWidget> WidgetClass;
 
-	UPROPERTY()
-	UConcertSelectionWidget* WidgetInstance;
 	
-
 	virtual void BeginPlay() override;
-
-	void ShowWidget();
 	
 	UFUNCTION()
 	void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
@@ -52,9 +45,16 @@ protected:
 	UFUNCTION()
 	
 	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
-	void ShowStandardWidget(const FString& SongName,const FString& LevelName, int32 BestStars);
-	void ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName);
 	void EnablePlayerInteraction();
-
+public:
+	FString GetSongName();// Assuming you have a member variable FString SongName
+	FString GetLevelName();
+	FString GetConcertName();
+	int32 GetBestStars() const; // You might want to retrieve this from the GameInstance
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	FString ConcertName;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	FString SongName;
 };

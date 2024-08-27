@@ -6,7 +6,6 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
-#include "ConcertSelectionSongChoiceWidget.h"
 
 AOverworldConcertActor::AOverworldConcertActor()
 {
@@ -22,71 +21,38 @@ AOverworldConcertActor::AOverworldConcertActor()
 
     ConcertCollider->OnComponentBeginOverlap.AddDynamic(this, &AOverworldConcertActor::OnBeginOverlap);
     ConcertCollider->OnComponentEndOverlap.AddDynamic(this, &AOverworldConcertActor::OnEndOverlap);
+    
 }
 
 void AOverworldConcertActor::BeginPlay()
 {
     Super::BeginPlay();
-}
-
-void AOverworldConcertActor::ShowWidget()
-{
-    if (!WidgetClass || WidgetInstance) return;
-
-    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (!GameInstance) {
-        UE_LOG(LogTemp, Error, TEXT("Failed to retrieve GameInstance."));
-        return;
-    }
-
-    FString SongName = GameInstance->GetSongNameForLevel(LevelToLoad);
-    if (SongName.IsEmpty()) {
-        UE_LOG(LogTemp, Error, TEXT("Failed to retrieve SongName."));
-        return;
-    }
-
-    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
-    if (BestStars < 0) {
-        UE_LOG(LogTemp, Error, TEXT("Invalid BestStars retrieved."));
-        return;
-    }
     
-    ShowStandardWidget(SongName, LevelToLoad.ToString(), BestStars);
-}
+    FString ActorName = GetName();
+    UE_LOG(LogTemp, Log, TEXT("BeginPlay - ActorName: %s"), *ActorName);
 
-void AOverworldConcertActor::ShowStandardWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
-{
-    WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
-    if (!WidgetInstance)
+    // Use ActorName to determine the SongName and ConcertName
+    if (ActorName.Contains("BP_OverworldConcertLocation_C_2"))
     {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create widget instance."));
-        return;
+        SongName = "Lagos";
+        ConcertName = "Alentejo";
+    }
+    else if (ActorName.Contains("BP_OverworldConcertLocation_C_0"))
+    {
+        SongName = "Chankura";
+        ConcertName = "Porto";
+    }
+    else
+    {
+        // Default or fallback values
+        SongName = "Default Song";
+        ConcertName = "Default Concert";
     }
 
-    WidgetInstance->InitializeWidget(SongName, LevelName, BestStars);  
-    WidgetInstance->AddToViewport();
-
-    EnablePlayerInteraction();
+    UE_LOG(LogTemp, Log, TEXT("BeginPlay - SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
 }
 
-void AOverworldConcertActor::ShowCustomSongSelectionWidget(UConcertGameInstance* GameInstance, const FString& SongName)
-{
-    WidgetInstance = CreateWidget<UConcertSelectionSongChoiceWidget>(GetWorld(), WidgetClass);
-    if (!WidgetInstance)
-    {
-        UE_LOG(LogTemp, Error, TEXT("Failed to create custom song selection widget instance."));
-        return;
-    }
 
-    TArray<FString> AvailableSongs = GameInstance->GetAvailableCustomSongs();
-    FString LevelName = TEXT("CustomSongs");
-    int32 BestStars = GameInstance->GetBestStarsForLevel(LevelName);
-
-    Cast<UConcertSelectionSongChoiceWidget>(WidgetInstance)->InitializeWidgetWithSongs(SongName, AvailableSongs, LevelName, BestStars);
-    WidgetInstance->AddToViewport();
-
-    EnablePlayerInteraction();
-}
 
 void AOverworldConcertActor::EnablePlayerInteraction()
 {
@@ -96,6 +62,28 @@ void AOverworldConcertActor::EnablePlayerInteraction()
         PlayerController->bEnableClickEvents = true;
         PlayerController->bEnableMouseOverEvents = true;
     }
+}
+
+FString AOverworldConcertActor::GetSongName()
+{
+    UE_LOG(LogTemp, Log, TEXT("GetSongName called: %s"), *SongName);
+    return SongName;
+}
+
+FString AOverworldConcertActor::GetConcertName()
+{
+    UE_LOG(LogTemp, Log, TEXT("GetConcertName called: %s"), *ConcertName);
+    return ConcertName;
+}
+
+int32 AOverworldConcertActor::GetBestStars() const
+{
+    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (GameInstance)
+    {
+        return GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
+    }
+    return 0;
 }
 
 void AOverworldConcertActor::LoadLevel()
@@ -111,16 +99,6 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 {
     if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        if (WidgetClass && !WidgetInstance)
-        {
-            WidgetInstance = CreateWidget<UConcertSelectionWidget>(GetWorld(), WidgetClass);
-            if (WidgetInstance)
-            {
-                ShowWidget();
-                WidgetInstance->AddToViewport();
-            }
-        }
-        
         APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
         if (PlayerController)
         {
@@ -130,11 +108,11 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
             PlayerController->SetInputMode(FInputModeGameAndUI());
         }
 
-        // Cache the actor in the GameManager
-        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();  
+        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();
         if (GameManager)
         {
-            GameManager->CacheOverworldConcertActor(this);
+            GameManager->CacheOverworldConcertActor(this);  // Cache the actor
+            UE_LOG(LogTemp, Log, TEXT("OnBeginOverlap - Cached Actor: %s"), *this->GetName());
         }
     }
 }
@@ -142,22 +120,22 @@ void AOverworldConcertActor::OnBeginOverlap(UPrimitiveComponent* OverlappedCompo
 void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-    if (!OtherActor || !OtherComp) return;
-
-    // Make sure the widget instance is valid before attempting to remove it
-    if (WidgetInstance)
+    if (AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(OtherActor))
     {
-        WidgetInstance->RemoveFromParent();
-        WidgetInstance = nullptr;
-    }
+        UUIGameManager* GameManager = PlayerCharacter->GetUIGameManager();
+        if (GameManager)
+        {
+            GameManager->RemoveConcertSelectionWidget();
+            UE_LOG(LogTemp, Log, TEXT("OnEndOverlap - Removed ConcertSelectionWidget from viewport"));
+        }
 
-    // Ensure the player controller is valid before modifying its properties
-    APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
-    if (PlayerController)
-    {
-        PlayerController->bShowMouseCursor = false;
-        PlayerController->bEnableClickEvents = false;
-        PlayerController->bEnableMouseOverEvents = false;
+        // Optionally, hide the mouse cursor and return control to the game
+        APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+        if (PlayerController)
+        {
+            PlayerController->bShowMouseCursor = false;
+            PlayerController->SetInputMode(FInputModeGameOnly());
+        }
     }
 }
 

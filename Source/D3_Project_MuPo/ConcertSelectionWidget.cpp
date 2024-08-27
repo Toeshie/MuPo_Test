@@ -9,7 +9,22 @@
 #include "Blueprint/WidgetTree.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
-#include "OverworldConcertActor.h"
+
+UConcertSelectionWidget::UConcertSelectionWidget(const FObjectInitializer& ObjectInitializer)
+    : Super(ObjectInitializer)
+{
+    static ConstructorHelpers::FObjectFinder<UTexture2D> FilledStarObj(TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star"));  
+    if (FilledStarObj.Succeeded())
+    {
+        FilledStarTexture = FilledStarObj.Object;
+    }
+
+    static ConstructorHelpers::FObjectFinder<UTexture2D> EmptyStarObj(TEXT("/Game/Blueprints/UI/13595"));  
+    if (EmptyStarObj.Succeeded())
+    {
+        EmptyStarTexture = EmptyStarObj.Object;
+    }
+}
 
 void UConcertSelectionWidget::NativeConstruct()
 {
@@ -34,36 +49,39 @@ void UConcertSelectionWidget::NativeConstruct()
     }
 }
 
-void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars)
+void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FString& ConcertName, int32 BestStars)
 {
-    UE_LOG(LogTemp, Warning, TEXT("InitializeWidget called with SongName: %s, LevelName: %s, BestStars: %d"), *SongName, *LevelName, BestStars);
-    
-        if (SongNameTextBlock)
-        {
-            SongNameTextBlock->SetText(FText::FromString(SongName));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("SongNameTextBlock is nullptr"));
-        }
-    
-        if (LevelNameTextBlock)
-        {
-            LevelNameTextBlock->SetText(FText::FromString(LevelName));
-        }
-        else
-        {
-            UE_LOG(LogTemp, Error, TEXT("LevelNameTextBlock is nullptr"));
-        }
-    
-        UpdateStars(BestStars);  // Ensure this is called
+    UE_LOG(LogTemp, Log, TEXT("InitializeWidget called with SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
+
+    if (TopTextBlock)
+    {
+        TopTextBlock->SetText(FText::FromString(ConcertName));
+        UE_LOG(LogTemp, Log, TEXT("TopTextBlock updated with ConcertName: %s"), *ConcertName);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("TopTextBlock is nullptr"));
+    }
+
+    if (BottomTextBlock)
+    {
+        BottomTextBlock->SetText(FText::FromString(SongName));
+        UE_LOG(LogTemp, Log, TEXT("BottomTextBlock updated with SongName: %s"), *SongName);
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("BottomTextBlock is nullptr"));
+    }
+
+    UpdateStars(BestStars);  // Ensure this is called
 }
+
 
 void UConcertSelectionWidget::UpdateStars(int32 BestStars)
 {
     if (!StarBox)
     {
-        UE_LOG(LogTemp, Warning, TEXT("StarBox is nullptr!"));
+        UE_LOG(LogTemp, Warning, TEXT("StarBox is null"));
         return;
     }
 
@@ -72,22 +90,24 @@ void UConcertSelectionWidget::UpdateStars(int32 BestStars)
     const int32 MaxStars = 5;
     for (int32 i = 0; i < MaxStars; ++i)
     {
-        UImage* StarImage = WidgetTree->ConstructWidget<UImage>(UImage::StaticClass());
+        UImage* StarImage = NewObject<UImage>(this);
         if (i < BestStars)
         {
-            UTexture2D* FilledStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star"));
-            StarImage->SetBrushFromTexture(FilledStarTexture);
+            // Ensure StarImage is valid before applying the brush
+            if (StarImage)
+            {
+                StarImage->SetBrushFromTexture(FilledStarTexture);
+            }
         }
         else
         {
-            UTexture2D* EmptyStarTexture = LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/13595.13595"));
-            StarImage->SetBrushFromTexture(EmptyStarTexture);
+            if (StarImage)
+            {
+                StarImage->SetBrushFromTexture(EmptyStarTexture);
+            }
         }
-        StarImage->SetDesiredSizeOverride(FVector2D(64, 64));
         StarBox->AddChild(StarImage);
     }
-
-    UE_LOG(LogTemp, Warning, TEXT("Updated Stars in Widget: %d"), BestStars);
 }
 
 void UConcertSelectionWidget::OnConfirmButtonClicked()

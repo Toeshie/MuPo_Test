@@ -11,7 +11,7 @@ void UConcertSelectionSongChoiceWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    SongNameTextBlock->SetText(FText::FromString(TEXT("Concert of the Custom Songs!")));
+    TopTextBlock->SetText(FText::FromString(TEXT("Concert of the Custom Songs!")));
 
     if (ConfirmButton)
     {

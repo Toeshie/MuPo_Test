@@ -18,6 +18,9 @@ class D3_PROJECT_MUPO_API UConcertSelectionWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UConcertSelectionWidget(const FObjectInitializer& ObjectInitializer);
+	
 	UFUNCTION(BlueprintCallable)
 	void InitializeWidget(const FString& SongName, const FString& LevelName, int32 BestStars);
 
@@ -26,10 +29,10 @@ public:
 
 protected:
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* SongNameTextBlock;
+	UTextBlock* TopTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
-	UTextBlock* LevelNameTextBlock;
+	UTextBlock* BottomTextBlock;
 
 	UPROPERTY(meta = (BindWidget))
 	UButton* ConfirmButton;
@@ -51,4 +54,7 @@ private:
 	void LoadCharacterSelectionWidgetClass();
 
 	UUIGameManager* UIManager;
+
+	UTexture2D* FilledStarTexture;
+	UTexture2D* EmptyStarTexture;
 };
