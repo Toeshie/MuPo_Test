@@ -12,7 +12,7 @@ AOverworldConcertActor::AOverworldConcertActor()
     PrimaryActorTick.bCanEverTick = true;
 
     BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BuildingMesh"));
-    RootComponent = BuildingMesh;  // Set the mesh as the root
+    RootComponent = BuildingMesh; 
 
     ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ConcertCollider"));
     ConcertCollider->SetupAttachment(BuildingMesh);
@@ -30,8 +30,7 @@ void AOverworldConcertActor::BeginPlay()
     
     FString ActorName = GetName();
     UE_LOG(LogTemp, Log, TEXT("BeginPlay - ActorName: %s"), *ActorName);
-
-    // Use ActorName to determine the SongName and ConcertName
+    
     if (ActorName.Contains("BP_OverworldConcertLocation_C_2"))
     {
         SongName = "Lagos";
@@ -44,7 +43,6 @@ void AOverworldConcertActor::BeginPlay()
     }
     else
     {
-        // Default or fallback values
         SongName = "Default Song";
         ConcertName = "Default Concert";
     }
@@ -128,8 +126,7 @@ void AOverworldConcertActor::OnEndOverlap(UPrimitiveComponent* OverlappedCompone
             GameManager->RemoveConcertSelectionWidget();
             UE_LOG(LogTemp, Log, TEXT("OnEndOverlap - Removed ConcertSelectionWidget from viewport"));
         }
-
-        // Optionally, hide the mouse cursor and return control to the game
+        
         APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
         if (PlayerController)
         {

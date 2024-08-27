@@ -47,10 +47,9 @@ protected:
 	void OnSongChosen(const FString& SelectedSongName, const FString& SelectedCharacter);
 	void EnablePlayerInteraction();
 public:
-	FString GetSongName();// Assuming you have a member variable FString SongName
-	FString GetLevelName();
+	FString GetSongName();
 	FString GetConcertName();
-	int32 GetBestStars() const; // You might want to retrieve this from the GameInstance
+	int32 GetBestStars() const; 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
 	FString ConcertName;

@@ -11,13 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="eadd47a4-fa55-4a09-b8db-d7ded7525bd8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.D3_Project_MuPo/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/BP_ConcertSelectionWidget.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/UI/BP_ConcertSelectionWidget.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/UI/BP_SongSelectionWDG.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/UI/BP_SongSelectionWDG.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Levels/MainMenu.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionSongChoiceWidget.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/ConcertSelectionWidget.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/OverworldConcertActor.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/D3_Project_MuPo/UIGameManager.cpp" afterDir="false" />
@@ -199,7 +193,7 @@
       <workItem from="1724552544407" duration="2904000" />
       <workItem from="1724685377056" duration="5174000" />
       <workItem from="1724702555465" duration="286000" />
-      <workItem from="1724702872765" duration="6797000" />
+      <workItem from="1724702872765" duration="7082000" />
     </task>
     <servers />
   </component>

@@ -3,10 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
 #include "UIGameManager.generated.h"
 
-class AOverworldConcertActor;  // Forward declaration
+class AOverworldConcertActor;  
 class UConcertSelectionWidget;
 
 UCLASS()
@@ -31,8 +30,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, class AOverworldConcertActor* OverworldConcertActor);
-
-	// New method to update the widget based on the cached actor
+	
 	UFUNCTION(BlueprintCallable)
 	void UpdateWidgetFromCachedActor();
 

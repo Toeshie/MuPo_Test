@@ -73,7 +73,7 @@ void UConcertSelectionWidget::InitializeWidget(const FString& SongName, const FS
         UE_LOG(LogTemp, Error, TEXT("BottomTextBlock is nullptr"));
     }
 
-    UpdateStars(BestStars);  // Ensure this is called
+    UpdateStars(BestStars); 
 }
 
 
@@ -93,7 +93,6 @@ void UConcertSelectionWidget::UpdateStars(int32 BestStars)
         UImage* StarImage = NewObject<UImage>(this);
         if (i < BestStars)
         {
-            // Ensure StarImage is valid before applying the brush
             if (StarImage)
             {
                 StarImage->SetBrushFromTexture(FilledStarTexture);
@@ -114,10 +113,8 @@ void UConcertSelectionWidget::OnConfirmButtonClicked()
 {
     if (UIManager)
     {
-        // Show the character selection widget when the confirm button is clicked
         UIManager->LoadCharacterSelectionWidget();
-
-        // Re-enable input handling for the new widget
+        
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
         if (PlayerController)
         {
@@ -126,8 +123,6 @@ void UConcertSelectionWidget::OnConfirmButtonClicked()
             PlayerController->bEnableMouseOverEvents = true;
             PlayerController->SetInputMode(FInputModeGameAndUI());
         }
-
-        // Remove the current widget from the viewport
         this->RemoveFromParent();
     }
 }
@@ -135,8 +130,6 @@ void UConcertSelectionWidget::OnConfirmButtonClicked()
 void UConcertSelectionWidget::LoadCharacterSelectionWidgetClass()
 {
     FString WidgetPath = TEXT("/Game/Blueprints/UI/CharacterSelectionWDG.CharacterSelectionWDG_C");
-
-    // Load the widget class at runtime
     CharacterSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, *WidgetPath);
 
     if (!CharacterSelectionWidgetClass)

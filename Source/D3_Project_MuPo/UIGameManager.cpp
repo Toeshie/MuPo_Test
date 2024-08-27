@@ -15,8 +15,6 @@ UUIGameManager::UUIGameManager()
     {
         CharacterSelectionWidgetClass = CharacterWidgetClassFinder.Class;
     }
-
-    // Initialize CachedConcertSelectionWidget as nullptr
     CachedConcertSelectionWidget = nullptr;
 
     UE_LOG(LogTemp, Log, TEXT("UIGameManager Created"));
@@ -78,8 +76,7 @@ void UUIGameManager::OnCharacterSelected(int32 CharacterIndex, UTexture2D* Selec
 void UUIGameManager::LoadInstrumentSelectionWidget(UTexture2D* CharacterImage, AOverworldConcertActor* OverworldConcertActor)
 {
     UE_LOG(LogTemp, Log, TEXT("Attempting to load InstrumentSelectionWidget dynamically..."));
-
-    // Corrected path based on your directory structure
+    
     InstrumentSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("/Game/Blueprints/InstrumentSelectionWDG.InstrumentSelectionWDG_C"));
 
     if (InstrumentSelectionWidgetClass)
@@ -118,8 +115,7 @@ void UUIGameManager::OnInstrumentSelected(int32 InstrumentIndex)
     UE_LOG(LogTemp, Log, TEXT("Instrument selected: %d"), InstrumentIndex);
 
     SetSelectedInstrument(InstrumentIndex);
-
-    // Load the level using the cached OverworldConcertActor
+    
     if (CachedOverworldConcertActor)
     {
         UE_LOG(LogTemp, Log, TEXT("CachedOverworldConcertActor is valid, loading level..."));
@@ -134,11 +130,9 @@ void UUIGameManager::OnInstrumentSelected(int32 InstrumentIndex)
 void UUIGameManager::CacheOverworldConcertActor(AOverworldConcertActor* OverworldConcertActor)
 {
     CachedOverworldConcertActor = OverworldConcertActor;
-
-    // Load and display the ConcertSelectionWidget using the cached actor
+    
     if (CachedConcertSelectionWidget == nullptr)
     {
-        // Assuming you have a path for the ConcertSelectionWidget
         TSubclassOf<UConcertSelectionWidget> ConcertSelectionWidgetClass = StaticLoadClass(UUserWidget::StaticClass(), nullptr, TEXT("/Game/Blueprints/UI/BP_ConcertSelectionWidget.BP_ConcertSelectionWidget_C"));
         
         if (ConcertSelectionWidgetClass)
@@ -147,8 +141,6 @@ void UUIGameManager::CacheOverworldConcertActor(AOverworldConcertActor* Overworl
             if (CachedConcertSelectionWidget)
             {
                 CachedConcertSelectionWidget->AddToViewport();
-
-                // Now update the widget using the cached actor
                 UpdateWidgetFromCachedActor();
             }
             else
@@ -163,7 +155,6 @@ void UUIGameManager::CacheOverworldConcertActor(AOverworldConcertActor* Overworl
     }
     else
     {
-        // If the widget is already cached, just update it
         UpdateWidgetFromCachedActor();
     }
 }
@@ -173,7 +164,7 @@ void UUIGameManager::RemoveConcertSelectionWidget()
     if (CachedConcertSelectionWidget)
     {
         CachedConcertSelectionWidget->RemoveFromParent();
-        CachedConcertSelectionWidget = nullptr;  // Optionally reset the cached widget to null
+        CachedConcertSelectionWidget = nullptr; 
     }
 }
 
@@ -187,7 +178,7 @@ void UUIGameManager::UpdateWidgetFromCachedActor()
 
         UE_LOG(LogTemp, Log, TEXT("UpdateWidgetFromCachedActor - SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
 
-        if (CachedConcertSelectionWidget)  // Ensure this is not null
+        if (CachedConcertSelectionWidget) 
         {
             CachedConcertSelectionWidget->InitializeWidget(SongName, ConcertName, BestStars);
         }
