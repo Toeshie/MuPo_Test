@@ -6,7 +6,9 @@
 #include "ConcertSelectionWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
+#include "D3_Project_MuPoCharacter.h"
 #include "OverworldConcertActor.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UUIGameManager::UUIGameManager()
 {
@@ -53,8 +55,14 @@ void UUIGameManager::LoadCharacterSelectionWidget()
         UCharacterSelectionWidget* CharacterSelectionWidget = CreateWidget<UCharacterSelectionWidget>(GetWorld(), CharacterSelectionWidgetClass);
         if (CharacterSelectionWidget)
         {
-            CharacterSelectionWidget->OnCharacterSelected.AddDynamic(this, &UUIGameManager::OnCharacterSelected);
-            CharacterSelectionWidget->AddToViewport();
+            AD3_Project_MuPoCharacter* PlayerCharacter = Cast<AD3_Project_MuPoCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+            if (PlayerCharacter)
+            {
+                PlayerCharacter->GetCharacterMovement()->DisableMovement();
+                CharacterSelectionWidget->OnCharacterSelected.AddDynamic(this, &UUIGameManager::OnCharacterSelected);
+                CharacterSelectionWidget->AddToViewport();
+            }
+            
         }
         else
         {
