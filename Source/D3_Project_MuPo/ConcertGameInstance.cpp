@@ -64,7 +64,7 @@ int32 UConcertGameInstance::GetBestStarsForLevel(const FString& LevelName) const
 		}
 	}
 	return 0;
-}
+}//Move
 
 void UConcertGameInstance::ResetAllHighScores()
 {
