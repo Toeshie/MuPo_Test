@@ -26,8 +26,6 @@ void UConcertGameInstance::Init()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Failed to create UIGameManager"));
 	}
-
-	
 	LoadHighScoreData();
 	LoadAllSongData();
 }
@@ -235,3 +233,5 @@ void UConcertGameInstance::LoadAllSongData()
 		}
 	}
 }
+
+

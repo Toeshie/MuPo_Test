@@ -99,5 +99,4 @@ private:
 	// Save Game Management
 	FString SaveSlotName = TEXT("HighScoreSlot");
 	uint32 UserIndex = 0;
-	
 };
