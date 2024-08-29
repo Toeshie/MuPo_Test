@@ -6,9 +6,9 @@ public class D3_Project_MuPo : ModuleRules
 {
 	public D3_Project_MuPo(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PrivateDependencyModuleNames.AddRange(new string[] { "AITestSuite"});
+		PrivateDependencyModuleNames.AddRange(new string[] { "AITestSuite", "Niagara" });
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "SlateCore", "Slate" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "SlateCore", "Slate", "Niagara" });
 	}
 }

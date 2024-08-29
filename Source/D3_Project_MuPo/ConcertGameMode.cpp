@@ -12,6 +12,9 @@
 #include "HighScoreSaveGame.h"
 #include "MarimbaCharacter.h"
 #include "Sound/SoundWave.h"
+#include "NiagaraComponent.h"
+#include "NiagaraActor.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Blueprint/UserWidget.h"
 #include "GameFramework/PlayerStart.h"
 
@@ -335,8 +338,32 @@ void AConcertGameMode::SpawnSelectedCharacter()
     }
 }
 
+void AConcertGameMode::ActivateFireworkds()
+{
+    TArray<AActor*> FoundActors;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANiagaraActor::StaticClass(), FoundActors);
+
+    for (AActor* Actor : FoundActors)
+    {
+        UE_LOG(LogTemp, Log, TEXT("Found Actor: %s"), *Actor->GetName());
+
+        UNiagaraComponent* NiagaraComponent = Actor->FindComponentByClass<UNiagaraComponent>();
+        if (NiagaraComponent)
+        {
+            UE_LOG(LogTemp, Log, TEXT("Activating Niagara Component: %s"), *NiagaraComponent->GetName());
+            NiagaraComponent->Activate(true); // Activate the Niagara system
+        }
+        else
+        {
+            UE_LOG(LogTemp, Error, TEXT("Niagara Component not found on actor: %s"), *Actor->GetName());
+        }
+    }
+}
+
 void AConcertGameMode::ShowEndGameMenu()
 {
+    ActivateFireworkds();
+    
     UHighScoreSaveGame* SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot("HighScoresSlot", 0));
     if (!SaveGameInstance)
     {

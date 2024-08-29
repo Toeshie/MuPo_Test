@@ -71,4 +71,6 @@ private:
 	void HandleNoteSpawned();
 
 	void SpawnSelectedCharacter();
+
+	void ActivateFireworkds();
 };
