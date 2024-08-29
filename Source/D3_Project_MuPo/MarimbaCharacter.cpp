@@ -10,10 +10,10 @@ AMarimbaCharacter::AMarimbaCharacter()
 {
     // Load new input actions for MarimbaCharacter
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaHighNote.IA_MarimbaHighNote'"));
-    IA_NoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);
+    IA_MarimbaNoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);
 
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteLowAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbalowNote.IA_MarimbaLowNote'"));
-    IA_NoteLow = Cast<UInputAction>(MarimbaNoteLowAction.Object);
+    IA_MarimbaNoteLow = Cast<UInputAction>(MarimbaNoteLowAction.Object);
     
     static ConstructorHelpers::FObjectFinder<UInputAction> Pause(TEXT("InputAction'/Game/Blueprints/Inputs/IA_Pause.IA_Pause'"));
     IA_Pause = Cast<UInputAction>(Pause.Object);

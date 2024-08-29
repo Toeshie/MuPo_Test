@@ -31,6 +31,7 @@ protected:
 private:
 	void HandleNoteSpawning();
 	void SpawnNoteBasedOnNoteData(const FNoteData& Note);
+	int32 TrackToSpawn;
 
 	// Timer handle for spawning notes
 	FTimerHandle NoteSpawnTimerHandle;
