@@ -20,7 +20,13 @@
 
 AConcertGameMode::AConcertGameMode()
 {
-    DefaultPawnClass = AConcertCharacter::StaticClass();
+    UConcertGameInstance* LocalGameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (LocalGameInstance)
+    {
+        int32 SelectedInstrumentIndex = LocalGameInstance->GetSelectedInstrument();
+        SetDefaultPawnClassBasedOnSelection(SelectedInstrumentIndex);
+    }
+    
     HUDClass = AScoreHUD::StaticClass();
     Player1Score = 0;
     CurrentStreak = 1;
@@ -36,6 +42,24 @@ AConcertGameMode::AConcertGameMode()
         EndGameMenuClass = MenuWidgetClass.Class;
     }
     
+}
+
+void AConcertGameMode::SetDefaultPawnClassBasedOnSelection(int32 InstrumentIndex)
+{
+    if (InstrumentIndex == 0)  // Concert Character
+    {
+        DefaultPawnClass = AConcertCharacter::StaticClass();
+    }
+    else if (InstrumentIndex == 1)  // Marimba Character
+    {
+        DefaultPawnClass = AMarimbaCharacter::StaticClass();
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Invalid instrument index selected."));
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("DefaultPawnClass set to: %s"), *DefaultPawnClass->GetName());
 }
 
 void AConcertGameMode::ScheduleEndGameMenu(float Delay)

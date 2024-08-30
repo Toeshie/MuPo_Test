@@ -14,6 +14,7 @@ class D3_PROJECT_MUPO_API AConcertGameMode : public AGameModeBase
 
 public:
 	AConcertGameMode();
+	void SetDefaultPawnClassBasedOnSelection(int32 InstrumentIndex);
 
 	// Score Management
 	UFUNCTION(BlueprintCallable, Category = "Score")

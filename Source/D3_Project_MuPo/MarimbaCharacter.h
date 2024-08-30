@@ -25,6 +25,7 @@ protected:
 	virtual void ToggleProxyMenuPause() override;
 	virtual void PlaySound(USoundCue* SoundCue) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	void SetCharacterMesh(UStaticMesh* NewMesh);
 
 private:
 	// New input actions for MarimbaCharacter

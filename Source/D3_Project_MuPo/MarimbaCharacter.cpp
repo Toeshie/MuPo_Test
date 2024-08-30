@@ -8,7 +8,11 @@
 
 AMarimbaCharacter::AMarimbaCharacter()
 {
-    // Load new input actions for MarimbaCharacter
+    if (CharacterMesh)
+    {
+        CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f)); // Example of modifying properties
+    }
+    
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaHighNote.IA_MarimbaHighNote'"));
     IA_MarimbaNoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);
 
@@ -116,4 +120,10 @@ void AMarimbaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
         EnhancedInputComponent->BindAction(IA_MarimbaNoteLow.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::HandleLowNoteInput);
         EnhancedInputComponent->BindAction(IA_Pause.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::ToggleProxyMenuPause);
     }
+}
+
+void AMarimbaCharacter::SetCharacterMesh(UStaticMesh* NewMesh)
+{
+    Super::SetCharacterMesh(NewMesh);  // Call the base class method
+    // Additional logic specific to MarimbaCharacter, if needed
 }
