@@ -18,6 +18,11 @@ AConcertCharacter::AConcertCharacter()
     // Set this character to call Tick() every frame. You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
 
+    CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
+    CharacterMesh->SetupAttachment(RootComponent);
+    CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); 
+    CharacterMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+    
     // Initialize input actions
     static ConstructorHelpers::FObjectFinder<UInputAction> NoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_NoteHigh.IA_NoteHigh'"));
     IA_NoteHigh = Cast<UInputAction>(NoteHighAction.Object);
@@ -51,8 +56,18 @@ AConcertCharacter::AConcertCharacter()
 void AConcertCharacter::BeginPlay()
 {
     Super::BeginPlay();
-
+    
     InitializeInputMappings();
+    
+    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
+    if (GameInstance && GameInstance->GetSelectedCharacterMesh())
+    {
+        SetCharacterMesh(GameInstance->GetSelectedCharacterMesh());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Character mesh not set after level load."));
+    }
     
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
     {
@@ -76,6 +91,8 @@ void AConcertCharacter::BeginPlay()
         PauseMenuWidgetInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
     }
 }
+
+
 
 void AConcertCharacter::ToggleProxyMenuPause()
 {
@@ -210,5 +227,18 @@ void AConcertCharacter::PlaySound(USoundCue* SoundCue)
     if (SoundCue)
     {
         UGameplayStatics::PlaySoundAtLocation(this, SoundCue, GetActorLocation());
+    }
+}
+
+void AConcertCharacter::SetCharacterMesh(UStaticMesh* NewMesh)
+{
+    if (CharacterMesh && NewMesh)
+    {
+        CharacterMesh->SetStaticMesh(NewMesh);
+        UE_LOG(LogTemp, Log, TEXT("Character mesh updated to %s"), *NewMesh->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to update character mesh: CharacterMesh or NewMesh is null."));
     }
 }

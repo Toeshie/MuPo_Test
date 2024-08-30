@@ -25,6 +25,8 @@ public:
 	UPROPERTY()
 	UStaticMeshComponent* InstrumentMesh;
 
+	void SetCharacterMesh(UStaticMesh* NewMesh);
+
 protected:
 	
 	virtual void BeginPlay() override;
@@ -49,7 +51,8 @@ protected:
 	virtual void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
 	virtual void PlaySound(USoundCue* SoundCue);
 	
-	
+
+
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* HighNoteHitSound;
 

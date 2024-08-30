@@ -1,6 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "ConcertGameInstance.h"
+
+#include "ConcertCharacter.h"
 #include "SongDataParserSubsystem.h"
 #include "UIGameManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -165,9 +167,15 @@ void UConcertGameInstance::SetSelectedSong(const FString& SongName)
 
 
 
-void UConcertGameInstance::SetSelectedCharacterMesh(UStaticMesh* Mesh)
+void UConcertGameInstance::SetSelectedCharacterMesh(UStaticMesh* SelectedMesh)
 {
-	SelectedCharacterMesh = Mesh;
+	SelectedCharacterMesh = SelectedMesh; // Store the selected mesh
+    
+	// Ensure this is called after the level transition
+	if (AConcertCharacter* PlayerCharacter = Cast<AConcertCharacter>(UGameplayStatics::GetPlayerCharacter(this, 0)))
+	{
+		PlayerCharacter->SetCharacterMesh(SelectedMesh);
+	}
 }
 
 UStaticMesh* UConcertGameInstance::GetSelectedCharacterMesh() const
@@ -233,5 +241,6 @@ void UConcertGameInstance::LoadAllSongData()
 		}
 	}
 }
+
 
 

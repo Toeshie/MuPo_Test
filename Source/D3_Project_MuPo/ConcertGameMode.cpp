@@ -20,7 +20,7 @@
 
 AConcertGameMode::AConcertGameMode()
 {
-    DefaultPawnClass = AMarimbaCharacter::StaticClass();
+    DefaultPawnClass = AConcertCharacter::StaticClass();
     HUDClass = AScoreHUD::StaticClass();
     Player1Score = 0;
     CurrentStreak = 1;
