@@ -10,14 +10,15 @@
 AOverworldConcertActor::AOverworldConcertActor()
 {
     PrimaryActorTick.bCanEverTick = true;
-
-    BuildingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BuildingMesh"));
-    RootComponent = BuildingMesh; 
-
+    
     ConcertCollider = CreateDefaultSubobject<UBoxComponent>(TEXT("ConcertCollider"));
-    ConcertCollider->SetupAttachment(BuildingMesh);
-    ConcertCollider->InitBoxExtent(FVector(50.f, 50.f, 50.f));
-    ConcertCollider->SetCollisionProfileName(TEXT("Trigger"));
+    RootComponent = ConcertCollider;
+
+    
+    ConcertCollider->SetBoxExtent(FVector(1000.0f, 1000.0f, 500.0f)); 
+
+    
+    ConcertCollider->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
 
     ConcertCollider->OnComponentBeginOverlap.AddDynamic(this, &AOverworldConcertActor::OnBeginOverlap);
     ConcertCollider->OnComponentEndOverlap.AddDynamic(this, &AOverworldConcertActor::OnEndOverlap);

@@ -20,16 +20,10 @@ public:
 	void LoadLevel();  // This method will load the level using LevelToLoad
     
 protected:
-
-	UPROPERTY(BlueprintReadOnly)
-	UStaticMeshComponent* BuildingMesh;
 	
-	UPROPERTY(BlueprintReadWrite, Category = "Collider")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	UBoxComponent* ConcertCollider;
-
-	UPROPERTY(BlueprintReadWrite, Category = "Root")
-	USceneComponent* RootRoot;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
 	FName LevelToLoad;
 

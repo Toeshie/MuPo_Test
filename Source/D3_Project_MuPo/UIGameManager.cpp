@@ -254,7 +254,14 @@ void UUIGameManager::SetMuteState(bool bMute)
     }
     else
     {
-        LoadSoundSettings();
+        // Load and apply the saved volumes directly without re-triggering LoadSoundSettings
+        UHighScoreSaveGame* LoadGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("SoundSettingsSlot"), 0));
+        if (LoadGameInstance)
+        {
+            SetMusicVolume(LoadGameInstance->MusicVolume);
+            SetFXVolume(LoadGameInstance->FXVolume);
+            SetAmbientVolume(LoadGameInstance->AmbientVolume);
+        }
     }
 }
 
