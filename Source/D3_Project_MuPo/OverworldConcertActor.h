@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ConcertGameInstance.h"
+#include "HighScoreSaveGame.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "OverworldConcertActor.generated.h"
@@ -43,9 +43,11 @@ protected:
 public:
 	FString GetSongName();
 	FString GetConcertName();
+	
+	UFUNCTION(BlueprintCallable, Category = "Score")
 	int32 GetBestStars() const; 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Concert", meta = (AllowPrivateAccess = "true"))
 	FString ConcertName;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category ="Level")

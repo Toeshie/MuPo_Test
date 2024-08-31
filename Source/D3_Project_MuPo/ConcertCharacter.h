@@ -25,7 +25,7 @@ public:
 	UPROPERTY()
 	UStaticMeshComponent* InstrumentMesh;
 
-	void SetCharacterMesh(UStaticMesh* NewMesh);
+	virtual void SetCharacterMesh(UStaticMesh* NewMesh);
 
 protected:
 	

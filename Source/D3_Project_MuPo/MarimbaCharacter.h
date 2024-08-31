@@ -25,7 +25,7 @@ protected:
 	virtual void ToggleProxyMenuPause() override;
 	virtual void PlaySound(USoundCue* SoundCue) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	void SetCharacterMesh(UStaticMesh* NewMesh);
+	void SetCharacterMesh(UStaticMesh* NewMesh) override;
 
 private:
 	// New input actions for MarimbaCharacter
@@ -34,6 +34,9 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputAction> IA_MarimbaNoteLow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UInputAction> IA_MarimbaPause;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UInputMappingContext> IMC_Marimba;

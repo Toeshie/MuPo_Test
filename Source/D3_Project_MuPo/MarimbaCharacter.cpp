@@ -4,6 +4,8 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
+#include "PauseMenuWidget.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 AMarimbaCharacter::AMarimbaCharacter()
@@ -19,8 +21,8 @@ AMarimbaCharacter::AMarimbaCharacter()
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteLowAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbalowNote.IA_MarimbaLowNote'"));
     IA_MarimbaNoteLow = Cast<UInputAction>(MarimbaNoteLowAction.Object);
     
-    static ConstructorHelpers::FObjectFinder<UInputAction> Pause(TEXT("InputAction'/Game/Blueprints/Inputs/IA_Pause.IA_Pause'"));
-    IA_Pause = Cast<UInputAction>(Pause.Object);
+    static ConstructorHelpers::FObjectFinder<UInputAction> Pause(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaPause.IA_MarimbaPause'"));
+    IA_MarimbaPause = Cast<UInputAction>(Pause.Object);
 
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> MarimbaContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/MarimbaInputs/IMC_Marimba.IMC_Marimba'"));
     IMC_Marimba = Cast<UInputMappingContext>(MarimbaContext.Object);
@@ -34,6 +36,12 @@ AMarimbaCharacter::AMarimbaCharacter()
 
     static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaMissNoteCue(TEXT("SoundCue'/Game/Sounds/MarimbaMissNoteCue.MarimbaMissNoteCue'"));
     MarimbaMissNoteSound = MarimbaMissNoteCue.Object;
+    
+    static ConstructorHelpers::FClassFinder<UUserWidget> PauseMenuBPClass(TEXT("/Game/Blueprints/UI/PauseMenu"));
+    if (PauseMenuBPClass.Class != nullptr)
+    {
+        PauseMenuClass = PauseMenuBPClass.Class;
+    }
 }
 
 void AMarimbaCharacter::BeginPlay()
@@ -81,10 +89,14 @@ void AMarimbaCharacter::HandleLowNoteInput(const FInputActionValue& Value)
     Super::ValidateNoteHit(Value, false);  
 }
 
-// Override to handle the Marimba-specific pause menu toggle
 void AMarimbaCharacter::ToggleProxyMenuPause()
 {
-    Super::ToggleProxyMenuPause();  // Call the base class method
+    Super::ToggleProxyMenuPause();  
+
+    if (PauseMenuWidgetInstance)
+    {
+        PauseMenuWidgetInstance->TogglePauseMenu();
+    }
 }
 
 void AMarimbaCharacter::PlaySound(USoundCue* SoundCue)

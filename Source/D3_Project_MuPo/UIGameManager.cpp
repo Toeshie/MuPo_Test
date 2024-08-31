@@ -187,9 +187,9 @@ void UUIGameManager::UpdateWidgetFromCachedActor()
     {
         FString SongName = CachedOverworldConcertActor->GetSongName();
         FString ConcertName = CachedOverworldConcertActor->GetConcertName();
-        int32 BestStars = CachedOverworldConcertActor->GetBestStars();
+        int32 BestStars = CachedOverworldConcertActor->GetBestStars(); // Get the best star rating
 
-        UE_LOG(LogTemp, Log, TEXT("UpdateWidgetFromCachedActor - SongName: %s, ConcertName: %s"), *SongName, *ConcertName);
+        UE_LOG(LogTemp, Log, TEXT("UpdateWidgetFromCachedActor - SongName: %s, ConcertName: %s, BestStars: %d"), *SongName, *ConcertName, BestStars);
 
         if (CachedConcertSelectionWidget) 
         {
@@ -254,7 +254,6 @@ void UUIGameManager::SetMuteState(bool bMute)
     }
     else
     {
-        // Load and apply the saved volumes directly without re-triggering LoadSoundSettings
         UHighScoreSaveGame* LoadGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("SoundSettingsSlot"), 0));
         if (LoadGameInstance)
         {

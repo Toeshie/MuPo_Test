@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "OverworldConcertActor.h"
-#include "ConcertSelectionWidget.h"
+#include "HighScoreSaveGame.h"
 #include "D3_Project_MuPoCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -77,12 +77,23 @@ FString AOverworldConcertActor::GetConcertName()
 
 int32 AOverworldConcertActor::GetBestStars() const
 {
-    UConcertGameInstance* GameInstance = Cast<UConcertGameInstance>(UGameplayStatics::GetGameInstance(this));
-    if (GameInstance)
+    UHighScoreSaveGame* LoadGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("HighScoreSaveSlot"), 0));
+    
+    if (!LoadGameInstance) // If the save game doesn't exist, create a new one
     {
-        return GameInstance->GetBestStarsForLevel(LevelToLoad.ToString());
+        LoadGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+        UGameplayStatics::SaveGameToSlot(LoadGameInstance, TEXT("HighScoreSaveSlot"), 0);
     }
-    return 0;
+
+    if (LoadGameInstance)
+    {
+        const FLevelScoreData* ScoreData = LoadGameInstance->LevelScores.Find(ConcertName);
+        if (ScoreData)
+        {
+            return ScoreData->GetStarRating();
+        }
+    }
+    return 0; // Return 0 if no data is found
 }
 
 void AOverworldConcertActor::LoadLevel()
