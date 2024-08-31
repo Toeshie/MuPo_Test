@@ -6,9 +6,12 @@
 #include "ConcertSelectionWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "ConcertGameInstance.h"
+#include "Sound/SoundMix.h"     
+#include "Sound/SoundClass.h"    
 #include "D3_Project_MuPoCharacter.h"
 #include "OverworldConcertActor.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
 
 UUIGameManager::UUIGameManager()
 {
@@ -20,6 +23,8 @@ UUIGameManager::UUIGameManager()
     CachedConcertSelectionWidget = nullptr;
 
     UE_LOG(LogTemp, Log, TEXT("UIGameManager Created"));
+
+    InitializeSoundSettings();
 }
 
 void UUIGameManager::LoadLevel(const FName& LevelName)
@@ -198,5 +203,83 @@ void UUIGameManager::UpdateWidgetFromCachedActor()
     else
     {
         UE_LOG(LogTemp, Error, TEXT("CachedOverworldConcertActor or CachedConcertSelectionWidget is null"));
+    }
+}
+
+void UUIGameManager::InitializeSoundSettings()
+{
+    
+    MainSoundMix = LoadObject<USoundMix>(nullptr, TEXT("/Game/Sounds/SoundClasses/MainSoundMixer.MainSoundMixer"));
+    MusicSoundClass = LoadObject<USoundClass>(nullptr, TEXT("/Game/Sounds/SoundClasses/Music.Music"));
+    FXSoundClass = LoadObject<USoundClass>(nullptr, TEXT("/Game/Sounds/SoundClasses/FX.FX"));
+    AmbientSoundClass = LoadObject<USoundClass>(nullptr, TEXT("/Game/Sounds/SoundClasses/Ambient.Ambient"));
+    
+    LoadSoundSettings();
+}
+
+void UUIGameManager::SetMusicVolume(float Volume)
+{
+    if (MusicSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, MusicSoundClass, Volume, 1.0f, 0.0f);
+        UGameplayStatics::PushSoundMixModifier(this, MainSoundMix);
+    }
+}
+
+void UUIGameManager::SetFXVolume(float Volume)
+{
+    if (FXSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, FXSoundClass, Volume, 1.0f, 0.0f);
+        UGameplayStatics::PushSoundMixModifier(this, MainSoundMix);
+    }
+}
+
+void UUIGameManager::SetAmbientVolume(float Volume)
+{
+    if (AmbientSoundClass)
+    {
+        UGameplayStatics::SetSoundMixClassOverride(this, MainSoundMix, AmbientSoundClass, Volume, 1.0f, 0.0f);
+        UGameplayStatics::PushSoundMixModifier(this, MainSoundMix);
+    }
+}
+
+void UUIGameManager::SetMuteState(bool bMute)
+{
+    if (bMute)
+    {
+        SetMusicVolume(0.0f);
+        SetFXVolume(0.0f);
+        SetAmbientVolume(0.0f);
+    }
+    else
+    {
+        LoadSoundSettings();
+    }
+}
+
+void UUIGameManager::SaveSoundSettings()
+{
+    UHighScoreSaveGame* SaveGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::CreateSaveGameObject(UHighScoreSaveGame::StaticClass()));
+    if (SaveGameInstance)
+    {
+        SaveGameInstance->MusicVolume = MusicSoundClass->Properties.Volume;
+        SaveGameInstance->FXVolume = FXSoundClass->Properties.Volume;
+        SaveGameInstance->AmbientVolume = AmbientSoundClass->Properties.Volume;
+        SaveGameInstance->bIsMuted = MusicSoundClass->Properties.Volume == 0.0f;
+
+        UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("SoundSettingsSlot"), 0);
+    }
+}
+
+void UUIGameManager::LoadSoundSettings()
+{
+    UHighScoreSaveGame* LoadGameInstance = Cast<UHighScoreSaveGame>(UGameplayStatics::LoadGameFromSlot(TEXT("SoundSettingsSlot"), 0));
+    if (LoadGameInstance)
+    {
+        SetMusicVolume(LoadGameInstance->MusicVolume);
+        SetFXVolume(LoadGameInstance->FXVolume);
+        SetAmbientVolume(LoadGameInstance->AmbientVolume);
+        SetMuteState(LoadGameInstance->bIsMuted);
     }
 }

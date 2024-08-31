@@ -5,7 +5,10 @@
 
 UHighScoreSaveGame::UHighScoreSaveGame()
 {
-	
+	MusicVolume = 1.0f;
+	FXVolume = 1.0f;
+	AmbientVolume = 1.0f;
+	bIsMuted = false;
 }
 
 int32 FLevelScoreData::GetStarRating() const

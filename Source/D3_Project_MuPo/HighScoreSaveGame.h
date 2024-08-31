@@ -16,8 +16,7 @@ struct FLevelScoreData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Score")
 	float SuccessPercentage;
-
-	// Correct declaration of GetStarRating
+	
 	int32 GetStarRating() const;
 };
 
@@ -32,4 +31,17 @@ public:
 	TMap<FString, FLevelScoreData> LevelScores;
 
 	UHighScoreSaveGame();
+
+	// Sound settings
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	float MusicVolume;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	float FXVolume;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	float AmbientVolume;
+
+	UPROPERTY(VisibleAnywhere, Category = "Sound")
+	bool bIsMuted;
 };

@@ -54,4 +54,40 @@ private:
 
 	// Cached reference to the concert selection widget
 	UConcertSelectionWidget* CachedConcertSelectionWidget;
+
+	//Sound Settings
+public:
+	
+	UFUNCTION(BlueprintCallable)
+	void SetMusicVolume(float Volume);
+
+	UFUNCTION(BlueprintCallable)
+	void SetFXVolume(float Volume);
+
+	UFUNCTION(BlueprintCallable)
+	void SetAmbientVolume(float Volume);
+
+	UFUNCTION(BlueprintCallable)
+	void SetMuteState(bool bMute);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveSoundSettings();
+
+	UFUNCTION(BlueprintCallable)
+	void LoadSoundSettings();
+
+private:
+	UPROPERTY()
+	USoundMix* MainSoundMix;
+
+	UPROPERTY()
+	USoundClass* MusicSoundClass;
+
+	UPROPERTY()
+	USoundClass* FXSoundClass;
+
+	UPROPERTY()
+	USoundClass* AmbientSoundClass;
+
+	void InitializeSoundSettings();
 };
