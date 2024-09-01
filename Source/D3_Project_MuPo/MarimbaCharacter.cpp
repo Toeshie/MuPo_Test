@@ -103,11 +103,6 @@ void AMarimbaCharacter::HandleLowNoteInput(const FInputActionValue& Value)
 void AMarimbaCharacter::ToggleProxyMenuPause()
 {
     Super::ToggleProxyMenuPause();  
-
-    if (PauseMenuWidgetInstance)
-    {
-        PauseMenuWidgetInstance->TogglePauseMenu();
-    }
 }
 
 void AMarimbaCharacter::PlaySound(USoundCue* SoundCue)
@@ -141,7 +136,7 @@ void AMarimbaCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
     {
         EnhancedInputComponent->BindAction(IA_MarimbaNoteHigh.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::HandleHighNoteInput);
         EnhancedInputComponent->BindAction(IA_MarimbaNoteLow.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::HandleLowNoteInput);
-        EnhancedInputComponent->BindAction(IA_Pause.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::ToggleProxyMenuPause);
+        EnhancedInputComponent->BindAction(IA_MarimbaPause.Get(), ETriggerEvent::Triggered, this, &AMarimbaCharacter::ToggleProxyMenuPause);
     }
 }
 
