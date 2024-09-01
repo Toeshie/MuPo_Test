@@ -26,6 +26,7 @@ public:
 	UStaticMeshComponent* InstrumentMesh;
 
 	virtual void SetCharacterMesh(UStaticMesh* NewMesh);
+	virtual void SetInstrumentMesh(UStaticMesh* NewMesh);
 
 protected:
 	

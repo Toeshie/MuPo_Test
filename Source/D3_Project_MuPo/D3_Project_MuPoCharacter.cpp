@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "GameFramework/Controller.h"
 #include "EnhancedInputComponent.h"
+#include "ConcertGameInstance.h"
 #include "PauseMenuWidget.h"
 #include "InputActionValue.h"
 #include "UIGameManager.h"

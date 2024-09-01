@@ -22,6 +22,12 @@ AConcertCharacter::AConcertCharacter()
     CharacterMesh->SetupAttachment(RootComponent);
     CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); 
     CharacterMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+
+    InstrumentMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InstrumentMesh"));
+    InstrumentMesh->SetupAttachment(CharacterMesh); // Attach to CharacterMesh
+
+    CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+    InstrumentMesh->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f)); 
     
     // Initialize input actions
     static ConstructorHelpers::FObjectFinder<UInputAction> NoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_NoteHigh.IA_NoteHigh'"));
@@ -67,6 +73,12 @@ void AConcertCharacter::BeginPlay()
     else
     {
         UE_LOG(LogTemp, Error, TEXT("Character mesh not set after level load."));
+    }
+
+    UStaticMesh* DrumMesh = LoadObject<UStaticMesh>(nullptr, TEXT("StaticMesh'/Game/Models/Base_All_Levels/Instruments_Drum.Instruments_Drum'"));
+    if (DrumMesh)
+    {
+        SetInstrumentMesh(DrumMesh);
     }
     
     if (APlayerController* PlayerController = Cast<APlayerController>(GetController()))
@@ -240,5 +252,18 @@ void AConcertCharacter::SetCharacterMesh(UStaticMesh* NewMesh)
     else
     {
         UE_LOG(LogTemp, Error, TEXT("Failed to update character mesh: CharacterMesh or NewMesh is null."));
+    }
+}
+
+void AConcertCharacter::SetInstrumentMesh(UStaticMesh* NewMesh)
+{
+    if (InstrumentMesh && NewMesh)
+    {
+        InstrumentMesh->SetStaticMesh(NewMesh);
+        UE_LOG(LogTemp, Log, TEXT("Instrument mesh set to %s"), *NewMesh->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to set instrument mesh."));
     }
 }

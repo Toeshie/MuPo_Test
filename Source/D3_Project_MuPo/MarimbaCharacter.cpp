@@ -15,6 +15,8 @@ AMarimbaCharacter::AMarimbaCharacter()
         CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f)); // Example of modifying properties
     }
     
+    InstrumentMesh->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+    
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaHighNote.IA_MarimbaHighNote'"));
     IA_MarimbaNoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);
 
@@ -34,7 +36,7 @@ AMarimbaCharacter::AMarimbaCharacter()
     static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaLowNoteHitCue(TEXT("SoundCue'/Game/Sounds/MarimbaLowNoteHitCue.MarimbaLowNoteHitCue'"));
     MarimbaLowNoteHitSound = MarimbaLowNoteHitCue.Object;
 
-    static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaMissNoteCue(TEXT("SoundCue'/Game/Sounds/MarimbaMissNoteCue.MarimbaMissNoteCue'"));
+    static ConstructorHelpers::FObjectFinder<USoundCue> MarimbaMissNoteCue(TEXT("SoundCue'/Game/Sounds/MissNoteCue.MissNoteCue'"));
     MarimbaMissNoteSound = MarimbaMissNoteCue.Object;
     
     static ConstructorHelpers::FClassFinder<UUserWidget> PauseMenuBPClass(TEXT("/Game/Blueprints/UI/PauseMenu"));
@@ -50,6 +52,12 @@ void AMarimbaCharacter::BeginPlay()
 
     // Initialize Marimba-specific input mappings
     InitializeInputMappings();
+
+    UStaticMesh* MarimbaMesh = LoadObject<UStaticMesh>(nullptr, TEXT("StaticMesh'/Game/Models/Base_All_Levels/Instruments_Marimba.Instruments_Marimba'"));
+    if (MarimbaMesh)
+    {
+        SetInstrumentMesh(MarimbaMesh);
+    }
 }
 
 void AMarimbaCharacter::InitializeInputMappings()

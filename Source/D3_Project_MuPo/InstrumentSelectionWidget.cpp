@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "UIGameManager.h"
+#include "ConcertGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "OverworldConcertActor.h"
 #include "GameFramework/Character.h"
