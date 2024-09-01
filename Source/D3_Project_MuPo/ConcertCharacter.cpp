@@ -42,11 +42,11 @@ AConcertCharacter::AConcertCharacter()
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> DrumsContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Drums.IMC_Drums'"));
     IMC_Drums = Cast<UInputMappingContext>(DrumsContext.Object);
 
-    static ConstructorHelpers::FObjectFinder<USoundCue> HighNoteHitCue(TEXT("SoundCue'/Game/Sounds/HighNoteHitCue.HighNoteHitCue'"));
-    HighNoteHitSound = HighNoteHitCue.Object;
+    //static ConstructorHelpers::FObjectFinder<USoundCue> HighNoteHitCue(TEXT("SoundCue'/Game/Sounds/HighNoteHitCue.HighNoteHitCue'"));
+    //HighNoteHitSound = HighNoteHitCue.Object;
 
-    static ConstructorHelpers::FObjectFinder<USoundCue> LowNoteHitCue(TEXT("SoundCue'/Game/Sounds/LowNoteHitCue.LowNoteHitCue'"));
-    LowNoteHitSound = LowNoteHitCue.Object;
+   // static ConstructorHelpers::FObjectFinder<USoundCue> LowNoteHitCue(TEXT("SoundCue'/Game/Sounds/LowNoteHitCue.LowNoteHitCue'"));
+   // LowNoteHitSound = LowNoteHitCue.Object;
 
     static ConstructorHelpers::FObjectFinder<USoundCue> MissNoteCue(TEXT("SoundCue'/Game/Sounds/MissNoteCue.MissNoteCue'"));
     MissNoteSound = MissNoteCue.Object;
