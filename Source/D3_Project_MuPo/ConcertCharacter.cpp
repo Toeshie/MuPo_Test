@@ -21,13 +21,13 @@ AConcertCharacter::AConcertCharacter()
     CharacterMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("CharacterMesh"));
     CharacterMesh->SetupAttachment(RootComponent);
     CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); 
-    CharacterMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+    CharacterMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
 
     InstrumentMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InstrumentMesh"));
-    InstrumentMesh->SetupAttachment(CharacterMesh); // Attach to CharacterMesh
-
-    CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-    InstrumentMesh->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f)); 
+    InstrumentMesh->SetupAttachment(CharacterMesh); 
+    InstrumentMesh->SetRelativeLocation(FVector(0.0f, 50.0f, 15.0f));
+    InstrumentMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
+    
     
     // Initialize input actions
     static ConstructorHelpers::FObjectFinder<UInputAction> NoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/IA_NoteHigh.IA_NoteHigh'"));

@@ -12,10 +12,13 @@ AMarimbaCharacter::AMarimbaCharacter()
 {
     if (CharacterMesh)
     {
-        CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 50.0f)); // Example of modifying properties
+        CharacterMesh->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f)); 
+        CharacterMesh->SetRelativeRotation(FRotator(0.0f, -90.0f, 0.0f));
     }
     
-    InstrumentMesh->SetRelativeLocation(FVector(100.0f, 0.0f, 0.0f));
+    InstrumentMesh->SetRelativeRotation(FRotator(0.0f, -90.f, 0.0f));
+    InstrumentMesh->SetRelativeLocation(FVector(0.0f, 70.0f, -35.0f)); 
+   
     
     static ConstructorHelpers::FObjectFinder<UInputAction> MarimbaNoteHighAction(TEXT("InputAction'/Game/Blueprints/Inputs/MarimbaInputs/IA_MarimbaHighNote.IA_MarimbaHighNote'"));
     IA_MarimbaNoteHigh = Cast<UInputAction>(MarimbaNoteHighAction.Object);

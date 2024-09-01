@@ -30,10 +30,10 @@ void UCharacterSelectionWidget::NativeConstruct()
     }
 
     // Load character meshes if not already done
-    CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character1.Characters_Character1"));
-    CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character2.Characters_Character2"));
-    CharacterMeshes[2] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character3.Characters_Character3"));
-    CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Game/TestMeshed/Characters_Character4.Characters_Character4"));
+    CharacterMeshes[0] = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Game/Models/Base_All_Levels/Character.Character'"));
+    CharacterMeshes[1] = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Game/Models/Base_All_Levels/Character1.Character1'"));
+    CharacterMeshes[2] = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Game/Models/Base_All_Levels/Character2.Character2'"));
+    CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Game/Models/Base_All_Levels/Character3.Character3'"));
 
     // Set character images (optional, depending on your implementation)
     CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
