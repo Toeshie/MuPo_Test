@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputAction.h"
 #include "MainConcertCameraActor.h"
+#include "NiagaraComponent.h"
 #include "Sound/SoundCue.h"
 #include "ConcertCharacter.generated.h"
 
@@ -51,7 +52,12 @@ protected:
 	
 	virtual void ValidateNoteHit(const FInputActionValue& Value, bool bIsHighNote);
 	virtual void PlaySound(USoundCue* SoundCue);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UNiagaraComponent* Hit_NGS;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UNiagaraComponent* Miss_NGS;
 
 
 	UPROPERTY(EditAnywhere, Category = "Sound")

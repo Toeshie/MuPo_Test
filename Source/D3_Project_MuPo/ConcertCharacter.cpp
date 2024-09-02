@@ -3,6 +3,7 @@
 #include "ConcertCharacter.h"
 #include "EnhancedInputSubsystems.h"
 #include "ConcertGameMode.h"
+#include "NiagaraComponent.h"
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
@@ -188,6 +189,12 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
                     bool perfectHit = false;
                     bool goodHit = false;
 
+                    // Activate Hit Niagara System
+                    if (Hit_NGS)
+                    {
+                        Hit_NGS->ActivateSystem();
+                    }
+
                     for (UActorComponent* Component : Note->GetComponents())
                     {
                         UPrimitiveComponent* PrimitiveComponent = Cast<UPrimitiveComponent>(Component);
@@ -223,6 +230,7 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
             }
         }
     }
+
     if (!bNoteHit)
     {
         AConcertGameMode* GameMode = Cast<AConcertGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
@@ -230,6 +238,12 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
         {
             GameMode->NoteHit(false, false); // Reset streak and multiplier
             PlaySound(MissNoteSound);
+
+            // Activate Miss Niagara System
+            if (Miss_NGS)
+            {
+                Miss_NGS->ActivateSystem();
+            }
         }
     }
 }
