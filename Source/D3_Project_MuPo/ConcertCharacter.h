@@ -7,7 +7,7 @@
 #include "InputAction.h"
 #include "MainConcertCameraActor.h"
 #include "NiagaraComponent.h"
-#include "Sound/SoundCue.h"
+#include "Haptics/HapticFeedbackEffect_Curve.h"
 #include "ConcertCharacter.generated.h"
 
 UCLASS()
@@ -55,9 +55,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	UNiagaraComponent* Hit_NGS;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UNiagaraComponent* Hit_NGS2;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	UNiagaraComponent* Miss_NGS;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	UNiagaraComponent* Miss_NGS2;
+	
+	UPROPERTY(EditAnywhere, Category = "Feedback")
+	UHapticFeedbackEffect_Curve* MissNoteHaptic;
 
 
 	UPROPERTY(EditAnywhere, Category = "Sound")

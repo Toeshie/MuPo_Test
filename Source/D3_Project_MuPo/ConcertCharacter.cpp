@@ -8,9 +8,11 @@
 #include "InputMappingContext.h"
 #include "Kismet/GameplayStatics.h"
 #include "MainConcertCameraActor.h"
+#include "NiagaraActor.h"
 #include "NoteBaseClass.h"
 #include "PauseMenuWidget.h"
 #include "Components/BoxComponent.h"
+#include "Haptics/HapticFeedbackEffect_Curve.h"
 #include "Sound/SoundCue.h"
 
 // Sets default values
@@ -42,6 +44,12 @@ AConcertCharacter::AConcertCharacter()
 
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> DrumsContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Drums.IMC_Drums'"));
     IMC_Drums = Cast<UInputMappingContext>(DrumsContext.Object);
+
+    static ConstructorHelpers::FObjectFinder<UHapticFeedbackEffect_Curve> HapticEffect(TEXT("HapticFeedbackEffect_Curve'/Game/Blueprints/ControlerFeedback/MissNoteFeedback.MissNoteFeedback'"));
+    if (HapticEffect.Succeeded())
+    {
+        MissNoteHaptic = HapticEffect.Object;
+    }
 
     //static ConstructorHelpers::FObjectFinder<USoundCue> HighNoteHitCue(TEXT("SoundCue'/Game/Sounds/HighNoteHitCue.HighNoteHitCue'"));
     //HighNoteHitSound = HighNoteHitCue.Object;
@@ -90,7 +98,6 @@ void AConcertCharacter::BeginPlay()
         PlayerController->SetInputMode(InputMode);
         PlayerController->bShowMouseCursor = false;
     }
-   
     
     TArray<AActor*> FoundActors;
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMainConcertCameraActor::StaticClass(), FoundActors);
@@ -103,9 +110,47 @@ void AConcertCharacter::BeginPlay()
     {
         PauseMenuWidgetInstance = CreateWidget<UPauseMenuWidget>(GetWorld(), PauseMenuClass);
     }
+
+    TArray<AActor*> FoundNiagaraSystems;
+    UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANiagaraActor::StaticClass(), FoundNiagaraSystems);
+
+    for (AActor* NiagaraActor : FoundNiagaraSystems)
+    {
+        ANiagaraActor* NiagaraSystemActor = Cast<ANiagaraActor>(NiagaraActor);
+        if (NiagaraSystemActor)
+        {
+            // Log each Niagara system's tags for debugging purposes
+            for (const FName& Tag : NiagaraSystemActor->Tags)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Found Niagara System: %s with Tag: %s"), *NiagaraSystemActor->GetName(), *Tag.ToString());
+
+                // Assign Hit Niagara systems
+                if (Tag == "Hit_1")
+                {
+                    Hit_NGS = NiagaraSystemActor->GetNiagaraComponent();
+                    UE_LOG(LogTemp, Warning, TEXT("Assigned Hit Niagara System: %s to Hit_NGS"), *NiagaraSystemActor->GetName());
+                }
+                else if (Tag == "Hit_2")
+                {
+                    Hit_NGS2 = NiagaraSystemActor->GetNiagaraComponent();
+                    UE_LOG(LogTemp, Warning, TEXT("Assigned Hit Niagara System: %s to Hit_NGS2"), *NiagaraSystemActor->GetName());
+                }
+            
+                // Assign Miss Niagara systems
+                else if (Tag == "Miss_1")
+                {
+                    Miss_NGS = NiagaraSystemActor->GetNiagaraComponent();
+                    UE_LOG(LogTemp, Warning, TEXT("Assigned Miss Niagara System: %s to Miss_NGS"), *NiagaraSystemActor->GetName());
+                }
+                else if (Tag == "Miss_2")
+                {
+                    Miss_NGS2 = NiagaraSystemActor->GetNiagaraComponent();
+                    UE_LOG(LogTemp, Warning, TEXT("Assigned Miss Niagara System: %s to Miss_NGS2"), *NiagaraSystemActor->GetName());
+                }
+            }
+        }
+    }
 }
-
-
 
 void AConcertCharacter::ToggleProxyMenuPause()
 {
@@ -188,11 +233,20 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
                 {
                     bool perfectHit = false;
                     bool goodHit = false;
-
-                    // Activate Hit Niagara System
-                    if (Hit_NGS)
+                    
+                    if (bIsHighNote && Hit_NGS2) 
                     {
+                        UE_LOG(LogTemp, Warning, TEXT("Activating High Note Hit Niagara System"));
                         Hit_NGS->ActivateSystem();
+                    }
+                    else if (!bIsHighNote && Hit_NGS) 
+                    {
+                        UE_LOG(LogTemp, Warning, TEXT("Activating Low Note Hit Niagara System"));
+                        Hit_NGS2->ActivateSystem();
+                    }
+                    else
+                    {
+                        UE_LOG(LogTemp, Error, TEXT("Hit Niagara System is null"));
                     }
 
                     for (UActorComponent* Component : Note->GetComponents())
@@ -238,11 +292,20 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
         {
             GameMode->NoteHit(false, false); // Reset streak and multiplier
             PlaySound(MissNoteSound);
-
-            // Activate Miss Niagara System
-            if (Miss_NGS)
+            
+            APlayerController* PlayerController = Cast<APlayerController>(GetController());
+            if (PlayerController && MissNoteHaptic)
             {
-                Miss_NGS->ActivateSystem();
+                if (bIsHighNote && Miss_NGS2) 
+                {
+                    Miss_NGS2->ActivateSystem();
+                    PlayerController->PlayHapticEffect(MissNoteHaptic, EControllerHand::Left); 
+                }
+                else if (!bIsHighNote && Miss_NGS) 
+                {
+                    Miss_NGS->ActivateSystem();
+                    PlayerController->PlayHapticEffect(MissNoteHaptic, EControllerHand::Right); 
+                }
             }
         }
     }
