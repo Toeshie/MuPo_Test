@@ -63,10 +63,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	UNiagaraComponent* Miss_NGS2;
 	
-	UPROPERTY(EditAnywhere, Category = "Feedback")
-	UHapticFeedbackEffect_Curve* MissNoteHaptic;
-
-
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* HighNoteHitSound;
 
@@ -75,6 +71,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Sound")
 	USoundCue* MissNoteSound;
+
+	UPROPERTY(EditAnywhere, Category = "Feedback")
+	UForceFeedbackEffect* MissNoteFeedback;
 	
 	// Input Actions
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input", meta = (AllowPrivateAccess = "true"))

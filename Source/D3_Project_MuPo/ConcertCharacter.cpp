@@ -45,17 +45,17 @@ AConcertCharacter::AConcertCharacter()
     static ConstructorHelpers::FObjectFinder<UInputMappingContext> DrumsContext(TEXT("InputMappingContext'/Game/Blueprints/Inputs/IMC_Drums.IMC_Drums'"));
     IMC_Drums = Cast<UInputMappingContext>(DrumsContext.Object);
 
-    static ConstructorHelpers::FObjectFinder<UHapticFeedbackEffect_Curve> HapticEffect(TEXT("HapticFeedbackEffect_Curve'/Game/Blueprints/ControlerFeedback/MissNoteFeedback.MissNoteFeedback'"));
-    if (HapticEffect.Succeeded())
-    {
-        MissNoteHaptic = HapticEffect.Object;
-    }
-
     //static ConstructorHelpers::FObjectFinder<USoundCue> HighNoteHitCue(TEXT("SoundCue'/Game/Sounds/HighNoteHitCue.HighNoteHitCue'"));
     //HighNoteHitSound = HighNoteHitCue.Object;
 
    // static ConstructorHelpers::FObjectFinder<USoundCue> LowNoteHitCue(TEXT("SoundCue'/Game/Sounds/LowNoteHitCue.LowNoteHitCue'"));
    // LowNoteHitSound = LowNoteHitCue.Object;
+
+    static ConstructorHelpers::FObjectFinder<UForceFeedbackEffect> FeedbackEffect(TEXT("ForceFeedbackEffect'/Game/Blueprints/ControllerFeedback/MissNoteFeedback.MissNoteFeedback'"));
+    if (FeedbackEffect.Succeeded())
+    {
+        MissNoteFeedback = FeedbackEffect.Object;
+    }
 
     static ConstructorHelpers::FObjectFinder<USoundCue> MissNoteCue(TEXT("SoundCue'/Game/Sounds/MissNoteCue.MissNoteCue'"));
     MissNoteSound = MissNoteCue.Object;
@@ -292,20 +292,30 @@ void AConcertCharacter::ValidateNoteHit(const FInputActionValue& Value, bool bIs
         {
             GameMode->NoteHit(false, false); // Reset streak and multiplier
             PlaySound(MissNoteSound);
-            
-            APlayerController* PlayerController = Cast<APlayerController>(GetController());
-            if (PlayerController && MissNoteHaptic)
             {
                 if (bIsHighNote && Miss_NGS2) 
                 {
                     Miss_NGS2->ActivateSystem();
-                    PlayerController->PlayHapticEffect(MissNoteHaptic, EControllerHand::Left); 
+                    
                 }
                 else if (!bIsHighNote && Miss_NGS) 
                 {
                     Miss_NGS->ActivateSystem();
-                    PlayerController->PlayHapticEffect(MissNoteHaptic, EControllerHand::Right); 
+                    
                 }
+            }
+            
+            APlayerController* PlayerController = Cast<APlayerController>(GetController());
+            if (PlayerController && MissNoteFeedback)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Force feedback is being triggered for missed note"));
+                FForceFeedbackParameters FeedbackParams;
+                FeedbackParams.bLooping = false;
+                PlayerController->ClientPlayForceFeedback(MissNoteFeedback, FeedbackParams);
+            }
+            else
+            {
+                UE_LOG(LogTemp, Error, TEXT("Force feedback not triggered: MissNoteFeedback or PlayerController is null"));
             }
         }
     }
