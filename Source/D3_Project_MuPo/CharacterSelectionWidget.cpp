@@ -36,10 +36,10 @@ void UCharacterSelectionWidget::NativeConstruct()
     CharacterMeshes[3] = LoadObject<UStaticMesh>(nullptr, TEXT("/Script/Engine.StaticMesh'/Game/Models/Base_All_Levels/Character3.Character3'"));
 
     // Set character images (optional, depending on your implementation)
-    CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/cartoon_style_smley_face_star.cartoon_style_smley_face_star")));
-    CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/13595.13595")));
-    CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/Images/Character.Character")));
-    CharacterImage4->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("/Game/Blueprints/UI/Images/Character.Character")));
+    CharacterImage1->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/Game/Blueprints/UI/Images/Character1.Character1'")));
+    CharacterImage2->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/Game/Blueprints/UI/Images/Character2.Character2'")));
+    CharacterImage3->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/Game/Blueprints/UI/Images/Character3.Character3'")));
+    CharacterImage4->SetBrushFromTexture(LoadObject<UTexture2D>(nullptr, TEXT("Texture2D'/Game/Blueprints/UI/Images/Character4.Character4'")));
 }
 
 // Button click handlers
@@ -91,8 +91,7 @@ void UCharacterSelectionWidget::OnCharacterButtonClicked(int32 CharacterIndex)
 
     // Broadcast the character selection along with the selected image
     OnCharacterSelected.Broadcast(CharacterIndex, SelectedCharacterImage);
-
-    // Optionally, remove this widget if you're done with it
+    
     RemoveFromParent();
 }
 

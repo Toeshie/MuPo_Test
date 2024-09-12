@@ -131,11 +131,8 @@ float AConcertGameMode::GetCorrectNotePercentage()
 
     int32 TotalHits = GoodHits + PerfectHits;
     HitPercentage = static_cast<float>(TotalHits) / TotalNotes * 100.0f;
-
-    UE_LOG(LogTemp, Log, TEXT("Calculating Hit Percentage. TotalHits: %d, TotalNotes: %d, HitPercentage: %f"), TotalHits, TotalNotes, HitPercentage);
-
-    return HitPercentage;
     
+    return HitPercentage;
 }
 
 void AConcertGameMode::DisplayScore()
@@ -339,10 +336,6 @@ void AConcertGameMode::SpawnSelectedCharacter()
                 {
                     ConcertCharacter->CharacterMesh->SetStaticMesh(SelectedCharacterMesh);
                 }
-                else
-                {
-                    UE_LOG(LogTemp, Error, TEXT("Spawned character does not have a valid CharacterMesh component!"));
-                }
             }
 
             APlayerController* PlayerController = UGameplayStatics::GetPlayerController(this, 0);
@@ -375,7 +368,7 @@ void AConcertGameMode::ActivateFireworkds()
         if (NiagaraComponent)
         {
             UE_LOG(LogTemp, Log, TEXT("Activating Niagara Component: %s"), *NiagaraComponent->GetName());
-            NiagaraComponent->Activate(true); // Activate the Niagara system
+            NiagaraComponent->Activate(true);
         }
         else
         {
@@ -420,8 +413,7 @@ void AConcertGameMode::ShowEndGameMenu()
     }
 
     UGameplayStatics::SaveGameToSlot(SaveGameInstance, "HighScoresSlot", 0);
-
-    // Display the end game menu as before
+    
     if (EndGameMenuClass)
     {
         APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
