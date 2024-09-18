@@ -145,11 +145,10 @@ void UNoteSpawner::SetNotesData(const TArray<FNoteData>& NewNotesData)
     }
 
     this->NotesData = NewNotesData;
-    CurrentNotesData = NewNotesData;  // Ensure this is set
+    CurrentNotesData = NewNotesData; 
     
     UE_LOG(LogTemp, Log, TEXT("SetNotesData successfully updated NotesData."));
-
-    // Start the note spawning timer here instead
+    
     GetWorld()->GetTimerManager().SetTimer(NoteSpawnTimerHandle, this, &UNoteSpawner::HandleNoteSpawning, 0.005f, true);
 }
 void UNoteSpawner::ClearScheduledNotes()

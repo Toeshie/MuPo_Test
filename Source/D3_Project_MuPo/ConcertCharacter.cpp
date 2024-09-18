@@ -119,7 +119,7 @@ void AConcertCharacter::BeginPlay()
         ANiagaraActor* NiagaraSystemActor = Cast<ANiagaraActor>(NiagaraActor);
         if (NiagaraSystemActor)
         {
-            // Log each Niagara system's tags for debugging purposes
+            // Log each Niagara system's tags
             for (const FName& Tag : NiagaraSystemActor->Tags)
             {
                 UE_LOG(LogTemp, Warning, TEXT("Found Niagara System: %s with Tag: %s"), *NiagaraSystemActor->GetName(), *Tag.ToString());

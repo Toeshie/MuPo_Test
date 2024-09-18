@@ -22,6 +22,16 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "UINavigation",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/b9ee9669c98146cd8433a62ea7f23699"
+		},
+		{
+			"Name": "ParallelcubeAudioAnalyzer",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/c04ca3c256584bc1a7b94555e9ca0332"
 		}
 	],
 	"TargetPlatforms": [
